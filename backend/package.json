@@ -27,7 +27,9 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --watch src --exec ts-node --files src/server.ts",
     "build": "npm install && tsc",
-    "start": "cross-env NODE_ENV=production node dist/server.js"
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "setup-roles": "ts-node src/scripts/setup-roles.ts",
+    "create-user": "ts-node src/scripts/create-user.ts"
   },
   "author": "",
   "license": "ISC",

@@ -1,0 +1,92 @@
+import mongoose, { Schema, Document, Model, Types } from "mongoose";
+import bcrypt from "bcrypt";
+import { RoleAttributes } from "./Role";
+import { hashPassword } from "../utils/auth";
+
+export interface UserAttributes extends Document {
+    firstname: string;
+    lastname: string;
+    email: string;
+    password: string;
+    role_id: Types.ObjectId;
+    status?: "active" | "deleted";
+    matchPassword(plainPassword: string): Promise<boolean>
+    role: RoleAttributes;
+}
+
+const UserSchema: Schema<UserAttributes> = new Schema(
+    {
+        firstname: {
+            type: String,
+            required: [true, "firstname is required."],
+            minlength: [1, "firstname must be at least 1 character."],
+            maxlength: [100, "firstname must be at most 100 characters."],
+            trim: true,
+        },
+
+        lastname: {
+            type: String,
+            required: [true, "lastname is required."],
+            minlength: [1, "lastname must be at least 1 character."],
+            maxlength: [100, "lastname must be at most 100 characters."],
+            trim: true,
+        },
+
+        email: {
+            type: String,
+            required: [true, "email is required."],
+            minlength: [5, "email must be at least 5 characters."],
+            maxlength: [100, "email must be at most 100 characters."],
+            trim: true,
+        },
+
+        password: {
+            type: String,
+            required: [true, "password is required."],
+            minlength: [12, "password must be at least 12 character."],
+            maxlength: [100, "password must be at most 100 characters."],
+        },
+
+        role_id: {
+           type: Schema.Types.ObjectId,
+            ref: "Role",
+        },
+
+        status: {
+            type: String,
+            enum: ["active", "deleted"],
+            default: "active",
+            required: true,
+        },
+    },
+    { timestamps: true } 
+);
+
+UserSchema.pre<UserAttributes>("save", async function () {
+    if (this.isModified("password")) {
+        this.password = await hashPassword(this.password);
+    }
+});
+
+UserSchema.methods.matchPassword = async function (
+    plainPassword: string
+): Promise<boolean> {
+    return await bcrypt.compare(plainPassword, this.password);
+};
+
+UserSchema.index({ status: 1, firstname: 1, lastname: 1, email: 1, role_id: 1 })
+UserSchema.index({ firstname: "text", lastname: "text", email: "text" });
+
+UserSchema.virtual("role", {
+    ref: "Role",
+    localField: "role_id",
+    foreignField: "_id",
+    justOne: true,
+});
+
+UserSchema.set("toObject", { virtuals: true });
+UserSchema.set("toJSON", { virtuals: true });
+
+const User: Model<UserAttributes> = mongoose.model("User", UserSchema);
+
+export default User;

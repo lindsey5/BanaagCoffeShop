@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
 import dns from "node:dns/promises";
+import authRoutes from "./routes/authRoutes";
 
 dotenv.config();
 
@@ -23,7 +24,8 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded());
 
-app.get('/', (_, res) => res.send('Welcome'));
+app.get('/', (_, res) => res.send('Hi'));
+app.use('/api/auth', authRoutes);
 
 connectDB();
 

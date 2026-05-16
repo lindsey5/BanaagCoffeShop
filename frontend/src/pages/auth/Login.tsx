@@ -3,14 +3,16 @@ import Button from "../../components/ui/Button";
 import TextField from "../../components/ui/Textfield";
 import { loginSchema, type LoginFormData } from "../../schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLogin } from "../../hooks/auth/use-login-hook";
 
 export default function Login() {
+    const loginMutation = useLogin();
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
     });
 
-    const onSubmit: SubmitHandler<LoginFormData> = () => {
-
+    const onSubmit: SubmitHandler<LoginFormData> = (data) => {
+        loginMutation.mutate(data)
     };
 
     return (
