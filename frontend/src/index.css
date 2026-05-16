@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+}
+
+@theme {
+  --color-brown: var(--text-brown);
+  --color-base: var(--bg-base);
+}
+
+@layer base {
+  :root {
+    --bg-base: #f2ebe6;
+    --gradient-accent: linear-gradient(135deg, #8b5e3c, #603F26);
+    --text-brown: #603F26;
+  }
+}
