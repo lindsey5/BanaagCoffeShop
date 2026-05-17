@@ -1,4 +1,4 @@
-import { Archive, LayoutDashboard, Coffee, ClipboardList, LogOut } from "lucide-react";
+import { Archive, LayoutDashboard, Coffee, ClipboardList, LogOut, Shield, User } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { PointOfSale } from "@mui/icons-material";
 import Card from "./Card";
@@ -9,7 +9,9 @@ const items = [
     { path: "/dashboard/inventory", label: "Inventory", icon: <Archive size={18} /> },
     { path: "/dashboard/menu", label: "Menu", icon: <Coffee size={18} /> },
     { path: "/dashboard/pos", label: "POS", icon: <PointOfSale sx={{ width: 18, height: 18 }} /> },
-    { path: "/orders", label: "Orders", icon: <ClipboardList size={18} /> },
+    { path: "/dashboard/orders", label: "Orders", icon: <ClipboardList size={18} /> },
+    { path: '/dashboard/roles', label: "Roles", icon: <Shield size={18}/>},
+    { path: '/dashboard/users', label: 'Users', icon: <User size={18}/>}
 ];
 
 export default function Sidebar() {
