@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "../../hooks/auth/use-login-hook";
 import { useAuthStore } from "../../lib/store/authStore";
 import { Navigate } from "react-router-dom";
-import { useState } from "react";
 import { promiseToast } from "../../utils/sileo";
 
 export default function Login() {
