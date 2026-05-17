@@ -5,6 +5,9 @@ import morgan from 'morgan';
 import cors from 'cors';
 import dns from "node:dns/promises";
 import authRoutes from "./routes/authRoutes";
+import roleRoutes from "./routes/roleRoutes";
+import { errorHandler } from "./middlewares/errorHandler";
+import inventoryItemRoutes from "./routes/inventoryItemRoutes";
 
 dotenv.config();
 
@@ -26,6 +29,9 @@ app.use(express.urlencoded());
 
 app.get('/', (_, res) => res.send('Hi'));
 app.use('/api/auth', authRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/inventory-items', inventoryItemRoutes);
+app.use(errorHandler);
 
 connectDB();
 

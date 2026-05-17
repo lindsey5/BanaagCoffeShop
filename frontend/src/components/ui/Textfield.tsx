@@ -34,7 +34,7 @@ export default function TextField({
     };
 
     return (
-        <div className={cn("w-full flex flex-col gap-1", className)}>
+        <div className={cn("w-full flex flex-col gap-1 text-black", className)}>
             <div className="relative w-full bg-white rounded-full">
                 <input
                 {...registration}

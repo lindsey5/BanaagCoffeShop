@@ -8,11 +8,15 @@
 @theme {
   --color-brown: var(--text-brown);
   --color-base: var(--bg-base);
+  --color-main: var(--bg-main);
+  --color-panel: var(--bg-panel);
 }
 
 @layer base {
   :root {
+    --bg-main: #75533d;
     --bg-base: #f2ebe6;
+    --bg-panel: #3a291e;
     --gradient-accent: linear-gradient(135deg, #8b5e3c, #603F26);
     --text-brown: #603F26;
   }

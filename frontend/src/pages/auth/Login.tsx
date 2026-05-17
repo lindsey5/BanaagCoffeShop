@@ -4,8 +4,11 @@ import TextField from "../../components/ui/Textfield";
 import { loginSchema, type LoginFormData } from "../../schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "../../hooks/auth/use-login-hook";
+import { useAuthStore } from "../../lib/store/authStore";
+import { Navigate } from "react-router-dom";
 
 export default function Login() {
+    const { isAuthenticated } = useAuthStore();
     const loginMutation = useLogin();
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -14,6 +17,8 @@ export default function Login() {
     const onSubmit: SubmitHandler<LoginFormData> = (data) => {
         loginMutation.mutate(data)
     };
+
+    if(isAuthenticated()) return <Navigate to="/dashboard" />
 
     return (
         <div className="relative w-full h-screen flex items-center justify-center">

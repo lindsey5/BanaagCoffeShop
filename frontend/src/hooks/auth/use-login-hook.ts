@@ -19,8 +19,6 @@ export const useLogin = () => {
         onSuccess: (data) => {
             setAuth(data.token.accessToken, data.token.refreshToken);
             setUser(data.user);
-            navigate("dashboard");
-
             navigate('/dashboard');
         },
     });
