@@ -25,7 +25,7 @@ export const ProtectedRoute = ({
     } = usePermissions();
     const { isAuthenticated } = useAuthStore();
 
-    if(isLoading) return <div>Loading...</div>
+    if(isLoading) return null;
     
     if (requireAuthentication && !isAuthenticated()) {
         return <Navigate to={redirectTo} replace />;
