@@ -1,6 +1,6 @@
-import { Archive, LayoutDashboard, Coffee, ClipboardList } from "lucide-react";
+import { Archive, LayoutDashboard, Coffee, ClipboardList, LogOut } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
-import { PointOfSale } from '@mui/icons-material';
+import { PointOfSale } from "@mui/icons-material";
 import Card from "./Card";
 import { useAuthStore } from "../../lib/store/authStore";
 
@@ -14,38 +14,50 @@ const items = [
 
 export default function Sidebar() {
     const location = useLocation();
-    const { user } = useAuthStore();
+    const { user, logout } = useAuthStore();
 
     return (
         <aside className="text-white w-60">
             <Card className="flex flex-col justify-between h-full w-full">
-                <nav className="flex flex-col gap-3">
-                {items.map((item) => {
-                    const active = location.pathname === item.path;
+                <div className="space-y-5">
+                    <div className="flex flex-col leading-tight">
+                        <h1 className="text-sm font-semibold text-white">
+                            {user?.firstname} {user?.lastname}
+                        </h1>
 
-                    return (
-                        <NavLink
-                            key={item.path}
-                            to={item.path}
-                            className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${
-                            active ? "bg-white/20" : "hover:bg-white/10"
-                            }`}
-                        >
-                            {item.icon}
-                            <span>{item.label}</span>
-                        </NavLink>
-                    );
-                })}
-                </nav>
-                <div className="flex flex-col leading-tight">
-                    <h1 className="text-sm font-semibold text-white">
-                        {user?.firstname} {user?.lastname}
-                    </h1>
+                        <h3 className="text-xs text-white/60 capitalize">
+                            {user?.role}
+                        </h3>
+                    </div>
 
-                    <h3 className="text-xs text-white/60 capitalize">
-                        {user?.role}
-                    </h3>
+                    {/* NAV ITEMS */}
+                    <nav className="flex flex-col gap-3">
+                        {items.map((item) => {
+                            const active = location.pathname === item.path;
+
+                            return (
+                                <NavLink
+                                    key={item.path}
+                                    to={item.path}
+                                    className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+                                        active ? "bg-white/20" : "hover:bg-white/10"
+                                    }`}
+                                >
+                                    {item.icon}
+                                    <span>{item.label}</span>
+                                </NavLink>
+                            );
+                        })}
+                    </nav>
                 </div>
+
+                <button
+                    onClick={logout}
+                    className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-500/10 transition cursor-pointer"
+                >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                </button>
             </Card>
         </aside>
     );
