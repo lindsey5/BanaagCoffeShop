@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "../../hooks/auth/use-login-hook";
 import { useAuthStore } from "../../lib/store/authStore";
 import { Navigate } from "react-router-dom";
+import { useState } from "react";
+import { promiseToast } from "../../utils/sileo";
 
 export default function Login() {
     const { isAuthenticated } = useAuthStore();
@@ -15,7 +17,7 @@ export default function Login() {
     });
 
     const onSubmit: SubmitHandler<LoginFormData> = (data) => {
-        loginMutation.mutate(data)
+        promiseToast(loginMutation.mutateAsync(data))
     };
 
     if(isAuthenticated()) return <Navigate to="/dashboard" />

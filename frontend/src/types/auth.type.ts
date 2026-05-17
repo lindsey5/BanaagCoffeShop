@@ -13,7 +13,8 @@ export interface AuthState {
 
 export interface AuthResponse { 
     success: boolean
-    user: User
+    user: User,
+    message?: string,
     token: {
         accessToken: string
         refreshToken: string

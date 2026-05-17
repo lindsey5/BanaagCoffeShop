@@ -1,9 +1,13 @@
+import { Toaster } from 'sileo'
 import AppRouter from './routes/AppRouter'
 
 function App() {
 
   return (
-    <AppRouter />
+    <>
+      <Toaster position="top-right" />
+      <AppRouter />
+    </>
   )
 }
 
