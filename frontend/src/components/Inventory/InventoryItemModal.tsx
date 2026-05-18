@@ -124,6 +124,7 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
                             onChange={(value) => setValue('unit', value)}
                             value={watch('unit')}
                             error={errors.unit?.message}
+                            disabled={inventoryItem !== null}
                         />
                     </div>
                     <TextField 

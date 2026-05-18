@@ -13,7 +13,8 @@ type DropdownProps = {
     value: string
     onChange: (value: string) => void
     error?: string
-    className?: string
+    className?: string;
+    disabled?: boolean;
 }
 
 export default function Dropdown({
@@ -22,7 +23,8 @@ export default function Dropdown({
     value,
     onChange,
     className,
-    error
+    error,
+    disabled
 }: DropdownProps) {
     const [open, setOpen] = useState(false)
 
@@ -44,10 +46,11 @@ export default function Dropdown({
                 {/* Button */}
                 <button
                     type="button"
-                    onClick={() => setOpen(prev => !prev)}
+                    onClick={() => !disabled && setOpen(prev => !prev)}
                     className={cn(
                         "w-full h-full flex items-center justify-between px-3 py-3 bg-white border border-gray-400 rounded-sm",
-                        error && "border-red-500"
+                        error && "border-red-500",
+                        disabled && 'opacity-50'
                     )}
                 >
                     <span className={cn(
