@@ -76,7 +76,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
 
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
-        pageSize: 1,
+        pageSize: 50,
     });
 
     const { data, isFetching } = useGetInventory({
