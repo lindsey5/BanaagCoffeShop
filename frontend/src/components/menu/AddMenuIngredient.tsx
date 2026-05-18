@@ -14,6 +14,7 @@ import { menuIngredientSchema, type MenuIngredientFormData } from "../../schemas
 import { useForm, type SubmitHandler } from "react-hook-form";
 import {units } from "../../lib/contants/menu";
 import Dropdown from "../ui/Dropdown";
+import { X } from "lucide-react";
 
 interface AddIngredientModalProps { 
     show: boolean;
@@ -131,6 +132,9 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
             <WhiteCard>
                 <form className="relative space-y-3" onSubmit={handleSubmit(onSubmit)}>
                 <h1 className="font-bold">Add Ingredient</h1>
+                <button type="button" className="absolute top-0 right-0 cursor-pointer" onClick={close}>
+                    <X size={20} />
+                </button>
                 <div className="relative">
                     <SearchField
                         onChange={(e) => setSearch(e.target.value)}
@@ -230,7 +234,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                         disabled={!item}
                         type="submit"
                         className="px-6 text-sm py-2 rounded-md"
-                    >Add</Button>
+                    >Add Ingredient</Button>
                 </div>
                 </form>
             </WhiteCard>
