@@ -132,6 +132,11 @@ export default function Menu () {
         promiseToast(deleteMenuMutation.mutateAsync(id));
     }
 
+    const onRowClick = (row : Menu) => {
+        setSelectedMenu(row);
+        setShowModal(true);
+    }
+
     return (
         <PageContainer
             title="Menu Management"
@@ -194,6 +199,7 @@ export default function Menu () {
                     showPagination
                     noDataMessage="No Items Found"
                     total={data?.pagination.total}
+                    onRowClick={onRowClick}
                 />
             </WhiteCard>
             <MenuModal 
