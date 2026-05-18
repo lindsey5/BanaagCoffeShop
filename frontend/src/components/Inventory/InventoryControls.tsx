@@ -7,6 +7,8 @@ import { getKeyByValue } from "../../utils/utils";
 import Button from "../ui/Button";
 import { Plus } from "lucide-react";
 import FiltersMenu from "../ui/FiltersMenu";
+import usePermissions from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../config/permissions";
 
 interface InventoryControlsProps {
     search: string;
@@ -32,6 +34,8 @@ export default function InventoryControls ({
     setFilter,
     setShowModal
 } : InventoryControlsProps) {
+    const { hasPermissions } = usePermissions();
+
     return (
         <div className="flex-1 flex gap-3 items-end justify-between">
             <SearchField
@@ -56,10 +60,12 @@ export default function InventoryControls ({
                         label="Sort"
                     />
                 </div>
-                <Button className="w-30 text-sm rounded-md" onClick={() => setShowModal(true)}>
-                    <Plus size={18}/>
-                    Add Item
-                </Button>
+                {hasPermissions([PERMISSIONS.INVENTORY_CREATE]) && (
+                    <Button className="w-30 text-sm rounded-md" onClick={() => setShowModal(true)}>
+                        <Plus size={18}/>
+                        Add Item
+                    </Button>
+                )}
                 <FiltersMenu 
                     className="lg:hidden"
                     containerStyle="space-y-3"

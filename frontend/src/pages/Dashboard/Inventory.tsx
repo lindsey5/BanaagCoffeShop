@@ -1,6 +1,6 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { Pencil, Trash } from "lucide-react";
-import type { ColumnDef, PaginationState } from "@tanstack/react-table";
+import type { ColumnDef, PaginationState, Row } from "@tanstack/react-table";
 import type { GetInventoryParams, InventoryItem } from "../../types/inventory.type";
 import CustomizedTable from "../../components/ui/Table";
 import InventoryItemModal from "../../components/Inventory/InventoryItemModal";
@@ -13,6 +13,8 @@ import Chip from "../../components/ui/Chip";
 import { useDeleteInventory } from "../../hooks/inventory/use-delete-inventory.hook";
 import { promiseToast } from "../../utils/sileo";
 import InventoryControls from "../../components/Inventory/InventoryControls";
+import usePermissions from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../config/permissions";
 
 const getStockStatus = (inventoryItem: InventoryItem) : { label: string, variant: "success" | "warning" | "danger" | "default" } => {
     if (inventoryItem.quantity <= 0) {
@@ -29,10 +31,12 @@ const getStockStatus = (inventoryItem: InventoryItem) : { label: string, variant
 interface GetColumnsParams {
     setInventoryItem: Dispatch<SetStateAction<InventoryItem | null>>;
     setShowModal: Dispatch<SetStateAction<boolean>>;
+    hasAnyPermissions: (permissions : string[]) => boolean;
+    hasPermissions: (permissions : string[]) => boolean;
     handleDelete: (id: string) => void;
 }
 
-const getColumns = ({ setInventoryItem, setShowModal, handleDelete } : GetColumnsParams) : ColumnDef<InventoryItem>[] => [
+const getColumns = ({ setInventoryItem, setShowModal, handleDelete, hasAnyPermissions, hasPermissions } : GetColumnsParams) : ColumnDef<InventoryItem>[] => [
     {
         header: 'Code',
         accessorKey: 'code'
@@ -77,30 +81,39 @@ const getColumns = ({ setInventoryItem, setShowModal, handleDelete } : GetColumn
         },
         meta: { align: 'center' }
     },
-    {
-        header: "Action",
-        cell: ({ row }) => (
-            <div className="flex items-center justify-center">
-                <IconButton 
-                    onClick={() => {
-                        setShowModal(true);
-                        setInventoryItem(row.original)
-                    }}
-                    icon={<Pencil size={18} />}
-                />
-                <IconButton 
-                    onClick={() => handleDelete(row.original._id)}
-                    variant="danger" 
-                    icon={<Trash size={18}/>} 
-                />
-            </div>
-        ),
-        meta: { align: 'center' }
-    }
+    ...(hasAnyPermissions([PERMISSIONS.INVENTORY_UPDATE, PERMISSIONS.INVENTORY_DELETE]) ? 
+        [
+            {
+                header: "Action",
+                cell: ({ row } : { row:  Row<InventoryItem>}) => (
+                    <div className="flex items-center justify-center">
+                        {hasPermissions([PERMISSIONS.INVENTORY_UPDATE]) && (
+                            <IconButton 
+                                onClick={() => {
+                                    setShowModal(true);
+                                    setInventoryItem(row.original)
+                                }}
+                                icon={<Pencil size={18} />}
+                            />
+                        )}
+                        {hasPermissions([PERMISSIONS.INVENTORY_DELETE]) && (
+                            <IconButton 
+                                onClick={() => handleDelete(row.original._id)}
+                                variant="danger" 
+                                icon={<Trash size={18}/>} 
+                            />
+                        )}
+                    </div>
+                ),
+                meta: { align: 'center' }
+            }
+        ]
+    : [])
 ]  
 
 export default function Inventory() {
     const deleteInventoryMutation = useDeleteInventory();
+    const { hasAnyPermissions, hasPermissions } = usePermissions();
     const [inventoryItem, setInventoryItem] = useState<InventoryItem | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
@@ -156,7 +169,7 @@ export default function Inventory() {
             <CustomizedTable 
                 isLoading={isFetching}
                 data={data?.inventoryItems || []}
-                columns={getColumns({ setInventoryItem, setShowModal, handleDelete })}
+                columns={getColumns({ setInventoryItem, setShowModal, handleDelete, hasAnyPermissions, hasPermissions })}
                 pagination={pagination}
                 setPagination={setPagination}
                 totalPages={data?.pagination.totalPages}

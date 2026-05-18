@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { WhiteCard } from "../../components/ui/Card";
 import PageContainer from "../../components/ui/PageContainer";
 import { useGetMenus } from "../../hooks/menu/use-get-menus.hook";
-import type { ColumnDef, PaginationState } from "@tanstack/react-table";
+import type { ColumnDef, PaginationState, Row } from "@tanstack/react-table";
 import { useDebounce } from "../../hooks/useDebounce";
 import type { SortOption } from "../../types/types";
 import CustomizedTable from "../../components/ui/Table";
@@ -17,12 +17,16 @@ import Button from "../../components/ui/Button";
 import MenuModal from "../../components/menu/MenuModal";
 import Chip from "../../components/ui/Chip";
 import IconButton from "../../components/ui/IconButton";
+import { PERMISSIONS } from "../../config/permissions";
+import usePermissions from "../../hooks/usePermissions";
 
 interface GetColumnsParams {
     handleEdit: (menu : Menu) => void;
+    hasAnyPermissions: (permissions : string[]) => boolean;
+    hasPermissions: (permissions : string[]) => boolean;
 }
 
-const getColumns = ({ handleEdit } : GetColumnsParams) : ColumnDef<Menu>[] => [
+const getColumns = ({ handleEdit, hasAnyPermissions, hasPermissions } : GetColumnsParams) : ColumnDef<Menu>[] => [
     {
         header: 'Code',
         accessorKey: 'code'
@@ -49,18 +53,22 @@ const getColumns = ({ handleEdit } : GetColumnsParams) : ColumnDef<Menu>[] => [
         cell: info => <Chip variant={info.getValue() as string === 'available' ? 'success' : 'danger' } label={(info.getValue() as string).toUpperCase()} />,
         meta: { align: 'center' }
     },
-    {
-        header: "Action",
-        cell: ({ row }) => (
-            <div className="flex items-center justify-center">
-                <IconButton 
-                    onClick={() => handleEdit(row.original)}
-                    icon={<Pencil size={18} />}
-                />
-            </div>
-        ),
-        meta: { align: 'center' }
-    }
+    ...(hasAnyPermissions([PERMISSIONS.MENU_UPDATE, PERMISSIONS.MENU_DELETE]) ? [
+        {
+            header: "Action",
+            cell: ({ row } : { row : Row<Menu>}) => (
+                <div className="flex items-center justify-center">
+                    {hasPermissions([PERMISSIONS.MENU_UPDATE]) && (
+                        <IconButton 
+                            onClick={() => handleEdit(row.original)}
+                            icon={<Pencil size={18} />}
+                        />
+                    )}
+                </div>
+            ),
+            meta: { align: 'center' }
+        }
+    ] : [])
 ]  
 
 const filterOptions :  Record<string, SortOption> = {
@@ -71,6 +79,7 @@ const filterOptions :  Record<string, SortOption> = {
 }
 
 export default function Menu () {
+    const { hasAnyPermissions, hasPermissions } = usePermissions();
     const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
@@ -159,7 +168,7 @@ export default function Menu () {
                 <CustomizedTable 
                     isLoading={isFetching}
                     data={data?.menus || []}
-                    columns={getColumns({ handleEdit })}
+                    columns={getColumns({ handleEdit, hasAnyPermissions, hasPermissions })}
                     pagination={pagination}
                     setPagination={setPagination}
                     totalPages={data?.pagination.totalPages}
