@@ -1,23 +1,18 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
-import SearchField from "../../components/ui/SearchField";
-import Button from "../../components/ui/Button";
-import { Pencil, Plus, Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 import type { GetInventoryParams, InventoryItem } from "../../types/inventory.type";
 import CustomizedTable from "../../components/ui/Table";
 import InventoryItemModal from "../../components/Inventory/InventoryItemModal";
 import { useGetInventory } from "../../hooks/inventory/use-get-inventory.hook";
 import { useDebounce } from "../../hooks/useDebounce";
-import Dropdown from "../../components/ui/Dropdown";
 import IconButton from "../../components/ui/IconButton";
-import { getKeyByValue } from "../../utils/utils";
 import type { SortOption } from "../../types/types";
 import { formatDate } from "../../utils/dateUtils";
-import FiltersMenu from "../../components/ui/FiltersMenu";
-import { categoryOptions } from "../../lib/contants/category";
 import Chip from "../../components/ui/Chip";
 import { useDeleteInventory } from "../../hooks/inventory/use-delete-inventory.hook";
 import { promiseToast } from "../../utils/sileo";
+import InventoryControls from "../../components/Inventory/InventoryControls";
 
 const getStockStatus = (inventoryItem: InventoryItem) : { label: string, variant: "success" | "warning" | "danger" | "default" } => {
     if (inventoryItem.quantity <= 0) {
@@ -104,11 +99,6 @@ const getColumns = ({ setInventoryItem, setShowModal, handleDelete } : GetColumn
     }
 ]  
 
-const filterOptions :  Record<string, SortOption> = {
-    'Newest': { sort: 'createdAt', order: 'desc' },
-    'Oldest': { sort: 'createdAt', order: 'asc' },
-}
-
 export default function Inventory() {
     const deleteInventoryMutation = useDeleteInventory();
     const [inventoryItem, setInventoryItem] = useState<InventoryItem | null>(null);
@@ -117,7 +107,7 @@ export default function Inventory() {
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState('');
     const debouncedSearch = useDebounce(search, 0.8);
-    const [filter, setFilter] = useState({
+    const [filter, setFilter] = useState<SortOption>({
         sort: 'createdAt',
         order: 'desc'
     })
@@ -153,50 +143,15 @@ export default function Inventory() {
     return (
         <div className="space-y-5">
             <h1 className="font-bold text-lg">Inventory List</h1>
-            <div className="flex-1 flex gap-3 items-center justify-between">
-                <SearchField
-                    className="max-w-50 lg:max-w-100"
-                    onChange={(e) => setSearch(e.target.value)}
-                    value={search}
-                    placeholder="Search inventory items..."
-                />
-                <div className="flex items-center gap-3">
-                    <div className="lg:flex gap-3 items-center hidden">
-                        <Dropdown 
-                            className="w-40"
-                            onChange={(value) => setCategory(value)}
-                            options={[{ label: 'All', value: '' }, ...categoryOptions]}
-                            value={category}
-                        />
-                        <Dropdown 
-                            onChange={(value) => setFilter(filterOptions[value])}
-                            options={Object.keys(filterOptions).map(opt => ({ label: opt, value: opt }))}
-                            value={getKeyByValue(filterOptions, filter) || ""}
-                        />
-                    </div>
-                    <Button className="w-30 text-sm rounded-md" onClick={() => setShowModal(true)}>
-                        <Plus size={18}/>
-                        Add Item
-                    </Button>
-                    <FiltersMenu 
-                        className="lg:hidden"
-                        containerStyle="space-y-3"
-                    >
-                        <Dropdown 
-                            onChange={(value) => setCategory(value)}
-                            options={[{ label: 'All', value: '' }, ...categoryOptions]}
-                            value={category}
-                            label="Category"
-                        />
-                        <Dropdown 
-                            onChange={(value) => setFilter(filterOptions[value])}
-                            options={Object.keys(filterOptions).map(opt => ({ label: opt, value: opt }))}
-                            value={getKeyByValue(filterOptions, filter) || ""}
-                            label="Sort"
-                        />
-                    </FiltersMenu>
-                </div>
-            </div>
+            <InventoryControls 
+                search={search}
+                setSearch={setSearch}
+                category={category}
+                setCategory={setCategory}
+                filter={filter}
+                setFilter={setFilter}
+                setShowModal={setShowModal}
+            />
             <CustomizedTable 
                 isLoading={isFetching}
                 data={data?.inventoryItems || []}

@@ -32,10 +32,15 @@ export interface InventoryResponse extends ApiResponse {
 export interface GetInventoryParams extends PaginationParams {
     search: string;
     sort: string;
-    order: string;
+    order: 'asc' | 'desc';
     category: string;
 }
 
 export interface GetInventoryResponse extends PaginationResponse {
     inventoryItems: InventoryItem[];
+}
+
+export interface GetInventoryByIdResponse {
+    success: boolean;
+    inventoryItem: InventoryItem;
 }

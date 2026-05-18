@@ -5,8 +5,6 @@ export const successToast = (title : string, description: string, position: Sile
         title,
         description,
         position,
-        fill: "#171717",
-        styles: { description: "text-white/75!" },
     });
 }
 
@@ -15,8 +13,6 @@ export const errorToast = (title : string, description : string, position: Sileo
         title,
         description,
         position: position,
-        fill: "#171717",
-        styles: { description: "text-white/75!" },
     });
 }
 export const promiseToast = <T extends { message?: string}>(
@@ -29,11 +25,6 @@ export const promiseToast = <T extends { message?: string}>(
         position: position,
         loading: { 
             title: "Loading...", 
-            fill: "#171717",        
-            styles: {
-                title: "text-white!",
-                description: "text-white/75!",
-            }
         },
         success: (data: T) => {
             setTimeout(() => {
@@ -43,11 +34,6 @@ export const promiseToast = <T extends { message?: string}>(
             return ({
                 title: "Success",
                 description: data?.message || successMessage,
-                fill: "#171717",
-                styles: {
-                    title: "text-white!",
-                    description: "text-white/75!",
-                },
             })
         },
         error: (err: any) => ({

@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes";
 import roleRoutes from "./routes/roleRoutes";
 import inventoryItemRoutes from "./routes/inventoryItemRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
+import menuRoutes from "./routes/menuRoutes";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.get("/", (_, res) => res.send("Hi"));
 app.use("/api/auth", authRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/inventory-items", inventoryItemRoutes);
+app.use('/api/menus', menuRoutes);
 
 app.use(errorHandler);
 

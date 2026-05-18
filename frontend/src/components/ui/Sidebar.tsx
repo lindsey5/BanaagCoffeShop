@@ -7,7 +7,7 @@ import { useAuthStore } from "../../lib/store/authStore";
 const items = [
     { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
     { path: "/dashboard/inventory", label: "Inventory", icon: <Archive size={18} /> },
-    { path: "/dashboard/menu", label: "Menu", icon: <Coffee size={18} /> },
+    { path: "/dashboard/menu", label: "Menu Management", icon: <Coffee size={18} /> },
     { path: "/dashboard/pos", label: "POS", icon: <PointOfSale sx={{ width: 18, height: 18 }} /> },
     { path: "/dashboard/orders", label: "Orders", icon: <ClipboardList size={18} /> },
     { path: '/dashboard/roles', label: "Roles", icon: <Shield size={18}/>},

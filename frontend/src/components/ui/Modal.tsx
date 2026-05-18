@@ -6,14 +6,18 @@ type AnimatedModalProps = {
     onClose: () => void;
     children: React.ReactNode;
     className?: string;
+    containerClassName?: string;
 };
 
-export default function Modal({ open, onClose, children, className = "" }: AnimatedModalProps) {
+export default function Modal({ open, onClose, children, className = "", containerClassName }: AnimatedModalProps) {
     return (
         <AnimatePresence>
         {open && (
             <motion.div
-                className="min-h-screen fixed inset-0 flex items-center justify-center bg-black/70 z-30"
+                className={cn(
+                    "min-h-screen fixed inset-0 flex items-center justify-center bg-black/70 z-30",
+                    containerClassName
+                )}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

@@ -74,7 +74,7 @@ export const PaginationControls = <T,>({ table, total }: PaginationControlsProps
                 <select
                     value={pageSize}
                     onChange={(e) => table.setPageSize(Number(e.target.value))}
-                    className="border border-gray-300 rounded px-2 py-1 text-xs xl:text-sm"
+                    className="rounded px-2 py-1 text-xs xl:text-sm"
                 >
                     {[5, 10, 20, 50, 100].map((size) => (
                         <option key={size} value={size} className="bg-panel">

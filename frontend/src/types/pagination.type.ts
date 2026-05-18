@@ -11,5 +11,4 @@ export interface PaginationResponse {
         totalPages: number;
         total: number;
     }
-    
 }

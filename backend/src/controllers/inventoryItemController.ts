@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import InventoryItem from "../models/InventoryItem";
+import MenuIngredient from "../models/MenuIngredient";
+import Menu from "../models/Menu";
 
 export const createInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
     try{
@@ -124,8 +126,53 @@ export const deleteInventoryItem = async (req: Request, res: Response, next: Nex
         inventoryItem.status = 'deleted';
         await inventoryItem.save();
 
+        await MenuIngredient.deleteMany({ inventory_item_id: inventoryItem._id });
+
+        const result = await Menu.aggregate([
+            {
+                $lookup: {
+                    from: "menuingredients",
+                    localField: "_id",
+                    foreignField: "menu_id",
+                    as: "ingredients",
+                },
+            },
+            {
+                $match: {
+                    ingredients: { $eq: [] },
+                },
+            },
+            {
+                $project: { _id: 1 },
+            },
+        ]);
+
+        const unavailableMenuIds = result.map(m => m._id);
+        
+        await Menu.updateMany(
+            { _id: { $in: unavailableMenuIds } },
+            { $set: { status: "unavailable" } }
+        );
+
         res.status(200).json({ success: true, message: 'Item successfully removed' });
     }catch(err) {
+        next(err);
+    }
+}
+
+export const getInventoryItemById = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const inventoryItem = await InventoryItem.findById(req.params.id);
+
+        if(!inventoryItem){
+            return res.status(404).json({
+                success: false,
+                message: 'Item not found'
+            })
+        }
+
+        res.status(200).json({ success: true, inventoryItem})
+    }catch(err){
         next(err);
     }
 }

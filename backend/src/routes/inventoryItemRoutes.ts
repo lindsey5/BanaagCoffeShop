@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { login, refreshAccessToken } from "../controllers/authController";
-import { authenticate, authorizePermission } from "../middlewares/authMiddleware";
+import { authenticate, authorizePermission, hasAnyPermission } from "../middlewares/authMiddleware";
 import PERMISSIONS from "../utils/permissions";
-import { createInventoryItem, deleteInventoryItem, getInventoryItems, updateInventoryItem } from "../controllers/inventoryItemController";
+import { createInventoryItem, deleteInventoryItem, getInventoryItemById, getInventoryItems, updateInventoryItem } from "../controllers/inventoryItemController";
 
 const router = Router();
 
@@ -32,6 +32,13 @@ router.delete(
     authenticate,
     authorizePermission(PERMISSIONS.INVENTORY_DELETE),
     deleteInventoryItem
+)
+
+router.get(
+    '/:id',
+    authenticate,
+    hasAnyPermission(PERMISSIONS.MENU_CREATE, PERMISSIONS.MENU_UPDATE),
+    getInventoryItemById
 )
 
 const inventoryItemRoutes = router;

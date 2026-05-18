@@ -6,6 +6,7 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import { PERMISSIONS } from "../config/permissions";
 import Inventory from "../pages/Dashboard/Inventory";
 import InventoryLayout from "../pages/InventoryLayout";
+import Menu from "../pages/Dashboard/Menu";
 
 const router = createBrowserRouter([
     {
@@ -30,9 +31,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'inventory',
-                Component: () => (
-                    <InventoryLayout />
-                ),
+                Component: () => <InventoryLayout />,
                 children: [
                     {
                         index: true,
@@ -43,6 +42,14 @@ const router = createBrowserRouter([
                         )
                     }
                 ]
+            },
+            {
+                path: 'menu',
+                Component: () => (
+                    <ProtectedRoute requiredPermissions={[PERMISSIONS.MENU_READ_ALL]}>
+                        <Menu />
+                    </ProtectedRoute>
+                )
             }
         ]
     }

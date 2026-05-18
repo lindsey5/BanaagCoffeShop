@@ -1,18 +1,10 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-export interface MenuIngredient {
-    inventory_item_id: mongoose.Types.ObjectId;
-    name: string;
-    amount: number;
-}
-
 export interface MenuAttributes extends Document {
     code: string;
     name: string;
     category: string;
-    description?: string;
     price: number;
-    ingredients: MenuIngredient[];
     status: "available" | "unavailable" | "deleted";
 }
 
@@ -42,33 +34,11 @@ const MenuSchema: Schema<MenuAttributes> = new Schema(
             trim: true,
         },
 
-        description: {
-            type: String,
-            maxlength: [300, "description must be at most 300 characters."],
-            trim: true,
-        },
-
         price: {
             type: Number,
             required: [true, "price is required."],
             min: [0, "price cannot be negative."],
         },
-
-        ingredients: [
-            {
-                inventory_item_id: {
-                    type: Schema.Types.ObjectId,
-                    ref: "InventoryItem",
-                    required: true,
-                },
-
-                amount: {
-                    type: Number,
-                    required: true,
-                    min: [0.01, "ingredient amount must be greater than 0"],
-                },
-            },
-        ],
 
         status: {
             type: String,
@@ -79,9 +49,18 @@ const MenuSchema: Schema<MenuAttributes> = new Schema(
     { timestamps: true }
 );
 
-MenuSchema.index({ name: 1 });
+MenuSchema.index({ name: 1, code: 1 });
 MenuSchema.index({ category: 1 });
 MenuSchema.index({ status: 1 });
+
+MenuSchema.virtual("menuIngredients", {
+    ref: "MenuIngredient",
+    localField: "_id",
+    foreignField: "menu_id",
+});
+
+MenuSchema.set("toObject", { virtuals: true });
+MenuSchema.set("toJSON", { virtuals: true });
 
 const Menu: Model<MenuAttributes> = mongoose.model("Menu", MenuSchema);
 

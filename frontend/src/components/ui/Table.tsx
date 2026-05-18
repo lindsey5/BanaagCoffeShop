@@ -80,20 +80,6 @@ export const TableSkeleton: React.FC<TableSkeletonProps> = ({
             <div className="overflow-auto flex-grow">
                 <table className="w-full border-collapse text-sm">
 
-                    {/* HEADER SKELETON */}
-                    <thead className="sticky top-0 z-10">
-                        <tr>
-                            {Array.from({ length: columns }).map((_, idx) => (
-                                <th
-                                    key={idx}
-                                    className="p-3 bg-[var(--bg-main)] border-b border-gray-400"
-                                >
-                                    <div className="min-w-30 h-5 w-full mx-auto rounded bg-[var(--bg-loading)]" />
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-
                     {/* BODY SKELETON */}
                     <tbody>
                         {Array.from({ length: rows }).map((_, rowIdx) => (
@@ -107,7 +93,7 @@ export const TableSkeleton: React.FC<TableSkeletonProps> = ({
                                 {Array.from({ length: columns }).map((_, colIdx) => (
                                     <td
                                         key={colIdx}
-                                        className="p-3 border-b border-[var(--border-light)]"
+                                        className="p-3 border-b border-gray-400"
                                     >
                                         <div
                                             className="min-w-30 h-5 w-full rounded bg-[var(--bg-loading)]"

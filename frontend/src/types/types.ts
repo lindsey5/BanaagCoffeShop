@@ -5,5 +5,5 @@ export interface ApiResponse {
 
 export interface SortOption {
     sort: string;
-    order: string;
+    order: 'asc' | 'desc';
 }

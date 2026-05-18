@@ -1,5 +1,5 @@
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
-import type { InventoryDTO, InventoryResponse, GetInventoryParams, GetInventoryResponse } from "../types/inventory.type";
+import type { InventoryDTO, InventoryResponse, GetInventoryParams, GetInventoryResponse, GetInventoryByIdResponse } from "../types/inventory.type";
 import type { ApiResponse } from "../types/types";
 
 const baseUrl = 'inventory-items'
@@ -9,6 +9,10 @@ export const inventoryService = {
         apiAxios<GetInventoryResponse>(`${baseUrl}`, {
             method: HttpMethod.GET,
             params
+        }),
+    getInventoryItemById: (id: string) =>
+        apiAxios<GetInventoryByIdResponse>(`${baseUrl}/${id}`, {
+            method: HttpMethod.GET,
         }),
 
     createInventoryItem: (data: InventoryDTO) => 
