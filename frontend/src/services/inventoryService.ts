@@ -1,5 +1,6 @@
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
 import type { InventoryDTO, InventoryResponse, GetInventoryParams, GetInventoryResponse } from "../types/inventory.type";
+import type { ApiResponse } from "../types/types";
 
 const baseUrl = 'inventory-items'
 
@@ -20,4 +21,9 @@ export const inventoryService = {
             method: HttpMethod.PUT,
             data
         }),
+
+    deleteInventoryItem: (id: string) => 
+        apiAxios<ApiResponse>(`${baseUrl}/${id}`, {
+            method: HttpMethod.DELETE
+        })
 };

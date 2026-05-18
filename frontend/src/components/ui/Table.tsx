@@ -88,7 +88,7 @@ export const TableSkeleton: React.FC<TableSkeletonProps> = ({
                                     key={idx}
                                     className="p-3 bg-[var(--bg-main)] border-b border-gray-400"
                                 >
-                                    <div className="h-5 w-full mx-auto rounded bg-[var(--bg-loading)]" />
+                                    <div className="min-w-30 h-5 w-full mx-auto rounded bg-[var(--bg-loading)]" />
                                 </th>
                             ))}
                         </tr>
@@ -110,7 +110,7 @@ export const TableSkeleton: React.FC<TableSkeletonProps> = ({
                                         className="p-3 border-b border-[var(--border-light)]"
                                     >
                                         <div
-                                            className="h-5 w-full rounded bg-[var(--bg-loading)]"
+                                            className="min-w-30 h-5 w-full rounded bg-[var(--bg-loading)]"
                                         />
                                     </td>
                                 ))}

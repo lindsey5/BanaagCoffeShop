@@ -16,11 +16,8 @@ import { formatDate } from "../../utils/dateUtils";
 import FiltersMenu from "../../components/ui/FiltersMenu";
 import { categoryOptions } from "../../lib/contants/category";
 import Chip from "../../components/ui/Chip";
-
-interface GetColumnsParams {
-    setInventoryItem: Dispatch<SetStateAction<InventoryItem | null>>;
-    setShowModal: Dispatch<SetStateAction<boolean>>;
-}
+import { useDeleteInventory } from "../../hooks/inventory/use-delete-inventory.hook";
+import { promiseToast } from "../../utils/sileo";
 
 const getStockStatus = (inventoryItem: InventoryItem) : { label: string, variant: "success" | "warning" | "danger" | "default" } => {
     if (inventoryItem.quantity <= 0) {
@@ -34,7 +31,13 @@ const getStockStatus = (inventoryItem: InventoryItem) : { label: string, variant
     return { label: "In Stock", variant: "success" };
 };
 
-const getColumns = ({ setInventoryItem, setShowModal } : GetColumnsParams) : ColumnDef<InventoryItem>[] => [
+interface GetColumnsParams {
+    setInventoryItem: Dispatch<SetStateAction<InventoryItem | null>>;
+    setShowModal: Dispatch<SetStateAction<boolean>>;
+    handleDelete: (id: string) => void;
+}
+
+const getColumns = ({ setInventoryItem, setShowModal, handleDelete } : GetColumnsParams) : ColumnDef<InventoryItem>[] => [
     {
         header: 'Code',
         accessorKey: 'code'
@@ -90,7 +93,11 @@ const getColumns = ({ setInventoryItem, setShowModal } : GetColumnsParams) : Col
                     }}
                     icon={<Pencil size={18} />}
                 />
-                <IconButton variant="danger" icon={<Trash size={18}/>} />
+                <IconButton 
+                    onClick={() => handleDelete(row.original._id)}
+                    variant="danger" 
+                    icon={<Trash size={18}/>} 
+                />
             </div>
         ),
         meta: { align: 'center' }
@@ -103,6 +110,7 @@ const filterOptions :  Record<string, SortOption> = {
 }
 
 export default function Inventory() {
+    const deleteInventoryMutation = useDeleteInventory();
     const [inventoryItem, setInventoryItem] = useState<InventoryItem | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
@@ -132,6 +140,14 @@ export default function Inventory() {
 
     const onRowClick = (row: InventoryItem) => {
         setInventoryItem(row)
+    }
+
+    const handleDelete = (id : string) => {
+        const isConfirmed = confirm('Are you sure you want to delete this item?');
+
+        if(!isConfirmed) return;
+
+        promiseToast(deleteInventoryMutation.mutateAsync(id))
     }
 
     return (
@@ -184,7 +200,7 @@ export default function Inventory() {
             <CustomizedTable 
                 isLoading={isFetching}
                 data={data?.inventoryItems || []}
-                columns={getColumns({ setInventoryItem, setShowModal })}
+                columns={getColumns({ setInventoryItem, setShowModal, handleDelete })}
                 pagination={pagination}
                 setPagination={setPagination}
                 totalPages={data?.pagination.totalPages}

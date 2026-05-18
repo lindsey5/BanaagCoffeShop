@@ -12,8 +12,7 @@ export const inventorySchema = z.object({
         .min(2, "Brand must be at least 2 characters")
         .max(100, "Brand must not exceed 100 characters"),
 
-    quantity: z.number({ error: "Quantity is required" })
-        .int("Stock must be a whole number"),
+    quantity: z.number({ error: "Quantity is required" }),
     
     category: z.string({ error: 'Category is required' })
         .min(1, "Category is required"),
@@ -21,7 +20,6 @@ export const inventorySchema = z.object({
     unit: z.string({ error: "Unit is required" }).min(1, "Unit is required"),
 
     threshold: z.number({ error: "Threshold is required" })
-        .int("Threshold must be a whole number"),
 });
 
 export type InventoryFormData = z.infer<typeof inventorySchema>;

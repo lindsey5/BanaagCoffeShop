@@ -3,9 +3,13 @@ import InventoryItem from "../models/InventoryItem";
 
 export const createInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
     try{
-        const isExisting = await InventoryItem.findOne({ name: req.body.name });
+        const isExistingName = await InventoryItem.findOne({ name: req.body.name, status: 'active' });
 
-        if(isExisting) return res.status(409).json({ success: false, message: `${req.body.name} already exists`});
+        if(isExistingName) return res.status(409).json({ success: false, message: `${req.body.name} already exists`});
+
+        const isExistingCode = await InventoryItem.findOne({ code: req.body.code, status: 'active' });
+
+        if(isExistingCode) return res.status(409).json({ success: false, message: `${req.body.code} already exists`});
 
         const inventoryItem = await InventoryItem.create(req.body);
 
@@ -31,7 +35,7 @@ export const getInventoryItems = async (
         const order = req.query.order === "asc" ? 1 : -1;
         const category =req.query.category || "";
 
-        const filter: any = {};
+        const filter: any = { status: 'active' };
 
         if (search) {
             filter.or = [
@@ -73,9 +77,13 @@ export const updateInventoryItem = async (req: Request, res: Response, next: Nex
     try{
         const id = req.params.id;
 
-        const isExisting = await InventoryItem.findOne({ name: req.body.name, _id: { $ne: id }});
+        const isExistingName = await InventoryItem.findOne({ name: req.body.name, status: 'active', _id: { $ne: id }});
 
-        if(isExisting) return res.status(409).json({ success: false, message: `${req.body.name} already exists`});
+        if(isExistingName) return res.status(409).json({ success: false, message: `${req.body.name} already exists`});
+
+        const isExistingCode = await InventoryItem.findOne({ code: req.body.code, status: 'active', _id: { $ne: id }});
+
+        if(isExistingCode) return res.status(409).json({ success: false, message: `${req.body.code} already exists`});
 
         const inventoryItem = await InventoryItem.findById(id);
 

@@ -15,7 +15,6 @@ const InventoryItemSchema: Schema<InventoryItemAttributes> = new Schema(
     {
         code: {
             type: String,
-            required: true,
             minlength: [5, "code must be at least 5 characters."],
             maxlength: [50, "code must be at most 50 characters."],
         },
@@ -28,7 +27,6 @@ const InventoryItemSchema: Schema<InventoryItemAttributes> = new Schema(
         name: {
             type: String,
             required: [true, "name is required."],
-            unique: true,
             minlength: [3, "name must be at least 3 characters."],
             maxlength: [100, "name must be at most 100 characters."],
             trim: true,
