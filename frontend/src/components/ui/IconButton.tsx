@@ -1,8 +1,7 @@
 import { cn } from "../../utils/utils";
 
-type IconButtonProps = {
+type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     icon: React.ReactNode;
-    onClick?: () => void;
     className?: string;
     disabled?: boolean;
     variant?: "default" | "danger";
@@ -27,7 +26,10 @@ export default function IconButton({
     return (
         <button
             type="button"
-            onClick={onClick}
+            onClick={(e) => {
+                e.stopPropagation();
+                onClick?.(e)
+            }}
             disabled={disabled}
             className={cn(
                 baseStyle,
