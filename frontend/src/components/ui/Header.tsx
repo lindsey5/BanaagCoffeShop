@@ -4,7 +4,7 @@ import { formatLongDate } from "../../utils/dateUtils";
 
 export default function Header () {
     return (
-        <header className="">
+        <header className="fixed inset-x-3 top-3">
             <Card className="flex justify-between items-center text-white">
                 <h1 className="text-xl font-bold flex justify-center items-center gap-2">
                     <Coffee size={25} />

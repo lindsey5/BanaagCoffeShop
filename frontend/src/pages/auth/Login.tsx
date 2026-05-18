@@ -30,7 +30,7 @@ export default function Login() {
                 <source src="/coffee-bg.mp4" type="video/mp4"/>
             </video>
 
-            <form className="w-[80%] max-w-[800px] bg-base rounded-2xl flex h-110 z-5 overflow-hidden"
+            <form className="w-[80%] max-w-[800px] bg-panel rounded-2xl flex h-110 z-5 overflow-hidden"
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <img 

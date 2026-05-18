@@ -25,6 +25,10 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
     const updateInventoryMutation = useUpdateInventory();
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<InventoryFormData>({
         resolver: zodResolver(inventorySchema),
+        defaultValues: {
+            quantity: 0,
+            threshold: 0,
+        }
     });
 
     const onSubmit: SubmitHandler<InventoryFormData> = (data) => {
@@ -49,8 +53,8 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
             brand: undefined,
             category: undefined,
             code: undefined,
-            quantity: undefined,
-            threshold: undefined,
+            quantity: 0,
+            threshold: 0,
             unit: undefined
         })
     }

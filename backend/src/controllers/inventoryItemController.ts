@@ -3,14 +3,20 @@ import InventoryItem from "../models/InventoryItem";
 
 export const createInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
     try{
-        const isExistingName = await InventoryItem.findOne({ name: req.body.name, status: 'active' });
+        const existingItem = await InventoryItem.findOne({
+            status: "active",
+            $or: [ { name: req.body.name }, { code: req.body.code }]
+        });
 
-        if(isExistingName) return res.status(409).json({ success: false, message: `${req.body.name} already exists`});
+        if (existingItem) {
+            if (existingItem.name === req.body.name) {
+                return res.status(409).json({ success: false, message: `${req.body.name} already exists` });
+            }
 
-        const isExistingCode = await InventoryItem.findOne({ code: req.body.code, status: 'active' });
-
-        if(isExistingCode) return res.status(409).json({ success: false, message: `${req.body.code} already exists`});
-
+            if (existingItem.code === req.body.code) {
+                return res.status(409).json({ success: false, message: `${req.body.code} already exists` });
+            }
+        }
         const inventoryItem = await InventoryItem.create(req.body);
 
         res.status(201).json({ success: true, inventoryItem, message: "Item successfully created" });
@@ -20,11 +26,7 @@ export const createInventoryItem = async (req: Request, res: Response, next: Nex
     }
 }
 
-export const getInventoryItems = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const getInventoryItems = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const page = req.query.page ? Number(req.query.page) : 1;
         const limit = req.query.limit ? Number(req.query.limit) : 10;
@@ -77,14 +79,19 @@ export const updateInventoryItem = async (req: Request, res: Response, next: Nex
     try{
         const id = req.params.id;
 
-        const isExistingName = await InventoryItem.findOne({ name: req.body.name, status: 'active', _id: { $ne: id }});
+        const existingItem = await InventoryItem.findOne({
+            status: "active",
+            $or: [ { name: req.body.name }, { code: req.body.code }]
+        });
+        if (existingItem) {
+            if (existingItem.name === req.body.name) {
+                return res.status(409).json({ success: false, message: `${req.body.name} already exists` });
+            }
 
-        if(isExistingName) return res.status(409).json({ success: false, message: `${req.body.name} already exists`});
-
-        const isExistingCode = await InventoryItem.findOne({ code: req.body.code, status: 'active', _id: { $ne: id }});
-
-        if(isExistingCode) return res.status(409).json({ success: false, message: `${req.body.code} already exists`});
-
+            if (existingItem.code === req.body.code) {
+                return res.status(409).json({ success: false, message: `${req.body.code} already exists` });
+            }
+        }
         const inventoryItem = await InventoryItem.findById(id);
 
         if(!inventoryItem) return res.status(404).json({ success: false, message: 'Item not found' });

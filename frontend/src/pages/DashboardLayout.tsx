@@ -4,13 +4,11 @@ import Header from "../components/ui/Header";
 
 export default function DashboardLayout () {
     return (
-        <div className="relative min-h-screen flex flex-col bg-panel">
-            <div className="z-10 h-full p-3 flex-1 flex flex-col gap-3">
+        <div className="relative min-h-screen bg-panel p-3">
+            <div className="pl-65 pt-20 flex-1 gap-3">
                 <Header />
-                <div className="pl-65 flex-1 gap-3">
-                    <Sidebar />
-                    <Outlet />
-                </div>
+                <Sidebar />
+                <Outlet />
             </div>
         </div>
     )
