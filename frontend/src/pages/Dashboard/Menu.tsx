@@ -21,6 +21,7 @@ import { PERMISSIONS } from "../../config/permissions";
 import usePermissions from "../../hooks/usePermissions";
 import { useDeleteMenu } from "../../hooks/menu/use-delete-menu.hook";
 import { promiseToast } from "../../utils/sileo";
+import { formatDate } from "../../utils/dateUtils";
 
 interface GetColumnsParams {
     handleEdit: (menu : Menu) => void;
@@ -54,6 +55,12 @@ const getColumns = ({ handleEdit, hasAnyPermissions, hasPermissions, handleDelet
         header: 'Status',
         accessorKey: 'status',
         cell: info => <Chip variant={info.getValue() as string === 'available' ? 'success' : 'danger' } label={(info.getValue() as string).toUpperCase()} />,
+        meta: { align: 'center' }
+    },
+    {
+        header: 'Date Created',
+        accessorKey: 'createdAt',
+        cell: info => formatDate(info.getValue() as string),
         meta: { align: 'center' }
     },
     ...(hasAnyPermissions([PERMISSIONS.MENU_UPDATE, PERMISSIONS.MENU_DELETE]) ? [
