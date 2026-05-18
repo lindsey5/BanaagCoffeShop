@@ -54,7 +54,7 @@ const getColumns = ({ setInventoryItem, setShowModal, handleDelete } : GetColumn
     },
     {
         header: "Stock",
-        cell: ({ row }) => `${row.original.quantity} ${row.original.unit}`,
+        cell: ({ row }) => `${row.original.quantity} ${row.original.unit.toUpperCase()}`,
         meta: { align: 'center' }
     },
     {
