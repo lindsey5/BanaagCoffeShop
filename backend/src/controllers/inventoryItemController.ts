@@ -83,7 +83,8 @@ export const updateInventoryItem = async (req: Request, res: Response, next: Nex
 
         const existingItem = await InventoryItem.findOne({
             status: "active",
-            $or: [ { name: req.body.name }, { code: req.body.code }]
+            $or: [ { name: req.body.name }, { code: req.body.code }],
+            _id: { $ne: id }
         });
         if (existingItem) {
             if (existingItem.name === req.body.name) {
@@ -103,6 +104,43 @@ export const updateInventoryItem = async (req: Request, res: Response, next: Nex
         const newValues = inventoryItem.set(req.body);
 
         await newValues.save();
+
+        const result = await Menu.aggregate([
+            {
+                $lookup: {
+                    from: "menuingredients",
+                    localField: "_id",
+                    foreignField: "menu_id",
+                    as: "ingredients",
+                },
+            },
+            {
+                $match: {
+                    ingredients: {
+                        $elemMatch: {
+                            inventory_item_id: inventoryItem._id,
+                        },
+                    },
+                },
+            },
+            {
+                $project: { _id: 1 },
+            },
+        ]);
+
+        const menuIds = result.map(m => m._id);
+
+        if (newValues.quantity > 0) {
+            await Menu.updateMany(
+                { _id: { $in: menuIds } },
+                { $set: { status: "unavailable" } }
+            );
+        } else {
+            await Menu.updateMany(
+                { _id: { $in: menuIds } },
+                { $set: { status: "available" } }
+            );
+        }
 
         res.status(200).json({
             success: true,
