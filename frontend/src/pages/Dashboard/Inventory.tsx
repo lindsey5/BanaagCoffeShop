@@ -129,7 +129,8 @@ export default function Inventory() {
     }
 
     const onRowClick = (row: InventoryItem) => {
-        setInventoryItem(row)
+        setInventoryItem(row);
+        setShowModal(true);
     }
 
     const handleDelete = (id : string) => {
@@ -141,7 +142,7 @@ export default function Inventory() {
     }
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-3">
             <h1 className="font-bold text-lg">Inventory List</h1>
             <InventoryControls 
                 search={search}

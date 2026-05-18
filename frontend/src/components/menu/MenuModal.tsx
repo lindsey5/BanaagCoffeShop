@@ -10,10 +10,11 @@ import Dropdown from "../ui/Dropdown";
 import { menuCategoryOptions } from "../../lib/contants/menu";
 import AddMenuIngredient from "./AddMenuIngredient";
 import Button from "../ui/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { errorToast, promiseToast } from "../../utils/sileo";
 import Ingredient from "./Ingredient";
 import { useCreateMenu } from "../../hooks/menu/use-create-menu.hook";
+import { useUpdateMenu } from "../../hooks/menu/use-update-menu.hook";
 
 interface MenuModalProps {
     close: () => void;
@@ -24,6 +25,7 @@ interface MenuModalProps {
 export default function MenuModal ({ close, show, selectedMenu } : MenuModalProps) {
     const [showAdd, setShowAdd] = useState(false);
     const createMenuMutation = useCreateMenu();
+    const updateMenuMutation = useUpdateMenu();
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<MenuFormData>({
         resolver: zodResolver(menuSchema),
         defaultValues: {
@@ -58,7 +60,7 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
 
         if(!isConfirmed) return;
 
-        promiseToast(createMenuMutation.mutateAsync(data))
+        promiseToast(selectedMenu ? updateMenuMutation.mutateAsync({ data, id: selectedMenu._id }) : createMenuMutation.mutateAsync(data))
     }
 
     const handleRemove = (id: string) => {
@@ -68,6 +70,10 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
 
         setValue('menuIngredients', watch('menuIngredients').filter(ingredient => ingredient.inventory_item_id !== id))
     }
+
+    useEffect(() => {
+        if(selectedMenu) reset(selectedMenu);
+    }, [selectedMenu])
 
     return (
         <>

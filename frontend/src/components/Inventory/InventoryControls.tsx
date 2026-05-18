@@ -33,25 +33,27 @@ export default function InventoryControls ({
     setShowModal
 } : InventoryControlsProps) {
     return (
-        <div className="flex-1 flex gap-3 items-center justify-between">
+        <div className="flex-1 flex gap-3 items-end justify-between">
             <SearchField
                 className="max-w-50 lg:max-w-100"
                 onChange={(e) => setSearch(e.target.value)}
                 value={search}
                 placeholder="Search inventory items..."
             />
-            <div className="flex items-center gap-3">
+            <div className="flex items-end gap-3">
                 <div className="lg:flex gap-3 items-center hidden">
                     <Dropdown 
                         className="w-40"
                         onChange={(value) => setCategory(value)}
                         options={[{ label: 'All', value: '' }, ...categoryOptions]}
                         value={category}
+                        label="Category"
                     />
                     <Dropdown 
                         onChange={(value) => setFilter(filterOptions[value])}
                         options={Object.keys(filterOptions).map(opt => ({ label: opt, value: opt }))}
                         value={getKeyByValue(filterOptions, filter) || ""}
+                        label="Sort"
                     />
                 </div>
                 <Button className="w-30 text-sm rounded-md" onClick={() => setShowModal(true)}>

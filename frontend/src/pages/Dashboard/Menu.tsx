@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { WhiteCard } from "../../components/ui/Card";
 import PageContainer from "../../components/ui/PageContainer";
 import { useGetMenus } from "../../hooks/menu/use-get-menus.hook";
@@ -9,15 +9,20 @@ import CustomizedTable from "../../components/ui/Table";
 import { type Menu } from "../../types/menu.type";
 import Dropdown from "../../components/ui/Dropdown";
 import { formatToPeso, getKeyByValue } from "../../utils/utils";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import FiltersMenu from "../../components/ui/FiltersMenu";
 import SearchField from "../../components/ui/SearchField";
 import { menuCategoryOptions } from "../../lib/contants/menu";
 import Button from "../../components/ui/Button";
 import MenuModal from "../../components/menu/MenuModal";
 import Chip from "../../components/ui/Chip";
+import IconButton from "../../components/ui/IconButton";
 
-const getColumns = () : ColumnDef<Menu>[] => [
+interface GetColumnsParams {
+    handleEdit: (menu : Menu) => void;
+}
+
+const getColumns = ({ handleEdit } : GetColumnsParams) : ColumnDef<Menu>[] => [
     {
         header: 'Code',
         accessorKey: 'code'
@@ -42,6 +47,18 @@ const getColumns = () : ColumnDef<Menu>[] => [
         header: 'Status',
         accessorKey: 'status',
         cell: info => <Chip variant={info.getValue() as string === 'available' ? 'success' : 'danger' } label={(info.getValue() as string).toUpperCase()} />,
+        meta: { align: 'center' }
+    },
+    {
+        header: "Action",
+        cell: ({ row }) => (
+            <div className="flex items-center justify-center">
+                <IconButton 
+                    onClick={() => handleEdit(row.original)}
+                    icon={<Pencil size={18} />}
+                />
+            </div>
+        ),
         meta: { align: 'center' }
     }
 ]  
@@ -80,6 +97,11 @@ export default function Menu () {
     const handleClose = () => {
         setShowModal(false);
         setSelectedMenu(null);
+    }
+    
+    const handleEdit = (menu : Menu) => {
+        setSelectedMenu(menu);
+        setShowModal(true);
     }
 
     return (
@@ -135,7 +157,7 @@ export default function Menu () {
                 <CustomizedTable 
                     isLoading={isFetching}
                     data={data?.menus || []}
-                    columns={getColumns()}
+                    columns={getColumns({ handleEdit })}
                     pagination={pagination}
                     setPagination={setPagination}
                     totalPages={data?.pagination.totalPages}
