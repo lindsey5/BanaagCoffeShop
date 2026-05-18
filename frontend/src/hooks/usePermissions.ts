@@ -1,4 +1,4 @@
-import { useGetOwnRole } from "./role/use-get-own-role";
+import { useGetOwnRole } from "./role/use-get-own-role.hook";
 
 export default function usePermissions () {
     const { data, isFetching } = useGetOwnRole();

@@ -53,7 +53,7 @@ export default function Login() {
                         />
                         <Button
                             className="w-full"
-                        
+                            type="submit"
                         >Login</Button>
                     </div>
                 </div>  

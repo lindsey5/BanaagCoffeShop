@@ -5,6 +5,7 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { PERMISSIONS } from "../config/permissions";
 import Inventory from "../pages/Dashboard/Inventory";
+import InventoryLayout from "../pages/InventoryLayout";
 
 const router = createBrowserRouter([
     {
@@ -30,10 +31,18 @@ const router = createBrowserRouter([
             {
                 path: 'inventory',
                 Component: () => (
-                    <ProtectedRoute requiredPermissions={[PERMISSIONS.INVENTORY_READ_ALL]}>
-                        <Inventory />
-                    </ProtectedRoute>
-                )
+                    <InventoryLayout />
+                ),
+                children: [
+                    {
+                        index: true,
+                        Component: () => (
+                            <ProtectedRoute requiredPermissions={[PERMISSIONS.INVENTORY_READ_ALL]}>
+                                <Inventory />
+                            </ProtectedRoute>
+                        )
+                    }
+                ]
             }
         ]
     }

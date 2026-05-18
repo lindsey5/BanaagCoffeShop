@@ -10,14 +10,41 @@
   --color-base: var(--bg-base);
   --color-main: var(--bg-main);
   --color-panel: var(--bg-panel);
+  --color-hover: var(--hover);
+  --color-muted: var(--text-muted);
+  --color-panel: var(--bg-panel);
+  --color-row-even: var(--row-even);
+  --color-row-odd: var(--row-odd);
+  --color-row-hover: var(--row-hover);
 }
 
 @layer base {
   :root {
-    --bg-main: #75533d;
-    --bg-base: #f2ebe6;
-    --bg-panel: #3a291e;
-    --gradient-accent: linear-gradient(135deg, #8b5e3c, #603F26);
+    --bg-main: #5e4331;
+    --bg-panel: #e1d1c6;
+    --bg-loading: #977e6ba2;
+
     --text-brown: #603F26;
+    --text-muted: #603f26a6;
+
+    --hover: #977e6b63;
+
+    --row-even: #d6bfb1;
+    --row-odd: #deccc1;
+    --row-hover: #977e6b63;
   }
+
+  table tbody tr:hover {
+    opacity: 70%;
+  } 
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }

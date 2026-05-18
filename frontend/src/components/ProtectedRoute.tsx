@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { type ReactNode } from 'react';
 import usePermissions from '../hooks/usePermissions';
 import { useAuthStore } from '../lib/store/authStore';
+import LoadingScreen from './LoadingScreen';
 
 type ProtectedRouteProps = {
     children: ReactNode;
@@ -25,7 +26,7 @@ export const ProtectedRoute = ({
     } = usePermissions();
     const { isAuthenticated } = useAuthStore();
 
-    if(isLoading) return null;
+    if(isLoading) return <LoadingScreen />
     
     if (requireAuthentication && !isAuthenticated()) {
         return <Navigate to={redirectTo} replace />;

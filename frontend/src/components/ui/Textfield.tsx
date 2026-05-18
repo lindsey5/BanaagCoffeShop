@@ -4,6 +4,7 @@ import { cn } from "../../utils/utils";
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
     error?: string;
+    label?: string;
     registration?: any;
     icon?: React.ReactNode;
     iconPosition?: "left" | "right";
@@ -13,6 +14,7 @@ export default function TextField({
     type = "text",
     className,
     placeholder,
+    label,
     disabled,
     error,
     registration,
@@ -35,7 +37,12 @@ export default function TextField({
 
     return (
         <div className={cn("w-full flex flex-col gap-1 text-black", className)}>
-            <div className="relative w-full bg-white rounded-full">
+            {label && (
+                <label className="text-xs font-medium text-muted">
+                {label}
+                </label>
+            )}
+            <div className={"relative w-full bg-white rounded-md"}>
                 <input
                 {...registration}
                 {...props}
@@ -44,11 +51,11 @@ export default function TextField({
                 placeholder={placeholder}
                 onChange={handleChange}
                 className={cn(
-                    "w-full p-3 pr-12 bg-input-ui border text-xs xl:text-sm rounded-full outline-none transition-all",
+                    "w-full p-3 pr-12 bg-input-ui border text-xs rounded-md outline-none transition-all",
                     icon ? (iconPosition === "left" ? "pl-10" : "pr-10") : "",
                     error
                     ? "border-red-500"
-                    : "border-gray-400"
+                    : "border-gray-400",
                 )}
                 />
 

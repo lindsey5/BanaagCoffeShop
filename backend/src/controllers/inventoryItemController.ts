@@ -9,7 +9,7 @@ export const createInventoryItem = async (req: Request, res: Response, next: Nex
 
         const inventoryItem = await InventoryItem.create(req.body);
 
-        res.status(201).json({ success: true, inventoryItem });
+        res.status(201).json({ success: true, inventoryItem, message: "Item successfully created" });
 
     }catch(err) {
         next(err);
@@ -29,11 +29,19 @@ export const getInventoryItems = async (
         const search = req.query.search ? String(req.query.search) : "";
         const sort = req.query.sort ? String(req.query.sort) : "createdAt";
         const order = req.query.order === "asc" ? 1 : -1;
+        const category =req.query.category || "";
 
         const filter: any = {};
 
         if (search) {
-            filter.name = { $regex: search, $options: "i" };
+            filter.or = [
+                { name: { $regex: search, $options: "i" }},
+                { code: { $regex: search, $options: "i" }}
+            ];
+        }
+
+        if(category) {
+            filter.category = category;
         }
 
         const [inventoryItems, total] = await Promise.all([
@@ -76,6 +84,8 @@ export const updateInventoryItem = async (req: Request, res: Response, next: Nex
         const oldValues = inventoryItem;
 
         const newValues = inventoryItem.set(req.body);
+
+        await newValues.save();
 
         res.status(200).json({
             success: true,

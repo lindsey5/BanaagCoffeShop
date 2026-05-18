@@ -1,18 +1,23 @@
-import type { AuthResponse, LoginPayload } from "../types/auth.type";
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
+import type { InventoryDTO, InventoryResponse, GetInventoryParams, GetInventoryResponse } from "../types/inventory.type";
 
-const baseUrl = 'auth'
+const baseUrl = 'inventory-items'
 
-export const authService = {
-    login: (data: LoginPayload): Promise<AuthResponse> =>
-        apiAxios<AuthResponse>(`${baseUrl}/login`, {
-        method: HttpMethod.POST,
-        data,
+export const inventoryService = {
+    getInventoryItems: (params : GetInventoryParams) =>
+        apiAxios<GetInventoryResponse>(`${baseUrl}`, {
+            method: HttpMethod.GET,
+            params
         }),
 
-    refreshAccessToken: (refreshToken : string): Promise<AuthResponse> => 
-        apiAxios<AuthResponse>(`${baseUrl}/refreshToken`, {
+    createInventoryItem: (data: InventoryDTO) => 
+        apiAxios<InventoryResponse>(`${baseUrl}`, {
             method: HttpMethod.POST,
-            data: { refreshToken }
+            data
+        }),
+    updateInventoryItem: (data: InventoryDTO, id: string) => 
+        apiAxios<InventoryResponse>(`${baseUrl}/${id}`, {
+            method: HttpMethod.PUT,
+            data
         }),
 };

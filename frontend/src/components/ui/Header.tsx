@@ -1,6 +1,6 @@
 import { Coffee } from "lucide-react";
 import Card from "./Card";
-import { formatLongDate, getTime } from "../../utils/dateUtils";
+import { formatLongDate } from "../../utils/dateUtils";
 
 export default function Header () {
     return (
@@ -10,10 +10,7 @@ export default function Header () {
                     <Coffee size={25} />
                     Banaag POS
                 </h1>
-                <div className="flex items-center gap-3">
-                    <p>{formatLongDate(new Date())} | </p>
-                    <p>{getTime()}</p>
-                </div>
+                <p>{formatLongDate(new Date())}</p>
             </Card>
         </header>
     )

@@ -1,15 +1,30 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface InventoryItemAttributes extends Document {
+    code: string;
     name: string;
+    category: string;
+    brand: string;
     quantity: number;
-    unit: "g" | "ml" | "pcs";
+    unit: "kg" | "g" | "ml" | "l" | "pcs";
     threshold: number;
     status: 'active' | 'deleted'
 }
 
 const InventoryItemSchema: Schema<InventoryItemAttributes> = new Schema(
     {
+        code: {
+            type: String,
+            required: true,
+            minlength: [5, "code must be at least 5 characters."],
+            maxlength: [50, "code must be at most 50 characters."],
+        },
+        category: {
+            type: String,
+            required: true,
+            minlength: [5, "category must be at least 5 characters."],
+            maxlength: [100, "category must be at most 100 characters."],
+        },
         name: {
             type: String,
             required: [true, "name is required."],
@@ -19,6 +34,13 @@ const InventoryItemSchema: Schema<InventoryItemAttributes> = new Schema(
             trim: true,
         },
 
+        brand: {
+            type: String,
+            required: [true, "brand is required."],
+            minlength: [2, "brand must be at least 2 characters."],
+            maxlength: [100, "brand must be at most 100 characters."],
+            trim: true,
+        },
         quantity: {
             type: Number,
             required: [true, "quantity is required."],
@@ -29,7 +51,7 @@ const InventoryItemSchema: Schema<InventoryItemAttributes> = new Schema(
         unit: {
             type: String,
             required: [true, "unit is required."],
-            enum: ["g", "ml", "pcs"],
+            enum: ["kg", "g", "l", "ml", "pcs"],
         },
 
         threshold: {
