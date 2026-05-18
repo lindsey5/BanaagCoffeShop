@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState } from "react";
+import {useEffect, useState } from "react";
 import type { PaginationState } from "@tanstack/react-table";
 import SearchField from "../ui/SearchField";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -122,36 +122,6 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
         }
     }, [data])
 
-    const kgToGram = (kg: number) => kg * 1000;
-    const lToMl = (l: number) => l * 1000;
-
-    const error = useMemo(() => {
-        if (!item) return "";
-
-        const amount = watch("amount");
-        const unit = watch("unit");
-
-        if (!amount || amount <= 0) return "";
-
-        if (unit === item.unit) {
-            if (amount > item.quantity) {
-                return `Amount should not exceed ${item.quantity} ${item.unit}`;
-            }
-        }
-
-        // convert KG to G
-        if (unit === "g" && item.unit === "kg" && amount > kgToGram(item.quantity)) {
-            return `Amount should not exceed ${kgToGram(item.quantity)} g`;
-        }
-
-        // convert L to ML
-        if (unit === "ml" && item.unit === "l" && amount > lToMl(item.quantity)) {
-            return `Amount should not exceed ${lToMl(item.quantity)} ml`;
-        }
-
-        return "";
-    }, [watch("amount"), watch("unit"), item]);
-
     return (
         <Modal
             open={show}
@@ -240,7 +210,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                                     }
                                 }}
                                 type="number"
-                                error={error || errors.amount?.message}
+                                error={errors.amount?.message}
                             />
                             <UnitDropdown 
                                 item={item}

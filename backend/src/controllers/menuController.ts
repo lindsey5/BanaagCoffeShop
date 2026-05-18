@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import Menu from "../models/Menu";
 import MenuIngredient from "../models/MenuIngredient";
+import InventoryItem from "../models/InventoryItem";
+import { kgToGram, lToMl } from "../utils/conversion";
 
 export const createMenu = async (req: Request, res: Response, next: NextFunction) => {
     try{
@@ -78,6 +80,76 @@ export const getMenus = async (req: Request, res: Response, next: NextFunction) 
                 totalPages: Math.ceil(total / limit),
             }
         })
+    }catch(err){
+        next(err);
+    }
+}
+
+export const updateMenu = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const id = req.params.id;
+
+        const existingItem = await Menu.findOne({
+            status: { $in: ['available', 'unavailable']},
+            $or: [ { name: req.body.menu.name }, { code: req.body.menu.code }],
+            _id: { $ne: id }
+        });
+
+        if (existingItem) {
+            if (existingItem.name === req.body.menu.name) {
+                return res.status(409).json({ success: false, message: `${req.body.menu.name} already exists` });
+            }
+
+            if (existingItem.code === req.body.menu.code) {
+                return res.status(409).json({ success: false, message: `${req.body.menu.code} already exists` });
+            }
+        }
+
+        const menu = await Menu.findById(id);
+
+        if(!menu) return res.status(404).json({ success: false, message: "Menu not found" });
+
+        menu.set(req.body.menu);
+        await menu.save();
+
+        await MenuIngredient.deleteMany({ menu_id: menu._id });
+
+        const menuIngredients = await MenuIngredient.insertMany(req.body.menuIngredients.map((ingredient : any) => ({ ...ingredient, menu_id: menu._id })))
+
+        const ingredientIds = menuIngredients.map(i => i.inventory_item_id);
+
+        const items = await InventoryItem.find({ 
+            _id: { $in: ingredientIds }
+        })
+
+        let status : 'available' | 'unavailable' | 'deleted' = 'available';
+        for(const item of items) {
+            const ingredient = menuIngredients.find(i => i.inventory_item_id === item._id);
+            
+            if(!ingredient) continue;
+
+            if(item.quantity < 0) status = 'unavailable';
+
+            if(item.unit === ingredient.unit){
+                if(ingredient.amount > item.quantity) {
+                    status = 'unavailable';
+                }
+            }
+
+            if(ingredient.unit === 'g' && item.unit === 'kg' && ingredient.amount > kgToGram(item.quantity)){
+                status = 'unavailable';
+            }
+
+            if(ingredient.unit === 'ml' && item.unit === 'l' && ingredient.amount > lToMl(item.quantity)){
+                status = 'unavailable';
+            }
+        }
+
+        menu.status = status;
+        await menu.save();
+
+        res.status(200).json({ success: true, message: 'Menu successfully updated' })
+
     }catch(err){
         next(err);
     }

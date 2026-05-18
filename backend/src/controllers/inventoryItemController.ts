@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import InventoryItem from "../models/InventoryItem";
 import MenuIngredient from "../models/MenuIngredient";
 import Menu from "../models/Menu";
+import { kgToGram, lToMl } from "../utils/conversion";
 
 export const createInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
     try{
@@ -77,35 +78,55 @@ export const getInventoryItems = async (req: Request, res: Response, next: NextF
     }
 };
 
-export const updateInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
-    try{
+export const updateInventoryItem = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
         const id = req.params.id;
 
+        // 1. Check duplicates (name or code)
         const existingItem = await InventoryItem.findOne({
             status: "active",
-            $or: [ { name: req.body.name }, { code: req.body.code }],
-            _id: { $ne: id }
+            _id: { $ne: id },
+            $or: [{ name: req.body.name }, { code: req.body.code }],
         });
+
         if (existingItem) {
             if (existingItem.name === req.body.name) {
-                return res.status(409).json({ success: false, message: `${req.body.name} already exists` });
+                return res.status(409).json({
+                    success: false,
+                    message: `${req.body.name} already exists`,
+                });
             }
 
             if (existingItem.code === req.body.code) {
-                return res.status(409).json({ success: false, message: `${req.body.code} already exists` });
+                return res.status(409).json({
+                    success: false,
+                    message: `${req.body.code} already exists`,
+                });
             }
         }
-        const inventoryItem = await InventoryItem.findById(id);
 
-        if(!inventoryItem) return res.status(404).json({ success: false, message: 'Item not found' });
+        // 2. Update inventory item
+        const inventoryItem = await InventoryItem.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true }
+        );
+
+        if (!inventoryItem) {
+            return res.status(404).json({
+                success: false,
+                message: "Item not found",
+            });
+        }
 
         const oldValues = inventoryItem;
 
-        const newValues = inventoryItem.set(req.body);
-
-        await newValues.save();
-
-        const result = await Menu.aggregate([
+        // 3. Find affected menus
+        const affectedMenus = await Menu.aggregate([
             {
                 $lookup: {
                     from: "menuingredients",
@@ -114,44 +135,91 @@ export const updateInventoryItem = async (req: Request, res: Response, next: Nex
                     as: "ingredients",
                 },
             },
+            { $unwind: "$ingredients" },
             {
                 $match: {
-                    ingredients: {
-                        $elemMatch: {
-                            inventory_item_id: inventoryItem._id,
-                        },
-                    },
+                    "ingredients.inventory_item_id": inventoryItem._id,
                 },
             },
             {
-                $project: { _id: 1 },
+                $group: {
+                    _id: "$_id",
+                },
             },
         ]);
 
-        const menuIds = result.map(m => m._id);
+        const menuIds = affectedMenus.map((m) => m._id);
 
-        if (newValues.quantity > 0) {
-            await Menu.updateMany(
-                { _id: { $in: menuIds } },
-                { $set: { status: "unavailable" } }
-            );
-        } else {
-            await Menu.updateMany(
-                { _id: { $in: menuIds } },
-                { $set: { status: "available" } }
-            );
+        // 4. Recalculate menu availability properly
+        const menus = await Menu.find({
+            _id: { $in: menuIds },
+        }).populate("menuIngredients");
+
+        const bulkOps = [];
+
+        for (const menu of menus) {
+            const ingredients = await MenuIngredient.find({
+                menu_id: menu._id,
+            });
+
+            let isAvailable = true;
+
+            for (const ing of ingredients) {
+                const inv = await InventoryItem.findById(ing.inventory_item_id);
+
+                if (!inv) {
+                    isAvailable = false;
+                    break;
+                }
+
+                if(ing.unit === inv.unit){
+                    if(ing.amount > inv.quantity) {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+
+                if(ing.unit === 'g' && inv.unit === 'kg' && ing.amount > kgToGram(inv.quantity)){
+                    isAvailable = false;
+                    break;
+                }
+
+                if(ing.unit === 'ml' && inv.unit === 'l' && ing.amount > lToMl(inv.quantity)) {
+                    isAvailable = false;
+                    break;
+                }
+            }
+
+            bulkOps.push({
+                updateOne: {
+                    filter: { _id: menu._id },
+                    update: {
+                        $set: {
+                            status: isAvailable
+                                ? ("available" as "available" | "unavailable")
+                                : ("unavailable" as "available" | "unavailable"),
+                        },
+                    },
+                },
+            });
         }
 
-        res.status(200).json({
+        // 5. Apply bulk update
+        if (bulkOps.length > 0) {
+            await Menu.bulkWrite(bulkOps);
+        }
+
+        // 6. Response
+        return res.status(200).json({
             success: true,
             message: `${inventoryItem.name} successfully updated`,
             oldValues,
-            newValues
-        })
-    }catch(err) {
+            newValues: inventoryItem,
+        });
+    } catch (err) {
         next(err);
     }
-}
+};
 
 export const deleteInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
     try{

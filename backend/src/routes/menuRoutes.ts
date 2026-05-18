@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, authorizePermission, hasAnyPermission } from "../middlewares/authMiddleware";
 import PERMISSIONS from "../utils/permissions";
-import { createMenu, getMenus } from "../controllers/menuController";
+import { createMenu, getMenus, updateMenu } from "../controllers/menuController";
 
 const router = Router();
 
@@ -11,6 +11,13 @@ router.post(
     authorizePermission(PERMISSIONS.MENU_CREATE),
     createMenu
 );
+
+router.put(
+    '/:id',
+    authenticate,
+    authorizePermission(PERMISSIONS.MENU_UPDATE),
+    updateMenu
+)
 
 router.get(
     '/',

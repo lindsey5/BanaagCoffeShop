@@ -23,9 +23,15 @@ export const menuService = {
         });
     },
 
-    updateMenu: (data: MenuDTO, id: string) => 
-        apiAxios<ApiResponse>(`${baseUrl}/${id}`, {
+    updateMenu: (data: MenuDTO, id: string) =>  {
+        const { menuIngredients, ...menu } = data;
+
+        return apiAxios<ApiResponse>(`${baseUrl}/${id}`, {
             method: HttpMethod.PUT,
-            data
-        }),
+            data: {
+                menu,
+                menuIngredients,
+            },
+        });
+    }
 };
