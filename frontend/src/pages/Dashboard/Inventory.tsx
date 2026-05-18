@@ -15,11 +15,24 @@ import type { SortOption } from "../../types/types";
 import { formatDate } from "../../utils/dateUtils";
 import FiltersMenu from "../../components/ui/FiltersMenu";
 import { categoryOptions } from "../../lib/contants/category";
+import Chip from "../../components/ui/Chip";
 
 interface GetColumnsParams {
     setInventoryItem: Dispatch<SetStateAction<InventoryItem | null>>;
     setShowModal: Dispatch<SetStateAction<boolean>>;
 }
+
+const getStockStatus = (inventoryItem: InventoryItem) : { label: string, variant: "success" | "warning" | "danger" | "default" } => {
+    if (inventoryItem.quantity <= 0) {
+        return { label: "Out of Stock", variant: "danger" };
+    }
+
+    if (inventoryItem.quantity < inventoryItem.threshold) {
+        return { label: "Low Stock", variant: "warning" };
+    }
+
+    return { label: "In Stock", variant: "success" };
+};
 
 const getColumns = ({ setInventoryItem, setShowModal } : GetColumnsParams) : ColumnDef<InventoryItem>[] => [
     {
@@ -55,6 +68,15 @@ const getColumns = ({ setInventoryItem, setShowModal } : GetColumnsParams) : Col
         header: 'Date Created',
         cell: info => formatDate(info.getValue() as string),
         accessorKey: 'createdAt',
+        meta: { align: 'center' }
+    },
+    {
+        header: 'Status',
+        cell: ({ row }) => {
+            const status = getStockStatus(row.original);
+
+            return <Chip label={status.label} variant={status.variant} />
+        },
         meta: { align: 'center' }
     },
     {

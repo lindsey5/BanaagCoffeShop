@@ -130,7 +130,7 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
                         error={errors.threshold?.message}
                     />
                     <div className="flex justify-end">
-                        <Button className="text-sm px-5" type="submit">
+                        <Button className="text-sm px-5" type="submit" disabled={createInventoryMutation.isPending || updateInventoryMutation.isPending}>
                             {inventoryItem ? 'Update' : 'Create' }
                         </Button>
                     </div>
