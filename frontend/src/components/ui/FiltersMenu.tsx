@@ -32,7 +32,7 @@ export default function FiltersMenu({
     return (
         <div ref={menuRef} className={cn("relative", className)}>
             <button
-                className="p-2 rounded-md"
+                className="p-2 rounded-md cursor-pointer"
                 onClick={() => setShow((prev) => !prev)}
             >
                 <Menu size={20} className={cn(show && "text-brown")} />
