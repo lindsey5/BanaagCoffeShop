@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, authorizePermission, hasAnyPermission } from "../middlewares/authMiddleware";
 import PERMISSIONS from "../utils/permissions";
-import { createMenu, getMenus, updateMenu } from "../controllers/menuController";
+import { createMenu, deleteMenu, getMenus, updateMenu } from "../controllers/menuController";
 
 const router = Router();
 
@@ -24,6 +24,13 @@ router.get(
     authenticate,
     hasAnyPermission(PERMISSIONS.MENU_READ_ALL),
     getMenus
+)
+
+router.delete(
+    '/:id',
+    authenticate,
+    hasAnyPermission(PERMISSIONS.MENU_DELETE),
+    deleteMenu
 )
 
 const menuRoutes = router;

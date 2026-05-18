@@ -9,7 +9,7 @@ import CustomizedTable from "../../components/ui/Table";
 import { type Menu } from "../../types/menu.type";
 import Dropdown from "../../components/ui/Dropdown";
 import { formatToPeso, getKeyByValue } from "../../utils/utils";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, Trash } from "lucide-react";
 import FiltersMenu from "../../components/ui/FiltersMenu";
 import SearchField from "../../components/ui/SearchField";
 import { menuCategoryOptions } from "../../lib/contants/menu";
@@ -19,14 +19,17 @@ import Chip from "../../components/ui/Chip";
 import IconButton from "../../components/ui/IconButton";
 import { PERMISSIONS } from "../../config/permissions";
 import usePermissions from "../../hooks/usePermissions";
+import { useDeleteMenu } from "../../hooks/menu/use-delete-menu.hook";
+import { promiseToast } from "../../utils/sileo";
 
 interface GetColumnsParams {
     handleEdit: (menu : Menu) => void;
+    handleDelete: (id: string) => void;
     hasAnyPermissions: (permissions : string[]) => boolean;
     hasPermissions: (permissions : string[]) => boolean;
 }
 
-const getColumns = ({ handleEdit, hasAnyPermissions, hasPermissions } : GetColumnsParams) : ColumnDef<Menu>[] => [
+const getColumns = ({ handleEdit, hasAnyPermissions, hasPermissions, handleDelete } : GetColumnsParams) : ColumnDef<Menu>[] => [
     {
         header: 'Code',
         accessorKey: 'code'
@@ -64,6 +67,13 @@ const getColumns = ({ handleEdit, hasAnyPermissions, hasPermissions } : GetColum
                             icon={<Pencil size={18} />}
                         />
                     )}
+                    {hasPermissions([PERMISSIONS.MENU_DELETE]) && (
+                        <IconButton 
+                            variant="danger"
+                            onClick={() => handleDelete(row.original._id)}
+                            icon={<Trash size={18}/>}
+                        />
+                    )}
                 </div>
             ),
             meta: { align: 'center' }
@@ -80,6 +90,7 @@ const filterOptions :  Record<string, SortOption> = {
 
 export default function Menu () {
     const { hasAnyPermissions, hasPermissions } = usePermissions();
+    const deleteMenuMutation = useDeleteMenu();
     const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
@@ -111,6 +122,14 @@ export default function Menu () {
     const handleEdit = (menu : Menu) => {
         setSelectedMenu(menu);
         setShowModal(true);
+    }
+
+    const handleDelete = (id: string) => {
+        const isConfirmed = confirm('Are you sure you want to delete this?');
+
+        if(!isConfirmed) return;
+
+        promiseToast(deleteMenuMutation.mutateAsync(id));
     }
 
     return (
@@ -168,7 +187,7 @@ export default function Menu () {
                 <CustomizedTable 
                     isLoading={isFetching}
                     data={data?.menus || []}
-                    columns={getColumns({ handleEdit, hasAnyPermissions, hasPermissions })}
+                    columns={getColumns({ handleEdit, hasAnyPermissions, hasPermissions, handleDelete })}
                     pagination={pagination}
                     setPagination={setPagination}
                     totalPages={data?.pagination.totalPages}

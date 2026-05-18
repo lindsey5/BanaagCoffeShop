@@ -33,5 +33,10 @@ export const menuService = {
                 menuIngredients,
             },
         });
-    }
+    },
+
+    deleteMenu: (id: string) => 
+        apiAxios<ApiResponse>(`${baseUrl}/${id}`, {
+            method: HttpMethod.DELETE
+        })
 };

@@ -154,3 +154,18 @@ export const updateMenu = async (req: Request, res: Response, next: NextFunction
         next(err);
     }
 }
+
+export const deleteMenu = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const menu = await Menu.findById(req.params.id);
+
+        if(!menu) return res.status(200).json({ success: false, message: 'Menu not found' })
+
+        menu.status = 'deleted';
+        await menu.save();
+
+        res.status(200).json({ success: true, message: 'Menu successfully deleted' });
+    }catch(err){
+        next(err);
+    }
+}

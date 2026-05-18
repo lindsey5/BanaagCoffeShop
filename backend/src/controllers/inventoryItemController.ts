@@ -139,6 +139,7 @@ export const updateInventoryItem = async (
             {
                 $match: {
                     "ingredients.inventory_item_id": inventoryItem._id,
+                    status: { $in: ['available', 'unavailable']}
                 },
             },
             {
@@ -256,7 +257,7 @@ export const deleteInventoryItem = async (req: Request, res: Response, next: Nex
         const unavailableMenuIds = result.map(m => m._id);
         
         await Menu.updateMany(
-            { _id: { $in: unavailableMenuIds } },
+            { _id: { $in: unavailableMenuIds }, status: 'available' },
             { $set: { status: "unavailable" } }
         );
 
