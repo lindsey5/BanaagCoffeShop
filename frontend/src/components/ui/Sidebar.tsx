@@ -19,7 +19,7 @@ export default function Sidebar() {
     const { user, logout } = useAuthStore();
 
     return (
-        <aside className="text-white w-60">
+        <aside className="text-white w-60 fixed left-3 bottom-5 top-23">
             <Card className="flex flex-col justify-between h-full w-full">
                 <div className="space-y-5">
                     <div className="flex flex-col leading-tight">
