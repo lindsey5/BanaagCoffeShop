@@ -11,6 +11,7 @@
   --color-main: var(--bg-main);
   --color-panel: var(--bg-panel);
   --color-hover: var(--hover);
+  --color-loading: var(--bg-loading);
   --color-muted: var(--text-muted);
   --color-panel: var(--bg-panel);
   --color-accent: var(--accent-color);

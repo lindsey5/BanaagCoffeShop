@@ -11,6 +11,17 @@ import { useGetMenus } from "../../hooks/menu/use-get-menus.hook";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 
+const MenuCardSkeleton = () => {
+    return (
+        <Card className="animate-pulse flex flex-col items-center gap-3 p-3">
+            <div className="w-full h-35 bg-loading rounded" />
+            <div className="w-3/4 h-4 bg-loading rounded" />
+            <div className="w-1/2 h-4 bg-loading rounded" />
+            <div className="w-full h-9 bg-loading rounded" />
+        </Card>
+    );
+};
+
 export default function POS () {
     const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
     const [category, setCategory] = useState('All');
@@ -71,26 +82,33 @@ export default function POS () {
                             label="Sort"
                         />
                     </div>
-                    {data?.menus.length ? (
+                    {isFetching ? (
                         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                        {data?.menus?.map((menu) => (
-                            <Card
-                                key={menu._id}
-                                className="flex flex-col items-center gap-3"
-                            >
-                                <img
+                            {Array.from({ length: 8 }).map((_, i) => (
+                            <MenuCardSkeleton key={i} />
+                            ))}
+                        </div>
+                        ) : data?.menus?.length ? (
+                            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                                {data.menus.map((menu) => (
+                                <Card
+                                    key={menu._id}
+                                    className="flex flex-col items-center gap-3"
+                                >
+                                    <img
                                     className="w-full h-35 object-contain"
                                     src={menu.image_url || "/placeholder.png"}
                                     alt={menu.name}
-                                />
+                                    />
 
-                                <h1>{menu.name}</h1>
-                                <p>{formatToPeso(menu.price)}</p>
-                                <Button className="w-full py-2">Add</Button>
-                            </Card>
-                        ))}
-                        </div>
-                    ) : <p className="text-center text-brown mt-5">No Products Found</p>}
+                                    <h1>{menu.name}</h1>
+                                    <p>{formatToPeso(menu.price)}</p>
+                                    <Button className="w-full py-2">Add</Button>
+                                </Card>
+                                ))}
+                            </div>
+                        ) : 
+                        <p className="text-center text-brown mt-5">No Products Found</p>}
                 </div>
                 <Card className="w-90 hidden lg:block sticky top-0">
                     <></>
