@@ -23,7 +23,7 @@ const MenuCardSkeleton = () => {
 };
 
 export default function POS () {
-    const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
+    const [pagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
     const [category, setCategory] = useState('All');
     const [search, setSearch] = useState('');
     const debouncedSearch = useDebounce(search, 0.8);
