@@ -1,5 +1,5 @@
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
-import type { MenuDTO, CreateMenuResponse, GetMenusParams, GetMenusResponse } from "../types/menu.type";
+import type { CreateMenuResponse, GetMenusParams, GetMenusResponse } from "../types/menu.type";
 import type { ApiResponse } from "../types/types";
 
 const baseUrl = 'menus'

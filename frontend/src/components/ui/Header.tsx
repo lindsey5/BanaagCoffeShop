@@ -4,8 +4,8 @@ import { formatLongDate } from "../../utils/dateUtils";
 
 export default function Header () {
     return (
-        <header className="fixed inset-x-3 top-3">
-            <Card className="flex justify-between items-center text-white">
+        <header className="z-100 fixed inset-x-0 top-0">
+            <Card className="flex justify-between items-center rounded-none text-white">
                 <h1 className="text-xl font-bold flex justify-center items-center gap-2">
                     <Coffee size={25} />
                     Banaag POS

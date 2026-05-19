@@ -12,7 +12,7 @@ import { formatToPeso, getKeyByValue } from "../../utils/utils";
 import { Pencil, Plus, Trash } from "lucide-react";
 import FiltersMenu from "../../components/ui/FiltersMenu";
 import SearchField from "../../components/ui/SearchField";
-import { menuCategoryOptions } from "../../lib/contants/menu";
+import { menuCategoryOptions, menuFilterOptions } from "../../lib/contants/menu";
 import Button from "../../components/ui/Button";
 import MenuModal from "../../components/menu/MenuModal";
 import Chip from "../../components/ui/Chip";
@@ -88,13 +88,6 @@ const getColumns = ({ handleEdit, hasAnyPermissions, hasPermissions, handleDelet
     ] : [])
 ]  
 
-const filterOptions :  Record<string, SortOption> = {
-    'Newest': { sort: 'createdAt', order: 'desc' },
-    'Oldest': { sort: 'createdAt', order: 'asc' },
-    'A-Z' : { sort: 'name', order: 'asc' },
-    'Z-A' : { sort: 'name', order: 'desc' }
-}
-
 export default function Menu () {
     const { hasAnyPermissions, hasPermissions } = usePermissions();
     const deleteMenuMutation = useDeleteMenu();
@@ -167,9 +160,9 @@ export default function Menu () {
                                 label="Category"
                             />
                             <Dropdown 
-                                onChange={(value) => setFilter(filterOptions[value])}
-                                options={Object.keys(filterOptions).map(opt => ({ label: opt, value: opt }))}
-                                value={getKeyByValue(filterOptions, filter) || ""}
+                                onChange={(value) => setFilter(menuFilterOptions[value])}
+                                options={Object.keys(menuFilterOptions).map(opt => ({ label: opt, value: opt }))}
+                                value={getKeyByValue(menuFilterOptions, filter) || ""}
                                 label="Sort"
                             />
                         </div>
@@ -188,9 +181,9 @@ export default function Menu () {
                                 label="Category"
                             />
                             <Dropdown 
-                                onChange={(value) => setFilter(filterOptions[value])}
-                                options={Object.keys(filterOptions).map(opt => ({ label: opt, value: opt }))}
-                                value={getKeyByValue(filterOptions, filter) || ""}
+                                onChange={(value) => setFilter(menuFilterOptions[value])}
+                                options={Object.keys(menuFilterOptions).map(opt => ({ label: opt, value: opt }))}
+                                value={getKeyByValue(menuFilterOptions, filter) || ""}
                                 label="Sort"
                             />
                         </FiltersMenu>
