@@ -2,10 +2,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { Menu, MenuIngredientDTO } from "../../types/menu.type";
 import { WhiteCard } from "../ui/Card";
 import Modal from "../ui/Modal";
-import { menuSchema, type MenuFormData } from "../../schemas/menuSchema";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { createMenuSchema, updateMenuSchema, type CreateMenuFormData, type UpdateMenuFormData } from "../../schemas/menuSchema";
+import { useForm, type SubmitHandler, type Resolver } from "react-hook-form";
 import TextField from "../ui/Textfield";
-import { Plus, X } from "lucide-react";
+import { Plus, Upload, X, Image } from "lucide-react";
 import Dropdown from "../ui/Dropdown";
 import { menuCategoryOptions } from "../../lib/contants/menu";
 import AddMenuIngredient from "./AddMenuIngredient";
@@ -15,6 +15,7 @@ import { errorToast, promiseToast } from "../../utils/sileo";
 import Ingredient from "./Ingredient";
 import { useCreateMenu } from "../../hooks/menu/use-create-menu.hook";
 import { useUpdateMenu } from "../../hooks/menu/use-update-menu.hook";
+import { fileToBase64 } from "../../utils/utils";
 
 interface MenuModalProps {
     close: () => void;
@@ -23,11 +24,12 @@ interface MenuModalProps {
 }
 
 export default function MenuModal ({ close, show, selectedMenu } : MenuModalProps) {
+    const [imageSrc, setImageSrc] = useState<string>();
     const [showAdd, setShowAdd] = useState(false);
     const createMenuMutation = useCreateMenu();
     const updateMenuMutation = useUpdateMenu();
-    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<MenuFormData>({
-        resolver: zodResolver(menuSchema),
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<CreateMenuFormData | UpdateMenuFormData>({
+        resolver: zodResolver(selectedMenu ? updateMenuSchema : createMenuSchema) as Resolver<CreateMenuFormData | UpdateMenuFormData>,
         defaultValues: {
             menuIngredients: []
         }
@@ -42,6 +44,7 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
             menuIngredients: [],
             price: undefined
         })
+        setImageSrc(undefined)
     }
 
     const handleAddIngredient = (ingredient : MenuIngredientDTO) => {
@@ -52,7 +55,20 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
         setValue('menuIngredients', [...watch('menuIngredients'), ingredient ])
     }
 
-    const onSubmit : SubmitHandler<MenuFormData> = (data) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setValue("image", file);
+        try {
+            const base64 = await fileToBase64(file);
+            setImageSrc(base64);
+        } catch (error) {
+            console.error("Failed to convert file to Base64:", error);
+        }
+    };
+
+    const onSubmit : SubmitHandler<CreateMenuFormData | UpdateMenuFormData> = (data) => {
         const isConfirmed = confirm(selectedMenu 
             ? "Are you sure you want to update this menu?"
             : "Are you sure you want to create this menu?"
@@ -60,7 +76,14 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
 
         if(!isConfirmed) return;
 
-        promiseToast(selectedMenu ? updateMenuMutation.mutateAsync({ data, id: selectedMenu._id }) : createMenuMutation.mutateAsync(data))
+        const { menuIngredients, image, ...menu } = data;
+
+        const formData = new FormData();
+        formData.append('menu', JSON.stringify(menu));
+        formData.append('menuIngredients', JSON.stringify(menuIngredients));
+        if (image) formData.append('image', image);
+
+        promiseToast(selectedMenu ? updateMenuMutation.mutateAsync({ data: formData, id: selectedMenu._id }) : createMenuMutation.mutateAsync(formData))
     }
 
     const handleRemove = (id: string) => {
@@ -72,7 +95,10 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
     }
 
     useEffect(() => {
-        if(selectedMenu) reset(selectedMenu);
+        if(selectedMenu) {
+            reset(selectedMenu);
+            setImageSrc(selectedMenu.image_url);
+        }
     }, [selectedMenu])
 
     return (
@@ -91,6 +117,33 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
                         <button type="button" className="absolute top-0 right-0 cursor-pointer" onClick={handleClose}>
                             <X size={20} />
                         </button>
+                        <div className="flex flex-col items-center">
+                            <div className="w-30 h-30 flex items-center justify-center overflow-hidden rounded">
+                                {imageSrc ? 
+                                    <img
+                                        src={imageSrc}
+                                        alt="Thumbnail"
+                                        className="object-contain w-full h-full"
+                                    /> : 
+                                    <Image className="w-full h-full" strokeWidth={0.7}/>
+                                }
+                            </div>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="thumbnail"
+                                className="hidden"
+                                onChange={handleFileChange}
+                            />
+
+                            <label htmlFor="thumbnail" className="cursor-pointer">
+                                <span className="border text-sm inline-flex items-center gap-2 px-4 py-2 rounded">
+                                    <Upload size={16} />
+                                    Upload Image
+                                </span>
+                            </label>
+                            <p className="text-red-500 text-xs">{errors.image?.message}</p>
+                        </div>
                         <div className="grid md:grid-cols-2 gap-2">
                             <TextField 
                                 label="Code"

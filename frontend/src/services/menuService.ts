@@ -11,29 +11,16 @@ export const menuService = {
             params
         }),
 
-    createMenu: (data: MenuDTO) => {
-        const { menuIngredients, ...menu } = data;
+    createMenu: (data: FormData) => apiAxios<CreateMenuResponse>(`${baseUrl}`, {
+        method: HttpMethod.POST,
+        data
+    }),
 
-        return apiAxios<CreateMenuResponse>(`${baseUrl}`, {
-            method: HttpMethod.POST,
-            data: {
-                menu,
-                menuIngredients,
-            },
-        });
-    },
-
-    updateMenu: (data: MenuDTO, id: string) =>  {
-        const { menuIngredients, ...menu } = data;
-
-        return apiAxios<ApiResponse>(`${baseUrl}/${id}`, {
+    updateMenu: (data: FormData, id: string) =>  
+        apiAxios<ApiResponse>(`${baseUrl}/${id}`, {
             method: HttpMethod.PUT,
-            data: {
-                menu,
-                menuIngredients,
-            },
-        });
-    },
+            data,
+        }),
 
     deleteMenu: (id: string) => 
         apiAxios<ApiResponse>(`${baseUrl}/${id}`, {

@@ -5,6 +5,8 @@ export interface MenuAttributes extends Document {
     name: string;
     category: string;
     price: number;
+    image_url: string;
+    image_public_id: string;
     status: "available" | "unavailable" | "deleted";
 }
 
@@ -31,6 +33,18 @@ const MenuSchema: Schema<MenuAttributes> = new Schema(
             required: [true, "menu category is required."],
             minlength: [3, "menu category must be at least 3 characters."],
             maxlength: [100, "menu category must be at most 100 characters."],
+            trim: true,
+        },
+
+        image_url: {
+            type: String,
+            required: [true, "image URL is required."],
+            trim: true,
+        },
+
+        image_public_id: {
+            type: String,
+            required: [true, "image public id is required."],
             trim: true,
         },
 

@@ -16,6 +16,8 @@ export interface Menu {
     name: string;
     category: string;
     price: number;
+    image_url: string;
+    image_public_id: string;
     menuIngredients: MenuIngredient[];
     status: "available" | "unavailable" | "deleted";
     createdAt: string;

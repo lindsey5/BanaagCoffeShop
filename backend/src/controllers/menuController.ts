@@ -3,8 +3,11 @@ import Menu from "../models/Menu";
 import MenuIngredient from "../models/MenuIngredient";
 import InventoryItem from "../models/InventoryItem";
 import { kgToGram, lToMl } from "../utils/conversion";
+import { deleteFile, uploadFile } from "../utils/cloudinaryUtils";
 
 export const createMenu = async (req: Request, res: Response, next: NextFunction) => {
+    let uploadedImage = null;
+    
     try{
         const existingItem = await Menu.findOne({
             status: "available",
@@ -21,8 +24,44 @@ export const createMenu = async (req: Request, res: Response, next: NextFunction
             }
         }
 
-        const menu = await Menu.create(req.body.menu);
-        const menuIngredients = await MenuIngredient.insertMany(req.body.menuIngredients.map((ingredient : any) => ({ ...ingredient, menu_id: menu._id })))
+        if(!req.file) return res.status(404).json({ success: false, message: 'Image is required' });
+
+        const { public_id: image_public_id, secure_url: image_url } = await uploadFile(req.file.buffer);
+
+        const menu = await Menu.create({ ...JSON.parse(req.body.menu), image_public_id, image_url });
+        const menuIngredients = await MenuIngredient.insertMany(JSON.parse(req.body.menuIngredients).map((ingredient : any) => ({ ...ingredient, menu_id: menu._id })))
+
+        const ingredientIds = menuIngredients.map(i => i.inventory_item_id);
+
+        const items = await InventoryItem.find({ 
+            _id: { $in: ingredientIds }
+        })
+
+        let status : 'available' | 'unavailable' | 'deleted' = 'available';
+        for(const item of items) {
+            const ingredient = menuIngredients.find(i => i.inventory_item_id === item._id);
+            
+            if(!ingredient) continue;
+
+            if(item.quantity < 0) status = 'unavailable';
+
+            if(item.unit === ingredient.unit){
+                if(ingredient.amount > item.quantity) {
+                    status = 'unavailable';
+                }
+            }
+
+            if(ingredient.unit === 'g' && item.unit === 'kg' && ingredient.amount > kgToGram(item.quantity)){
+                status = 'unavailable';
+            }
+
+            if(ingredient.unit === 'ml' && item.unit === 'l' && ingredient.amount > lToMl(item.quantity)){
+                status = 'unavailable';
+            }
+        }
+
+        menu.status = status;
+        await menu.save();
 
         res.status(201).json({
             success: true,
@@ -34,11 +73,14 @@ export const createMenu = async (req: Request, res: Response, next: NextFunction
         });
 
     }catch(err){
+        if(uploadedImage) await deleteFile(uploadedImage);
         next(err);
     }
 }
 
 export const getMenus = async (req: Request, res: Response, next: NextFunction) => {
+    let uploadedImage = null;
+
     try{
         const page = req.query.page ? Number(req.query.page) : 1;
         const limit = req.query.limit ? Number(req.query.limit) : 10;
@@ -86,6 +128,7 @@ export const getMenus = async (req: Request, res: Response, next: NextFunction) 
 }
 
 export const updateMenu = async (req: Request, res: Response, next: NextFunction) => {
+    let uploadedImage = null;
     try{
         const id = req.params.id;
 
@@ -109,12 +152,22 @@ export const updateMenu = async (req: Request, res: Response, next: NextFunction
 
         if(!menu) return res.status(404).json({ success: false, message: "Menu not found" });
 
-        menu.set(req.body.menu);
+        let image_public_id = menu?.image_public_id;
+        let image_url = menu?.image_url;
+
+        if(req.file){
+            await deleteFile(image_public_id);
+            const { public_id, secure_url } = await uploadFile(req.file.buffer);
+            image_public_id = public_id;
+            image_url = secure_url;
+        }
+
+        menu.set({ ...req.body.menu, image_public_id, image_url });
         await menu.save();
 
         await MenuIngredient.deleteMany({ menu_id: menu._id });
 
-        const menuIngredients = await MenuIngredient.insertMany(req.body.menuIngredients.map((ingredient : any) => ({ ...ingredient, menu_id: menu._id })))
+        const menuIngredients = await MenuIngredient.insertMany(JSON.parse(req.body.menuIngredients).map((ingredient : any) => ({ ...ingredient, menu_id: menu._id })))
 
         const ingredientIds = menuIngredients.map(i => i.inventory_item_id);
 
@@ -151,6 +204,7 @@ export const updateMenu = async (req: Request, res: Response, next: NextFunction
         res.status(200).json({ success: true, message: 'Menu successfully updated' })
 
     }catch(err){
+        if(uploadedImage) await deleteFile(uploadedImage);
         next(err);
     }
 }
@@ -163,6 +217,8 @@ export const deleteMenu = async (req: Request, res: Response, next: NextFunction
 
         menu.status = 'deleted';
         await menu.save();
+
+        await deleteFile(menu.image_public_id);
 
         res.status(200).json({ success: true, message: 'Menu successfully deleted' });
     }catch(err){

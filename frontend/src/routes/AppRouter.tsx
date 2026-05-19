@@ -7,6 +7,7 @@ import { PERMISSIONS } from "../config/permissions";
 import Inventory from "../pages/Dashboard/Inventory";
 import InventoryLayout from "../pages/InventoryLayout";
 import Menu from "../pages/Dashboard/Menu";
+import POS from "../pages/Dashboard/POS";
 
 const router = createBrowserRouter([
     {
@@ -48,6 +49,14 @@ const router = createBrowserRouter([
                 Component: () => (
                     <ProtectedRoute requiredPermissions={[PERMISSIONS.MENU_READ_ALL]}>
                         <Menu />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'POS',
+                Component: () => (
+                    <ProtectedRoute requiredPermissions={[PERMISSIONS.ORDER_CREATE]}>
+                        <POS />
                     </ProtectedRoute>
                 )
             }

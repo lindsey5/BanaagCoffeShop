@@ -13,6 +13,7 @@
   --color-hover: var(--hover);
   --color-muted: var(--text-muted);
   --color-panel: var(--bg-panel);
+  --color-accent: var(--accent-color);
   --color-row-even: var(--row-even);
   --color-row-odd: var(--row-odd);
   --color-row-hover: var(--row-hover);
@@ -23,6 +24,7 @@
     --bg-main: #5e4331;
     --bg-panel: #e1d1c6;
     --bg-loading: #977e6ba2;
+    --accent-color: #704f3a;
 
     --text-brown: #603F26;
     --text-muted: #603f26a6;
