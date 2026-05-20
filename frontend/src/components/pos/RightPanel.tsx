@@ -246,11 +246,10 @@ export default function RightPanel({
                     </h1>
 
                     <textarea
-                        className="w-full min-h-20 p-2 text-sm bg-white border border-gray-400 rounded-md outline-none resize-none"
+                        className="text-black w-full min-h-20 p-2 text-xs bg-white border border-gray-400 rounded-md outline-none resize-none"
                         placeholder="Add special request..."
                         value={specialRequest}
                         onChange={(e) => setSpecialRequest(e.target.value)}
-                        disabled={orderItems.length < 1}
                     />
                 </div>
                 <div className="h-[1px] bg-brown" />
