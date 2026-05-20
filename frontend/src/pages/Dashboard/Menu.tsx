@@ -7,13 +7,8 @@ import { useDebounce } from "../../hooks/useDebounce";
 import type { SortOption } from "../../types/types";
 import CustomizedTable from "../../components/ui/Table";
 import { type Menu } from "../../types/menu.type";
-import Dropdown from "../../components/ui/Dropdown";
-import { formatToPeso, getKeyByValue } from "../../utils/utils";
-import { Pencil, Plus, Trash } from "lucide-react";
-import FiltersMenu from "../../components/ui/FiltersMenu";
-import SearchField from "../../components/ui/SearchField";
-import { menuCategoryOptions, menuFilterOptions } from "../../lib/contants/menu";
-import Button from "../../components/ui/Button";
+import { formatToPeso } from "../../utils/utils";
+import { Pencil, Trash } from "lucide-react";
 import MenuModal from "../../components/menu/MenuModal";
 import Chip from "../../components/ui/Chip";
 import IconButton from "../../components/ui/IconButton";
@@ -22,6 +17,7 @@ import usePermissions from "../../hooks/usePermissions";
 import { useDeleteMenu } from "../../hooks/menu/use-delete-menu.hook";
 import { promiseToast } from "../../utils/sileo";
 import { formatDate } from "../../utils/dateUtils";
+import MenuControls from "../../components/menu/MenuControls";
 
 interface GetColumnsParams {
     handleEdit: (menu : Menu) => void;
@@ -143,52 +139,15 @@ export default function Menu () {
             description="Manage your menu items for your POS system."
         >
             <WhiteCard className="space-y-5">
-                <div className="flex-1 flex gap-3 items-end justify-between">
-                    <SearchField
-                        className="max-w-50 lg:max-w-100"
-                        onChange={(e) => setSearch(e.target.value)}
-                        value={search}
-                        placeholder="Search menu..."
-                    />
-                    <div className="flex items-end gap-3">
-                        <div className="lg:flex gap-3 items-center hidden">
-                            <Dropdown 
-                                className="w-40"
-                                onChange={(value) => setCategory(value)}
-                                options={[{ label: 'All', value: '' }, ...menuCategoryOptions]}
-                                value={category}
-                                label="Category"
-                            />
-                            <Dropdown 
-                                onChange={(value) => setFilter(menuFilterOptions[value])}
-                                options={Object.keys(menuFilterOptions).map(opt => ({ label: opt, value: opt }))}
-                                value={getKeyByValue(menuFilterOptions, filter) || ""}
-                                label="Sort"
-                            />
-                        </div>
-                        <Button className="w-35 text-sm rounded-md" onClick={() => setShowModal(true)}>
-                            <Plus size={18}/>
-                            Create Menu
-                        </Button>
-                        <FiltersMenu 
-                            className="lg:hidden"
-                            containerStyle="space-y-3"
-                        >
-                            <Dropdown 
-                                onChange={(value) => setCategory(value)}
-                                options={[{ label: 'All', value: '' }, ...menuCategoryOptions]}
-                                value={category}
-                                label="Category"
-                            />
-                            <Dropdown 
-                                onChange={(value) => setFilter(menuFilterOptions[value])}
-                                options={Object.keys(menuFilterOptions).map(opt => ({ label: opt, value: opt }))}
-                                value={getKeyByValue(menuFilterOptions, filter) || ""}
-                                label="Sort"
-                            />
-                        </FiltersMenu>
-                    </div>
-                </div>
+                <MenuControls 
+                    search={search}
+                    setSearch={setSearch}
+                    category={category}
+                    setCategory={setCategory}
+                    filter={filter}
+                    setFilter={setFilter}
+                    setShowModal={setShowModal}
+                />
                 <CustomizedTable 
                     isLoading={isFetching}
                     data={data?.menus || []}

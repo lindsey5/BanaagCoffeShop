@@ -107,16 +107,6 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
     }
 
     useEffect(() => {
-        if(item) {
-            reset({
-                amount: undefined,
-                inventory_item_id: item._id,
-                unit: undefined
-            })
-        }
-    }, [item])
-
-    useEffect(() => {
         if(data?.inventoryItems) {
             if(data.pagination.page === 1) setItems(data.inventoryItems);
             else setItems(prev => [...prev, ...data.inventoryItems])
@@ -196,7 +186,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                             </h1>
 
                             <div className="text-sm space-y-1">
-                                <p className="font-medium">{item.name}</p>
+                                <p className="font-medium">{item.name} | {item.brand}</p>
 
                                 <p>Code: {item.code}</p>
 

@@ -79,7 +79,6 @@ export const createMenu = async (req: Request, res: Response, next: NextFunction
 }
 
 export const getMenus = async (req: Request, res: Response, next: NextFunction) => {
-    let uploadedImage = null;
 
     try{
         const page = req.query.page ? Number(req.query.page) : 1;
@@ -105,13 +104,15 @@ export const getMenus = async (req: Request, res: Response, next: NextFunction) 
 
         const [menus, total] = await Promise.all([
             Menu.find(filter)
-            .populate('menuIngredients')
+            .populate({
+                path: 'menuIngredients',
+                populate: 'inventoryItem'
+            })
             .sort({ [sort] : order })
             .skip(skip)
             .limit(limit),
             Menu.countDocuments(filter)
         ])
-
         res.status(200).json({
             success: true,
             menus,

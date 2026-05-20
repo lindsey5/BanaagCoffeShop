@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { MenuIngredientAttributes } from "./MenuIngredient";
 
 export interface MenuAttributes extends Document {
     code: string;
@@ -7,6 +8,7 @@ export interface MenuAttributes extends Document {
     price: number;
     image_url: string;
     image_public_id: string;
+    menuIngredients: MenuIngredientAttributes[];
     status: "available" | "unavailable" | "deleted";
 }
 

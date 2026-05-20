@@ -1,26 +1,16 @@
 import { useMemo, useState } from "react";
 import PageContainer from "../../components/ui/PageContainer";
-import { menuCategories, menuFilterOptions } from "../../lib/contants/menu";
-import SearchField from "../../components/ui/SearchField";
 import { useDebounce } from "../../hooks/useDebounce";
-import Dropdown from "../../components/ui/Dropdown";
 import type { SortOption } from "../../types/types";
-import { formatToPeso, getKeyByValue } from "../../utils/utils";
 import type { PaginationState } from "@tanstack/react-table";
 import { useGetMenus } from "../../hooks/menu/use-get-menus.hook";
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-
-const MenuCardSkeleton = () => {
-    return (
-        <Card className="animate-pulse flex flex-col items-center gap-3 p-3">
-        <div className="w-full h-35 bg-loading rounded" />
-        <div className="w-3/4 h-4 bg-loading rounded" />
-        <div className="w-1/2 h-4 bg-loading rounded" />
-        <div className="w-full h-9 bg-loading rounded" />
-        </Card>
-    );
-};
+import Products from "../../components/pos/Products";
+import CategoryTab from "../../components/pos/CategoryTab";
+import POSControls from "../../components/pos/POSControls";
+import RightPanel from "../../components/pos/RightPanel";
+import type { CreateOrderItemDTO } from "../../types/order.type";
+import type { Menu } from "../../types/menu.type";
+import { kgToGram, lToMl } from "../../utils/utils";
 
 export default function POS() {
     const [pagination] = useState<PaginationState>({
@@ -37,19 +27,63 @@ export default function POS() {
         order: "desc",
     });
 
-    const params = useMemo(
-        () => ({
+    const params = useMemo(() => ({
         limit: pagination.pageSize,
         page: pagination.pageIndex + 1,
         order: filter.order,
         sort: filter.sort,
         search: debouncedSearch,
         category: category === "All" ? "" : category,
-        }),
-        [pagination, filter, debouncedSearch, category]
-    );
+    }), [pagination, filter, debouncedSearch, category]);
 
     const { data, isFetching } = useGetMenus(params);
+    const [orderItems, setOrderItems] = useState<CreateOrderItemDTO[]>([]);
+
+    const handleAddItem = (menu : Menu) => {
+        const existingItem = orderItems.find(item => item.menu_id === menu._id);
+
+        let allowed = true;
+        
+        if(existingItem){
+            const nextQty = existingItem.quantity + 1;
+            for (const ing of existingItem.menu.menuIngredients) {
+                const inv = ing.inventoryItem;
+                const ingAmount = ing.amount * nextQty;
+
+                const isSameUnit =
+                    inv.unit === ing.unit;
+
+                const isKgToG =
+                    inv.unit === "kg" && ing.unit === "g";
+
+                const isLToMl =
+                    inv.unit === "l" && ing.unit === "ml";
+
+                const availableQty =
+                    isKgToG
+                        ? kgToGram(inv.quantity)
+                        : isLToMl
+                            ? lToMl(inv.quantity)
+                            : inv.quantity;
+
+                if (!isSameUnit && !isKgToG && !isLToMl) {
+                    allowed = false;
+                    break;
+                }
+
+                if (availableQty < ingAmount) {
+                    allowed = false;
+                    break;
+                }
+            }
+        }
+
+        if(!allowed) return;
+
+        setOrderItems(prev => existingItem ? prev.map(item => item.menu_id === menu._id ? { ...item, quantity: item.quantity + 1, total: item.quantity * item.price } : item) : 
+        [...prev, { menu, menu_id: menu._id, price: menu.price, quantity: 1, total: menu.price }])
+
+    }
 
     return (
         <PageContainer
@@ -63,87 +97,24 @@ export default function POS() {
                 <div className="flex-1 flex flex-col min-w-0 space-y-3 overflow-hidden">
 
                     {/* CATEGORY FILTER */}
-                    <div className="flex overflow-x-auto gap-2 pb-3">
-                        {["All", ...menuCategories].map((item) => {
-                            const active = category === item;
-
-                            return (
-                                <button
-                                    key={item}
-                                    onClick={() => setCategory(item)}
-                                    className={`cursor-pointer min-w-20 flex justify-center items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                                        active
-                                        ? "bg-accent text-white"
-                                        : "bg-main/40 hover:bg-main"
-                                    }`}
-                                >
-                                {item}
-                                </button>
-                            );
-                        })}
-                    </div>
+                    <CategoryTab category={category} setCategory={setCategory}/>
 
                     {/* SEARCH + SORT */}
-                    <div className="flex items-end gap-3">
-                        <SearchField
-                            placeholder="Search products by code or name..."
-                            onChange={(e) => setSearch(e.target.value)}
-                            value={search}
-                        />
-
-                        <Dropdown
-                            className="min-w-30"
-                            onChange={(value) => setFilter(menuFilterOptions[value])}
-                            options={Object.keys(menuFilterOptions).map((opt) => ({
-                                label: opt,
-                                value: opt,
-                            }))}
-                            value={getKeyByValue(menuFilterOptions, filter) || ""}
-                            label="Sort"
-                        />
-                    </div>
+                    <POSControls search={search} setSearch={setSearch} filter={filter} setFilter={setFilter}/>
 
                     {/* PRODUCT GRID */}
-                    <div className="flex-1 overflow-y-auto pr-1">
-                        {isFetching ? (
-                            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                                {Array.from({ length: 8 }).map((_, i) => (
-                                <MenuCardSkeleton key={i} />
-                                ))}
-                            </div>
-                        ) : data?.menus?.length ? (
-                            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                                {data.menus.map((menu) => (
-                                <Card
-                                    key={menu._id}
-                                    className="flex flex-col items-center gap-3"
-                                >
-                                    <img
-                                    className="w-full h-35 object-contain"
-                                    src={menu.image_url || "/placeholder.png"}
-                                    alt={menu.name}
-                                    />
-
-                                    <h1>{menu.name}</h1>
-                                    <p>{formatToPeso(menu.price)}</p>
-
-                                    <Button className="w-full py-2">Add</Button>
-                                </Card>
-                                ))}
-                            </div>
-                        ) : (
-                        <p className="text-center text-brown mt-5">
-                            No Products Found
-                        </p>
-                        )}
-                    </div>
+                    <Products 
+                        isFetching={isFetching} 
+                        menus={data?.menus || []}
+                        handleAddItem={handleAddItem}
+                    />
                 </div>
 
                 {/* RIGHT SIDE */}
-                <Card className="w-90 hidden lg:flex flex-col h-full sticky top-0">
-                    <></>
-                </Card>
-
+                <RightPanel 
+                    orderItems={orderItems}
+                    setOrderItems={setOrderItems}
+                />
             </div>
         </PageContainer>
     );
