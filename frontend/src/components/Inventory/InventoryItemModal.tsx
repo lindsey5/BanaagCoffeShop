@@ -60,7 +60,7 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
     }
 
     useEffect(() => {
-        if(inventoryItem) reset(inventoryItem)
+        if(inventoryItem) reset({ ...inventoryItem, quantity: Number(inventoryItem.quantity.toFixed(2)) })
     }, [inventoryItem])
     
     return (
