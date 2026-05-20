@@ -119,15 +119,8 @@ export const getOrders = async (req: Request, res: Response, next: NextFunction)
 
         const orders = await Order.find(filter)
             .populate([
-                {
-                    path: "orderItems",
-                    populate: {
-                        path: 'menu',
-                    }
-                },
-                {
-                    path: 'user'
-                }
+                { path: "orderItems" },
+                { path: 'user' }
             ]) 
             .sort({ createdAt: -1 })
             .skip(skip)

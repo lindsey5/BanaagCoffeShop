@@ -52,16 +52,6 @@ const OrderItemSchema: Schema<OrderItemAttributes> = new Schema(
 OrderItemSchema.index({ order_id: 1 });
 OrderItemSchema.index({ menu_id: 1 });
 
-OrderItemSchema.virtual("menu", {
-    ref: "Menu",
-    localField: "menu_id",
-    foreignField: "_id",
-    justOne: true
-})
-
-OrderItemSchema.set("toObject", { virtuals: true });
-OrderItemSchema.set("toJSON", { virtuals: true });
-
 const OrderItem: Model<OrderItemAttributes> = mongoose.model(
     "OrderItem",
     OrderItemSchema
