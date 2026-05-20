@@ -63,6 +63,13 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
                         <p>{formatToPeso(order.subtotal)}</p>
                     </div>
 
+                    {order.discount && (
+                        <div className="flex justify-between">
+                            <p>Discount</p>
+                            <p>{formatToPeso(order.subtotal * (order.discount / 100))}</p>
+                        </div>
+                    )}
+
                     <div className="flex justify-between">
                         <p>Tax (12%)</p>
                         <p>{formatToPeso(order.tax)}</p>

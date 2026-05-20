@@ -278,12 +278,18 @@ export default function RightPanel({
                     </p>
 
                     <p className="flex justify-between text-xs">
+                        Discount
+                        <span className="font-bold">
+                            {formatToPeso(subtotal * (discount / 100))}
+                        </span>
+                    </p>
+
+                    <p className="flex justify-between text-xs">
                         Tax (12%)
                         <span className="font-bold">
                             {formatToPeso(tax)}
                         </span>
                     </p>
-
                     <p className="flex justify-between text-md font-bold">
                         Total
                         <span>
