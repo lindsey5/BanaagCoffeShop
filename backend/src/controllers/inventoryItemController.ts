@@ -373,6 +373,21 @@ export const getTotalInventoryItems = async (req: Request, res: Response, next: 
     try {
         const total = await InventoryItem.countDocuments({
             status: "active",
+        });
+
+        res.status(200).json({
+            success: true,
+            total
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const getTotalLowStockInventoryItems = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const total = await InventoryItem.countDocuments({
+            status: "active",
             $expr: { $lte: ["$quantity", "$threshold"] }
         });
 
