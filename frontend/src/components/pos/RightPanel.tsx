@@ -14,6 +14,7 @@ import TextField from "../ui/Textfield";
 import { useCreateOrder } from "../../hooks/order/use-create-order.hook";
 import { promiseToast } from "../../utils/sileo";
 import Receipt from "../shared/Receipt";
+import { useGetTotalOrders } from "../../hooks/order/use-get-total-orders.hook";
 
 interface RightPanelProps {
     orderItems: CreateOrderItemDTO[];
@@ -36,12 +37,14 @@ export default function RightPanel({
     orderItems,
     setOrderItems
 }: RightPanelProps) {
+    const { data } = useGetTotalOrders();
     const createOrderMutation = useCreateOrder();
     const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | "e-wallet">("cash");
     const [payment, setPayment] = useState(0);
     const [specialRequest, setSpecialRequest] = useState("");
     const [order, setOrder] = useState<Order | null>(null);
     const [discount, setDiscount] = useState(0);
+    const [customer, setCustomer] = useState('');
 
     const { subtotal, tax, grandTotal } = useMemo(() => {
         const taxRate = 0.12;
@@ -150,15 +153,20 @@ export default function RightPanel({
     }, [payment, orderItems, grandTotal]);
 
     const canPlaceOrder = useMemo(() => {
-        if(!orderItems.length) return false;
+        if (!orderItems.length) return false;
 
-        if(paymentMethod === 'cash' && (payment < grandTotal)) return false;
+        if (orderItems.some(item => item.quantity <= 0)) {
+            return false;
+        }
 
-        if(orderItems.every(item => item.quantity < 1)) return false;
+        if (!customer.trim()) return false;
+
+        if (paymentMethod === "cash" && payment < grandTotal) {
+            return false;
+        }
 
         return true;
-
-    }, [orderItems, paymentMethod, payment, grandTotal])
+    }, [orderItems, paymentMethod, payment, grandTotal, customer]);
 
     const placeOrder = async () => {
         const isConfirmed = confirm('Place this order?');
@@ -167,6 +175,7 @@ export default function RightPanel({
 
         const response = await promiseToast(createOrderMutation.mutateAsync({
             order: {
+                customer_name: customer,
                 change,
                 discount,
                 grandTotal,
@@ -193,9 +202,14 @@ export default function RightPanel({
         />
         <Card className="w-90 flex flex-col max-h-full sticky top-0 gap-4 p-3">
             {/* HEADER */}
-            <h1 className="font-bold text-lg">
-                Order Summary
-            </h1>
+            <div className="flex justify-between">
+                <h1 className="font-bold text-lg">
+                    Order Summary
+                </h1>
+                {data?.success && (
+                    <p>Order #{data?.total + 1}</p>
+                )}
+            </div>
 
             {/* ORDER ITEMS LIST */}
             <div className="flex-1 min-h-60 overflow-y-auto space-y-3 pr-1">
@@ -281,6 +295,13 @@ export default function RightPanel({
                         onChange={(e) => setSpecialRequest(e.target.value)}
                     />
                 </div>
+
+                <TextField 
+                    label="Customer Name"
+                    placeholder="Enter customer name"
+                    onChange={(e) => setCustomer(e.target.value)}
+                    value={customer}
+                />
                 <div className="h-[1px] bg-brown" />
                 {/* PAYMENT SUMMARY */}
                 <div className="space-y-2">

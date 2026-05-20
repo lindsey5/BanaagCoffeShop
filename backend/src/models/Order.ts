@@ -2,6 +2,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface OrderAttributes extends Document {
     order_id: string;
+    order_no: number;
+    customer_name: string;
     payment_method: "cash" | "e-wallet" | "card";
     tax: number;
     discount: number;
@@ -18,6 +20,15 @@ const OrderSchema: Schema<OrderAttributes> = new Schema(
         order_id: {
             type: String,
             unique: true
+        },
+
+        order_no: {
+            type: Number,
+        },
+
+        customer_name: {
+            type: String,
+            required: true,
         },
 
         payment_method: {
@@ -77,6 +88,11 @@ OrderSchema.pre("save", async function (this: OrderAttributes) {
         }
 
         this.order_id = generatedId;
+    }
+
+    if(!this.order_no) {
+        const total = await mongoose.models.Order.countDocuments();
+        this.order_no = total + 1;
     }
 
     return;

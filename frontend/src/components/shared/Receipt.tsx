@@ -58,14 +58,21 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
                     <div className="border-t border-gray-400 my-4" />
 
                     {/* Order Info */}
-                    <div className="text-xs">
+                    <div className="text-xs space-y-1">
+                        <p className="font-bold">
+                            Dine In - #{order.order_no}
+                        </p>
+
                         <p className="font-bold">
                             Walk In - Order: {order.order_id}
                         </p>
+                        <p>{formatReceiptDate(order.createdAt)}</p>
                         <p>
                             Server: {order.user.firstname} {order.user.lastname}
                         </p>
-                        <p>{formatReceiptDate(order.createdAt)}</p>
+                        <p>
+                            Customer: {order.customer_name}
+                        </p>
                     </div>
 
                     <div className="border-t border-gray-400 my-4" />

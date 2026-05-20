@@ -3,20 +3,24 @@ import Card from "../../components/ui/Card";
 import PageContainer from "../../components/ui/PageContainer";
 import { useGetRoles } from "../../hooks/role/use-get-roles.hook";
 import { useNavigate } from "react-router-dom";
-import { getPermissionKey } from "../../config/permissions";
+import { getPermissionKey, PERMISSIONS } from "../../config/permissions";
 import Chip from "../../components/ui/Chip";
 import RoleCardSkeleton from "../../components/roles/RoleCardSkeleton";
 import Button from "../../components/ui/Button";
+import usePermissions from "../../hooks/usePermissions";
 
 export default function Roles () {
     const navigate = useNavigate();
     const { data, isFetching } = useGetRoles();
+    const { hasPermissions } = usePermissions();
 
     return (
         <PageContainer title="Role Management" description="Manage user roles and permissions">
-            <div className="flex justify-end">
-                <Button onClick={() => navigate('/dashboard/create-role')}>Create Role</Button>
-            </div>
+            {hasPermissions([PERMISSIONS.ROLE_CREATE]) && (
+                <div className="flex justify-end">
+                    <Button onClick={() => navigate('/dashboard/create-role')}>Create Role</Button>
+                </div>
+            )}
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
             {isFetching ? (
                 Array.from({ length: 6 }).map((_, index) => (

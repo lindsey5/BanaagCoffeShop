@@ -1,10 +1,13 @@
 import type { Menu } from "./menu.type";
+import type { PaginationParams, PaginationResponse } from "./pagination.type";
 import type { ApiResponse } from "./types";
 import type { User } from "./user.type";
 
 export interface Order {
     _id: string;
     order_id: string;
+    order_no: number;
+    customer_name: string;
     payment_method: 'cash' | 'e-wallet' | 'card';
     tax: number;
     discount: number;
@@ -39,6 +42,7 @@ export interface CreateOrderItemDTO {
 }
 
 export interface CreateOrderDTO {
+    customer_name: string;
     payment_method: 'cash' | 'e-wallet' | 'card';
     tax: number;
     discount: number;
@@ -56,4 +60,19 @@ export interface CreateOrderPayload {
 
 export interface CreateOrderResponse extends ApiResponse{
     order: Order;
+}
+
+export interface GetTotalOrdersResponse extends ApiResponse {
+    total: number;
+}
+
+export interface GetOrdersParams extends PaginationParams {
+    search: string;
+    startDate: string;
+    endDate: string;
+    paymentMethod: string;
+}
+
+export interface GetOrdersResponse extends PaginationResponse {
+    orders: Order[];
 }

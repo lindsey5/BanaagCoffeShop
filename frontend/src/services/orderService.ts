@@ -1,5 +1,5 @@
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
-import type { CreateOrderPayload, CreateOrderResponse } from "../types/order.type";
+import { type GetTotalOrdersResponse, type CreateOrderPayload, type CreateOrderResponse, type GetOrdersResponse, type GetOrdersParams } from "../types/order.type";
 
 const baseUrl = 'orders'
 
@@ -9,4 +9,16 @@ export const orderService = {
             method: HttpMethod.POST,
             data
         }),
+
+    getTotalOrders: () => 
+        apiAxios<GetTotalOrdersResponse>(`${baseUrl}/total`, {
+            method: HttpMethod.GET
+        }),
+
+    getOrders: (params : GetOrdersParams) =>
+        apiAxios<GetOrdersResponse>(`${baseUrl}`, {
+            method: HttpMethod.GET,
+            params
+        })
+    
 };
