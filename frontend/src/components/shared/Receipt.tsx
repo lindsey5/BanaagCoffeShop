@@ -65,7 +65,7 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
                     </div>
 
                     <div className="flex justify-between">
-                        <p>Tax</p>
+                        <p>Tax (12%)</p>
                         <p>{formatToPeso(order.tax)}</p>
                     </div>
 
@@ -81,7 +81,7 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
                 <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
                         <p>Mode of Payment</p>
-                        <p>{order.payment_method}</p>
+                        <p className="capitalize">{order.payment_method}</p>
                     </div>
                     <div className="flex justify-between">
                         <p>Payment</p>
