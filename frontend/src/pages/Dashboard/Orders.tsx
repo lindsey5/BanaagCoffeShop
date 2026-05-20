@@ -14,6 +14,7 @@ import SearchField from "../../components/ui/SearchField";
 import Dropdown from "../../components/ui/Dropdown";
 import DateInput from "../../components/ui/DateInput";
 import FiltersMenu from "../../components/ui/FiltersMenu";
+import { formatDate, formatLongDate } from "../../utils/dateUtils";
 
 const paymentMethods = [
     { label: 'All', value: '' }, 
@@ -52,6 +53,12 @@ const getColumns = (setOrder : Dispatch<SetStateAction<Order | null>>) : ColumnD
         header: 'Total',
         accessorKey: 'grandTotal',
         cell: info => formatToPeso(Number(info.getValue())),
+        meta: { align: 'center' }
+    },
+    {
+        header: 'Date',
+        accessorKey: 'createdAt',
+        cell: info => formatLongDate(info.getValue() as string),
         meta: { align: 'center' }
     },
     {
