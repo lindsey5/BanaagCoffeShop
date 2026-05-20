@@ -18,7 +18,7 @@ export const createOrder = async (
         session.startTransaction();
 
         // 1. Create Order
-        const order = await Order.create([req.body.order], { session });
+        const order = await Order.create([{...req.body.order, user_id: req.user._id }], { session });
 
         // 2. Create Order Items
         const orderItems = await OrderItem.insertMany(
@@ -28,6 +28,8 @@ export const createOrder = async (
             })),
             { session }
         );
+
+        const newOrder = await order[0].populate("user");
 
         // 3. Deduct inventory
         for (const item of orderItems) {
@@ -72,7 +74,7 @@ export const createOrder = async (
             success: true,
             message: "Order successfully created.",
             order: {
-                ...order[0].toObject(),
+                ...newOrder.toObject(),
                 orderItems,
             },
         });

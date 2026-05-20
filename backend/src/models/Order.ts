@@ -10,6 +10,7 @@ export interface OrderAttributes extends Document {
     payment: number;
     change: number;
     specialRequest: string;
+    user_id: mongoose.Types.ObjectId;
 }
 
 const OrderSchema: Schema<OrderAttributes> = new Schema(
@@ -50,7 +51,12 @@ const OrderSchema: Schema<OrderAttributes> = new Schema(
         },
         specialRequest: {
             type: String
-        }
+        },
+        user_id: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: [true, "user_id is required."]
+        },
     },
     { timestamps: true }
 );
@@ -81,6 +87,12 @@ OrderSchema.virtual("orderItems", {
     localField: "_id",
     foreignField: "order_id",
 });
+
+OrderSchema.virtual("user", {
+    ref: "User",
+    localField: "_id",
+    foreignField: "user_id",
+})
 
 OrderSchema.set("toObject", { virtuals: true });
 OrderSchema.set("toJSON", { virtuals: true });

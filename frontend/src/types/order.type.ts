@@ -1,5 +1,6 @@
 import type { Menu } from "./menu.type";
 import type { ApiResponse } from "./types";
+import type { User } from "./user.type";
 
 export interface Order {
     _id: string;
@@ -12,7 +13,8 @@ export interface Order {
     subtotal: number;
     grandTotal: number;
     orderItems: OrderItem[];
-    
+    user_id: string;
+    user: User;
     createdAt: string;
     updatedAt: string;
 }

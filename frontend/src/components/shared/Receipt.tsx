@@ -37,9 +37,9 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
 
                 {/* Order Info */}
                 <div className="whitespace-pre-line text-xs">
-                    <p className="font-semibold">DINE IN - #17</p>
+                    <p className="font-semibold">DINE IN</p>
                     <p>Walk In - Order: {order.order_id}</p>
-                    <p>Server: Cabalo</p>
+                    <p>Server: {order.user.firstname} {order.user.lastname}</p>
                     <p>{formatDate(order.createdAt)}</p>
                 </div>
 
@@ -79,6 +79,10 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
 
                 {/* Payment */}
                 <div className="space-y-1 text-xs">
+                    <div className="flex justify-between">
+                        <p>Mode of Payment</p>
+                        <p>{order.payment_method}</p>
+                    </div>
                     <div className="flex justify-between">
                         <p>Payment</p>
                         <p>{formatToPeso(order.payment)}</p>
