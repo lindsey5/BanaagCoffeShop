@@ -4,7 +4,7 @@ import PageContainer from "../../components/ui/PageContainer";
 
 export default function Dashboard () {
     return (
-        <PageContainer title="Dashboard" description="">
+        <PageContainer title="Dashboard" description="Overview of your system metrics">
            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 <OrderSalesToday />
                 <OrderSalesThisWeek />

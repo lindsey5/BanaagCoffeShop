@@ -11,7 +11,6 @@ import {
 
 import { Line } from "react-chartjs-2";
 import { WhiteCard } from "./Card";
-import { useEffect, useState } from "react";
 import { formatToPeso as format } from "../../utils/utils";
 
 ChartJS.register(
@@ -37,15 +36,6 @@ export default function Chart({
     values,
     formatToPeso,
 }: ChartProps) {
-    const [brown, setBrown] = useState("");
-
-    useEffect(() => {
-        const value = getComputedStyle(document.documentElement)
-        .getPropertyValue("--bg-main")
-        .trim();
-
-        setBrown(value);
-    }, []);
 
     const gridColor = "rgba(0,0,0,0.08)";
 
@@ -68,7 +58,7 @@ export default function Chart({
         datasets: [
         {
             data: values,
-            borderColor: brown,
+            borderColor: '#704f3a',
             backgroundColor: (context: any) => {
             const { ctx, chartArea } = context.chart;
             if (!chartArea) return;
@@ -79,7 +69,7 @@ export default function Chart({
             tension: 0.3,
             pointRadius: 0,
             pointHoverRadius: 4,
-            pointHoverBackgroundColor: brown,
+            pointHoverBackgroundColor: '#704f3a',
         },
         ],
     };
@@ -97,9 +87,9 @@ export default function Chart({
         },
         tooltip: {
             backgroundColor: "#ffffff",
-            titleColor: brown,
-            bodyColor: brown,
-            borderColor: brown,
+            titleColor: '#704f3a',
+            bodyColor: '#704f3a',
+            borderColor: '#704f3a',
             borderWidth: 1,
             padding: 10,
             displayColors: false,
@@ -115,7 +105,7 @@ export default function Chart({
         scales: {
         x: {
             ticks: {
-            color: brown,
+            color: '#704f3a',
             maxRotation: 0,
             minRotation: 0,
             },
@@ -125,7 +115,7 @@ export default function Chart({
         },
         y: {
             ticks: {
-            color: brown,
+            color: '#704f3a',
             },
             grid: {
             color: gridColor,

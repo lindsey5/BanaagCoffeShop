@@ -14,7 +14,7 @@ import SearchField from "../../components/ui/SearchField";
 import Dropdown from "../../components/ui/Dropdown";
 import DateInput from "../../components/ui/DateInput";
 import FiltersMenu from "../../components/ui/FiltersMenu";
-import { formatDate, formatLongDate } from "../../utils/dateUtils";
+import { formatLongDate } from "../../utils/dateUtils";
 
 const paymentMethods = [
     { label: 'All', value: '' }, 
