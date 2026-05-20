@@ -92,6 +92,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
     const handleSelectItem = (item: InventoryItem) => {
         setSearch("");
         setItem(item);
+        setValue('inventory_item_id', item._id);
         setOnFocus(false);
     };
 
