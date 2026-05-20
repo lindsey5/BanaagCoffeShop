@@ -12,6 +12,7 @@ interface ProductsProps {
 }
 
 export default function Products ({ isFetching, menus, handleAddItem } : ProductsProps) {
+
     return (
         <div className="flex-1 overflow-y-auto pr-1">
             {isFetching ? (
@@ -23,25 +24,26 @@ export default function Products ({ isFetching, menus, handleAddItem } : Product
             ) : menus?.length ? (
                 <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                     {menus.map((menu) => (
-                    <Card
-                        key={menu._id}
-                        className="flex flex-col items-center gap-3"
+                    <button
+                        className="cursor-pointer"
+                        onClick={() => handleAddItem(menu)}
+                        disabled={menu.status !== 'available'}
                     >
-                        <img
-                        className="w-full h-35 object-contain"
-                        src={menu.image_url || "/placeholder.png"}
-                        alt={menu.name}
-                        />
+                        <Card
+                            key={menu._id}
+                            className="flex flex-col items-center gap-3"
+                        >
+                            <img
+                                className="w-full h-35 object-contain"
+                                src={menu.image_url || "/placeholder.png"}
+                                alt={menu.name}
+                            />
 
-                        <h1>{menu.name}</h1>
-                        <p>{formatToPeso(menu.price)}</p>
-                        <Chip label={menu.status.toUpperCase()} variant={menu.status === 'available' ? 'success' : 'danger'} />
-                        <Button 
-                            className="w-full py-2" 
-                            onClick={() => handleAddItem(menu)}
-                            disabled={menu.status !== 'available'}
-                        >Add</Button>
-                    </Card>
+                            <h1>{menu.name}</h1>
+                            <p>{formatToPeso(menu.price)}</p>
+                            <Chip label={menu.status.toUpperCase()} variant={menu.status === 'available' ? 'success' : 'danger'} />
+                        </Card>
+                    </button>
                     ))}
                 </div>
             ) : (

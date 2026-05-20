@@ -6,6 +6,7 @@ export interface Order {
     payment_method: 'cash' | 'e-wallet' | 'card';
     tax: number;
     discount: number;
+    payment: number;
     change: number;
     subtotal: number;
     grandTotal: number;
@@ -31,4 +32,18 @@ export interface CreateOrderItemDTO {
     price: number;
     quantity: number;
     total: number;
+}
+
+export interface CreateOrderDTO {
+    payment_method: 'cash' | 'e-wallet' | 'card';
+    tax: number;
+    discount: number;
+    change: number;
+    subtotal: number;
+    grandTotal: number;
+}
+
+export interface CreateOrderPayload {
+    order: CreateOrderDTO;
+    orderItems: CreateOrderItemDTO[];
 }

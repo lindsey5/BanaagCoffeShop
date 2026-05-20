@@ -8,7 +8,7 @@ import Products from "../../components/pos/Products";
 import CategoryTab from "../../components/pos/CategoryTab";
 import POSControls from "../../components/pos/POSControls";
 import RightPanel from "../../components/pos/RightPanel";
-import type { CreateOrderItemDTO } from "../../types/order.type";
+import type { CreateOrderDTO, CreateOrderItemDTO } from "../../types/order.type";
 import type { Menu } from "../../types/menu.type";
 import { kgToGram, lToMl } from "../../utils/utils";
 
@@ -91,7 +91,7 @@ export default function POS() {
             description="Create new orders, apply discounts, and generate receipts."
         >
             {/* MAIN LAYOUT */}
-            <div className="flex gap-5 h-[calc(100vh-208px)]">
+            <div className="flex items-start gap-5 h-[calc(100vh)]">
 
                 {/* LEFT SIDE */}
                 <div className="flex-1 flex flex-col min-w-0 space-y-3 overflow-hidden">
