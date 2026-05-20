@@ -18,3 +18,9 @@ export const menuFilterOptions :  Record<string, SortOption> = {
     'A-Z' : { sort: 'name', order: 'asc' },
     'Z-A' : { sort: 'name', order: 'desc' }
 }
+
+export const menuStatusOptions = [
+    { label: 'All', value: '' },
+    { label: 'Available', value: 'available' },
+    { label: 'Unavailable', value: 'unavailable' },
+]

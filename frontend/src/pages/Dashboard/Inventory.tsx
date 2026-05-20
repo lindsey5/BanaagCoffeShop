@@ -119,6 +119,7 @@ export default function Inventory() {
     const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState('');
+    const [status, setStatus] = useState('');
     const debouncedSearch = useDebounce(search, 0.8);
     const [filter, setFilter] = useState<SortOption>({
         sort: 'createdAt',
@@ -132,7 +133,8 @@ export default function Inventory() {
         sort: filter.sort,
         search: debouncedSearch,
         category,
-    }), [pagination, filter, debouncedSearch, category]);
+        status,
+    }), [pagination, filter, debouncedSearch, category, status]);
 
     const { data, isFetching } = useGetInventory(params);
 
@@ -165,6 +167,8 @@ export default function Inventory() {
                 filter={filter}
                 setFilter={setFilter}
                 setShowModal={setShowModal}
+                status={status}
+                setStatus={setStatus}
             />
             <CustomizedTable 
                 isLoading={isFetching}

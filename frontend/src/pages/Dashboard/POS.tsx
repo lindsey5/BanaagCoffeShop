@@ -34,6 +34,7 @@ export default function POS() {
         sort: filter.sort,
         search: debouncedSearch,
         category: category === "All" ? "" : category,
+        status: ''
     }), [pagination, filter, debouncedSearch, category]);
 
     const { data, isFetching } = useGetMenus(params);

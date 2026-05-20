@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { menuCategoryOptions, menuFilterOptions } from "../../lib/contants/menu";
+import { menuCategoryOptions, menuFilterOptions, menuStatusOptions } from "../../lib/contants/menu";
 import { getKeyByValue } from "../../utils/utils";
 import FiltersMenu from "../ui/FiltersMenu";
 import Dropdown from "../ui/Dropdown";
@@ -16,6 +16,8 @@ interface MenuControlsProps{
     filter: SortOption;
     setFilter: Dispatch<SetStateAction<SortOption>>;
     setShowModal: Dispatch<SetStateAction<boolean>>;
+    status: string;
+    setStatus: Dispatch<SetStateAction<string>>;
 }
 
 export default function MenuControls ({ 
@@ -25,7 +27,9 @@ export default function MenuControls ({
     setCategory, 
     filter, 
     setFilter,
-    setShowModal
+    setShowModal,
+    status,
+    setStatus
 } : MenuControlsProps) {
     return (
         <div className="flex-1 flex gap-3 items-end justify-between">
@@ -43,6 +47,13 @@ export default function MenuControls ({
                         options={[{ label: 'All', value: '' }, ...menuCategoryOptions]}
                         value={category}
                         label="Category"
+                    />
+                    <Dropdown 
+                        className="w-30"
+                        onChange={(value) => setStatus(value)}
+                        options={menuStatusOptions}
+                        value={status}
+                        label="Status"
                     />
                     <Dropdown 
                         onChange={(value) => setFilter(menuFilterOptions[value])}
@@ -64,6 +75,12 @@ export default function MenuControls ({
                         options={[{ label: 'All', value: '' }, ...menuCategoryOptions]}
                         value={category}
                         label="Category"
+                    />
+                    <Dropdown 
+                        onChange={(value) => setStatus(value)}
+                        options={menuStatusOptions}
+                        value={status}
+                        label="Status"
                     />
                     <Dropdown 
                         onChange={(value) => setFilter(menuFilterOptions[value])}

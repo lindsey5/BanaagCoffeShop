@@ -29,6 +29,7 @@ export interface GetMenusParams extends PaginationParams {
     sort: string;
     order: 'asc' | 'desc';
     search: string;
+    status: string;
 }
 
 export interface GetMenusResponse extends PaginationResponse {

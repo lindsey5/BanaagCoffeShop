@@ -11,7 +11,7 @@ import Dropdown from "../ui/Dropdown";
 import { useCreateInventory } from "../../hooks/inventory/use-create-inventory.hook";
 import { promiseToast } from "../../utils/sileo";
 import { useUpdateInventory } from "../../hooks/inventory/use-update-inventory.hook";
-import { categoryOptions } from "../../lib/contants/category";
+import { categoryOptions } from "../../lib/contants/inventory";
 import { useEffect } from "react";
 
 interface InventoryModalProps {

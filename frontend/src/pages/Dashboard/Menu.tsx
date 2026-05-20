@@ -93,6 +93,7 @@ export default function Menu () {
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState('');
     const debouncedSearch = useDebounce(search, 0.8);
+    const [status, setStatus] = useState('');
     const [filter, setFilter] = useState<SortOption>({
         sort: 'createdAt',
         order: 'desc'
@@ -105,6 +106,7 @@ export default function Menu () {
         sort: filter.sort,
         search: debouncedSearch,
         category,
+        status
     }), [pagination, filter, debouncedSearch, category]);
 
 
@@ -147,6 +149,8 @@ export default function Menu () {
                     filter={filter}
                     setFilter={setFilter}
                     setShowModal={setShowModal}
+                    status={status}
+                    setStatus={setStatus}
                 />
                 <CustomizedTable 
                     isLoading={isFetching}

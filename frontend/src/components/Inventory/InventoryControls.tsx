@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import SearchField from "../ui/SearchField";
-import { categoryOptions } from "../../lib/contants/category";
+import { categoryOptions, inventoryStatusOptions } from "../../lib/contants/inventory";
 import type { SortOption } from "../../types/types";
 import Dropdown from "../ui/Dropdown";
 import { getKeyByValue } from "../../utils/utils";
@@ -18,6 +18,8 @@ interface InventoryControlsProps {
     filter: SortOption;
     setFilter:  Dispatch<SetStateAction<SortOption>>;
     setShowModal:  Dispatch<SetStateAction<boolean>>;
+    status: string;
+    setStatus: Dispatch<SetStateAction<string>>;
 }
 
 const filterOptions :  Record<string, SortOption> = {
@@ -32,7 +34,9 @@ export default function InventoryControls ({
     setCategory,
     filter,
     setFilter,
-    setShowModal
+    setShowModal,
+    status,
+    setStatus
 } : InventoryControlsProps) {
     const { hasPermissions } = usePermissions();
 
@@ -52,6 +56,13 @@ export default function InventoryControls ({
                         options={[{ label: 'All', value: '' }, ...categoryOptions]}
                         value={category}
                         label="Category"
+                    />
+                    <Dropdown 
+                        className="w-30"
+                        onChange={(value) => setStatus(value)}
+                        options={inventoryStatusOptions}
+                        value={status}
+                        label="Status"
                     />
                     <Dropdown 
                         onChange={(value) => setFilter(filterOptions[value])}
@@ -75,6 +86,12 @@ export default function InventoryControls ({
                         options={[{ label: 'All', value: '' }, ...categoryOptions]}
                         value={category}
                         label="Category"
+                    />
+                    <Dropdown 
+                        onChange={(value) => setStatus(value)}
+                        options={inventoryStatusOptions}
+                        value={status}
+                        label="Status"
                     />
                     <Dropdown 
                         onChange={(value) => setFilter(filterOptions[value])}

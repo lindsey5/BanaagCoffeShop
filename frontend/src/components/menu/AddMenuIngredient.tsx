@@ -87,6 +87,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
         sort: "name",
         page: pagination.pageIndex + 1,
         search: debouncedSearch,
+        status: ''
     });
 
     const handleSelectItem = (item: InventoryItem) => {

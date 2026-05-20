@@ -34,6 +34,7 @@ export interface GetInventoryParams extends PaginationParams {
     sort: string;
     order: 'asc' | 'desc';
     category: string;
+    status: string;
 }
 
 export interface GetInventoryResponse extends PaginationResponse {

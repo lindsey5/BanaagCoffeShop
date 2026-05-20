@@ -40,7 +40,18 @@ export const getInventoryItems = async (req: Request, res: Response, next: NextF
         const order = req.query.order === "asc" ? 1 : -1;
         const category =req.query.category || "";
 
+        const status = req.query.status;
+
         const filter: any = { status: 'active' };
+
+        if(status === 'low-stock') {
+            filter.$expr = { $lte: ["$quantity", "$threshold"] };
+            filter.quantity = { $ne: 0 }
+        }else if(status === 'out-of-stock') {
+            filter.quantity = 0;
+        }else if(status === 'in-stock') {
+            filter.$expr = { $gte: ["$quantity", "$threshold"] }
+        }
 
         if (search) {
             filter.$or = [
@@ -357,3 +368,19 @@ export const getInventoryItemById = async (req: Request, res: Response, next: Ne
         next(err);
     }
 }
+
+export const getTotalInventoryItems = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const total = await InventoryItem.countDocuments({
+            status: "active",
+            $expr: { $lte: ["$quantity", "$threshold"] }
+        });
+
+        res.status(200).json({
+            success: true,
+            total
+        });
+    } catch (err) {
+        next(err);
+    }
+};
