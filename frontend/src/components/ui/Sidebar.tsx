@@ -22,6 +22,9 @@ export default function Sidebar() {
         <aside className="text-white w-60 fixed left-3 bottom-3 top-20">
             <Card className="flex flex-col justify-between h-full w-full overflow-y-auto">
                 <div className="space-y-5">
+                    <div className="flex justify-center">
+                        <img className="w-25 h-25 rounded-full" src="/logo.jpg" alt="" />
+                    </div>
                     <div className="flex flex-col leading-tight">
                         <h1 className="text-sm font-semibold text-white">
                             {user?.firstname} {user?.lastname}
