@@ -91,7 +91,7 @@ export default function POS() {
             description="Create new orders, apply discounts, and generate receipts."
         >
             {/* MAIN LAYOUT */}
-            <div className="flex items-start gap-5 h-[calc(100vh)]">
+            <div className="flex items-start gap-5 min-h-[calc(100vh)]">
 
                 {/* LEFT SIDE */}
                 <div className="flex-1 flex flex-col min-w-0 space-y-3 overflow-hidden">

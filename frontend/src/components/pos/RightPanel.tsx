@@ -55,12 +55,14 @@ export default function RightPanel({
         const tax = discountedSubtotal * taxRate;
         const grandTotal = discountedSubtotal + tax;
 
+        setPayment(paymentMethod === 'cash' ? 0 : grandTotal);
+
         return {
             subtotal,
             tax,
             grandTotal
         };
-    }, [orderItems, discount]);
+    }, [orderItems, discount, paymentMethod]);
 
     const handleQuantity = (menu_id: string, change: number) => {
         setOrderItems(prev =>
@@ -221,11 +223,7 @@ export default function RightPanel({
                                     paymentMethod === p.value &&
                                         "bg-accent"
                                 )}
-                                onClick={() => {
-                                    setPaymentMethod(p.value as "cash" | "card" | "e-wallet")
-                                    if(p.value !== 'cash') setPayment(grandTotal)
-                                    else setPayment(0) 
-                                }}
+                                onClick={() => setPaymentMethod(p.value as "cash" | "card" | "e-wallet")}
                             >
                                 {p.label}
                             </button>
