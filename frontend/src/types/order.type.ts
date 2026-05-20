@@ -3,7 +3,7 @@ import type { Menu } from "./menu.type";
 export interface Order {
     _id: string;
     order_id: string;
-    payment_method: 'cash' | 'e-wallet';
+    payment_method: 'cash' | 'e-wallet' | 'card';
     tax: number;
     discount: number;
     change: number;

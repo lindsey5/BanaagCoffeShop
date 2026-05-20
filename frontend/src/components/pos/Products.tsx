@@ -2,6 +2,7 @@ import type { Menu } from "../../types/menu.type";
 import { formatToPeso } from "../../utils/utils";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
+import Chip from "../ui/Chip";
 import ProductSkeleton from "./ProductSkeleton";
 
 interface ProductsProps {
@@ -34,8 +35,12 @@ export default function Products ({ isFetching, menus, handleAddItem } : Product
 
                         <h1>{menu.name}</h1>
                         <p>{formatToPeso(menu.price)}</p>
-
-                        <Button className="w-full py-2" onClick={() => handleAddItem(menu)}>Add</Button>
+                        <Chip label={menu.status.toUpperCase()} variant={menu.status === 'available' ? 'success' : 'danger'} />
+                        <Button 
+                            className="w-full py-2" 
+                            onClick={() => handleAddItem(menu)}
+                            disabled={menu.status !== 'available'}
+                        >Add</Button>
                     </Card>
                     ))}
                 </div>
