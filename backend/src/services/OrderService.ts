@@ -10,7 +10,6 @@ type Period = "today" | "thisWeek" | "thisMonth" | "thisYear" | "all";
 class OrderService {
     static async getMonthlyOrderSalesByYear(year: number) {
         const match: any = {
-            status: "completed",
             createdAt: {
                 $gte: new Date(year, 0, 1, 0, 0, 0, 0),
                 $lte: new Date(year, 11, 31, 23, 59, 59, 999),
@@ -22,7 +21,7 @@ class OrderService {
             {
                 $group: {
                     _id: { month: { $month: "$createdAt" } },
-                    totalSales: { $sum: "$total_amount" },
+                    totalSales: { $sum: "$grandTotal" },
                 },
             },
             {
@@ -51,7 +50,7 @@ class OrderService {
 
     static async getOrderSales ({ period } : { period: Period }) {
         const now = new Date();
-        const match: any = { status: "completed" };
+        const match: any = { };
 
         // Filter by period
         switch (period) {
@@ -97,7 +96,7 @@ class OrderService {
 
         const result = await Order.aggregate([
             { $match: match },
-            { $group: { _id: null, totalSales: { $sum: "$total_amount" } } }
+            { $group: { _id: null, totalSales: { $sum: "$grandTotal" } } }
         ]);
 
         return result[0]?.totalSales || 0;

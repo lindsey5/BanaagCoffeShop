@@ -1,5 +1,5 @@
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
-import { type GetTotalOrdersResponse, type CreateOrderPayload, type CreateOrderResponse, type GetOrdersResponse, type GetOrdersParams } from "../types/order.type";
+import { type GetTotalOrdersResponse, type CreateOrderPayload, type CreateOrderResponse, type GetOrdersResponse, type GetOrdersParams, type GetOrderMonthlySalesResponse, type GetOrderSalesByPeriodResponse, type Period } from "../types/order.type";
 
 const baseUrl = 'orders'
 
@@ -19,6 +19,18 @@ export const orderService = {
         apiAxios<GetOrdersResponse>(`${baseUrl}`, {
             method: HttpMethod.GET,
             params
+        }),
+
+    getOrderMonthlySales: (year: number) => (
+        apiAxios<GetOrderMonthlySalesResponse>(`orders/sales/monthly?year=${year}`, {
+            method: HttpMethod.GET
         })
+    ),
+
+    getOrderSalesByPeriod: (period: Period) => (
+        apiAxios<GetOrderSalesByPeriodResponse>(`orders/sales/${period}`, {
+            method: HttpMethod.GET
+        })
+    ),
     
 };

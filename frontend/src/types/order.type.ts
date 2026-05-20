@@ -76,3 +76,16 @@ export interface GetOrdersParams extends PaginationParams {
 export interface GetOrdersResponse extends PaginationResponse {
     orders: Order[];
 }
+
+export interface GetOrderMonthlySalesResponse {
+    success: boolean;
+    monthlySales: { month: string, totalSales: number }[];
+    year: number;
+}
+
+export interface GetOrderSalesByPeriodResponse {
+    success: boolean;
+    sales: number;
+}
+
+export type Period = "today" | "this-week" | "this-month" | "this-year";
