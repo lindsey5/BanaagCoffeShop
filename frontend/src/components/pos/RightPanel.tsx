@@ -167,12 +167,13 @@ export default function RightPanel({
     }
 
     return (
+        <>
+        <Receipt 
+            close={() => window.location.reload()}
+            order={order}
+            show={order !== null}
+        />
         <Card className="w-90 flex flex-col max-h-full sticky top-0 gap-4 p-3">
-            <Receipt 
-                close={() => window.location.reload()}
-                order={order}
-                show={order !== null}
-            />
             {/* HEADER */}
             <h1 className="font-bold text-lg">
                 Order Summary
@@ -316,5 +317,6 @@ export default function RightPanel({
 
             </WhiteCard>
         </Card>
+        </>
     );
 }

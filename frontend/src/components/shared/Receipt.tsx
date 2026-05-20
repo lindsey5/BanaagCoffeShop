@@ -1,7 +1,6 @@
 import type { Order } from "../../types/order.type";
 import { formatDate } from "../../utils/dateUtils";
 import { formatToPeso } from "../../utils/utils";
-import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 
 interface ReceiptProps {
@@ -15,7 +14,7 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
 
     return (
         <Modal onClose={close} open={show}>
-            <div className="w-full max-w-md bg-white rounded-lg p-6 text-gray-800 font-mono text-sm leading-relaxed">
+            <div className="max-h-[95vh] overflow-y-auto w-full max-w-md bg-white rounded-lg p-6 text-gray-800 font-mono text-sm leading-relaxed">
 
                 {/* Header */}
                 <div className="text-center whitespace-pre-line">
@@ -101,13 +100,9 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
 
                 {/* Buttons */}
                 <div className="mt-6 flex justify-center gap-2">
-                    <Button className="rounded-md">
-                        Print
-                    </Button>
-
                     <button
                         onClick={close}
-                        className="px-4 bg-black text-white rounded-md hover:bg-gray-800 transition"
+                        className="px-4 py-2 cursor-pointer bg-black text-white rounded-md hover:bg-gray-800 transition"
                     >
                         Close
                     </button>
