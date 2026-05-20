@@ -18,6 +18,7 @@ export interface Order {
 
 export interface OrderItem {
     _id: string;
+    order_id: string;
     menu_id: string;
     menu: Menu;
     price: number;
