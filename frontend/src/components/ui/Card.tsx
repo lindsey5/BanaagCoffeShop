@@ -20,7 +20,7 @@ export default function Card ({ children, className} : CardProps) {
 export function WhiteCard ({ children, className} : CardProps) {
     return (
         <div className={cn(
-            "border border-gray-500 shadow-lg rounded-lg p-5 bg-panel text-brown",
+            "border border-gray-400 shadow-lg rounded-lg p-5 bg-panel text-brown",
             className
         )}>
             {children}
