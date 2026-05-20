@@ -107,7 +107,7 @@ export default function Menu () {
         search: debouncedSearch,
         category,
         status
-    }), [pagination, filter, debouncedSearch, category]);
+    }), [pagination, filter, debouncedSearch, category, status]);
 
 
     const { data, isFetching } = useGetMenus(params);
