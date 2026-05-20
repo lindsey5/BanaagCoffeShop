@@ -65,7 +65,7 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
 
                     {order.discount && (
                         <div className="flex justify-between">
-                            <p>Discount</p>
+                            <p>Discount ({order.discount}%)</p>
                             <p>- {formatToPeso(order.subtotal * (order.discount / 100))}</p>
                         </div>
                     )}
