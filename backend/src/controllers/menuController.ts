@@ -92,7 +92,7 @@ export const getMenus = async (req: Request, res: Response, next: NextFunction) 
         const filter : any = { status: { $in: ['unavailable', 'available']} }
 
         if(search) {
-            filter.or = [
+            filter.$or = [
                 { name: { $regex: search, $options: "i" }},
                 { code: { $regex: search, $options: "i" }}
             ]
