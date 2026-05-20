@@ -41,7 +41,7 @@ export default function Chart({
 
     useEffect(() => {
         const value = getComputedStyle(document.documentElement)
-        .getPropertyValue("--text-brown")
+        .getPropertyValue("--bg-main")
         .trim();
 
         setBrown(value);
@@ -57,8 +57,8 @@ export default function Chart({
         chartArea.bottom
         );
 
-        gradient.addColorStop(0, "rgba(96, 63, 38, 0.6)");
-        gradient.addColorStop(1, "rgba(96, 63, 38, 0)");
+        gradient.addColorStop(0, "rgba(122, 83, 53, 0.88)");
+        gradient.addColorStop(1, "rgba(54, 36, 22, 0)");
 
         return gradient;
     };
