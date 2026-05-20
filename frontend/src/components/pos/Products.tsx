@@ -1,6 +1,5 @@
 import type { Menu } from "../../types/menu.type";
 import { formatToPeso } from "../../utils/utils";
-import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Chip from "../ui/Chip";
 import ProductSkeleton from "./ProductSkeleton";
