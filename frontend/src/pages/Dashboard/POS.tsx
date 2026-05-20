@@ -8,7 +8,7 @@ import Products from "../../components/pos/Products";
 import CategoryTab from "../../components/pos/CategoryTab";
 import POSControls from "../../components/pos/POSControls";
 import RightPanel from "../../components/pos/RightPanel";
-import type { CreateOrderDTO, CreateOrderItemDTO } from "../../types/order.type";
+import type { CreateOrderItemDTO } from "../../types/order.type";
 import type { Menu } from "../../types/menu.type";
 import { kgToGram, lToMl } from "../../utils/utils";
 
