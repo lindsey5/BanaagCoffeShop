@@ -5,7 +5,7 @@ import {
     type SetStateAction
 } from "react";
 
-import type { CreateOrderItemDTO } from "../../types/order.type";
+import type { Order, CreateOrderItemDTO } from "../../types/order.type";
 import Card, { WhiteCard } from "../ui/Card";
 import { cn, formatToPeso, kgToGram, lToMl } from "../../utils/utils";
 import OrderItem from "./OrderItem";
@@ -13,6 +13,7 @@ import Button from "../ui/Button";
 import TextField from "../ui/Textfield";
 import { useCreateOrder } from "../../hooks/order/use-create-order.hook";
 import { promiseToast } from "../../utils/sileo";
+import Receipt from "../shared/Receipt";
 
 interface RightPanelProps {
     orderItems: CreateOrderItemDTO[];
@@ -39,6 +40,7 @@ export default function RightPanel({
     const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | "e-wallet">("cash");
     const [payment, setPayment] = useState(0);
     const [specialRequest, setSpecialRequest] = useState("");
+    const [order, setOrder] = useState<Order | null>(null);
     const [discount, setDiscount] = useState(0);
 
     const { subtotal, tax, grandTotal } = useMemo(() => {
@@ -145,7 +147,7 @@ export default function RightPanel({
 
         if(!isConfirmed) return;
 
-        promiseToast(createOrderMutation.mutateAsync({
+        const response = await promiseToast(createOrderMutation.mutateAsync({
             order: {
                 change,
                 discount,
@@ -157,12 +159,20 @@ export default function RightPanel({
                 specialRequest
             },
             orderItems
-        }));
+        }), "top-center", () => {});
+
+        if(response.success){
+            setOrder(response.order)
+        }
     }
 
     return (
         <Card className="w-90 flex flex-col max-h-full sticky top-0 gap-4 p-3">
-
+            <Receipt 
+                close={() => window.location.reload()}
+                order={order}
+                show={order !== null}
+            />
             {/* HEADER */}
             <h1 className="font-bold text-lg">
                 Order Summary
