@@ -90,8 +90,9 @@ OrderSchema.virtual("orderItems", {
 
 OrderSchema.virtual("user", {
     ref: "User",
-    localField: "_id",
-    foreignField: "user_id",
+    localField: "user_id",
+    foreignField: "_id",
+    justOne: true
 })
 
 OrderSchema.set("toObject", { virtuals: true });

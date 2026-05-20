@@ -41,3 +41,18 @@ export const formatDate = (date: Date | string | null | undefined): string => {
 
     return `${year}-${month}-${day} ${formattedHours}:${minutes} ${ampm}`;
 };
+
+export const formatReceiptDate = (date: string | Date) => {
+    const d = new Date(date);
+
+    const formatted = new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    }).format(d);
+
+    return formatted.replace("AM", "A.M.").replace("PM", "P.M.");
+};

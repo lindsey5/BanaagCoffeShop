@@ -1,5 +1,5 @@
 import type { Order } from "../../types/order.type";
-import { formatDate } from "../../utils/dateUtils";
+import { formatReceiptDate } from "../../utils/dateUtils";
 import { formatToPeso } from "../../utils/utils";
 import Modal from "../ui/Modal";
 
@@ -39,7 +39,7 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
                 <div className="whitespace-pre-line text-xs">
                     <p className="font-bold text-sm">Walk In - Order: {order.order_id}</p>
                     <p>Server: {order.user.firstname} {order.user.lastname}</p>
-                    <p>{formatDate(order.createdAt)}</p>
+                    <p>{formatReceiptDate(order.createdAt)}</p>
                 </div>
 
                 <div className="w-full h-[1px] bg-gray-500 my-4" />
