@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PageContainer from "../../components/ui/PageContainer";
 import { useDebounce } from "../../hooks/useDebounce";
 import type { SortOption } from "../../types/types";
@@ -13,7 +13,7 @@ import type { Menu } from "../../types/menu.type";
 import { kgToGram, lToMl } from "../../utils/utils";
 
 export default function POS() {
-    const [pagination] = useState<PaginationState>({
+    const [pagination, setPagination] = useState<PaginationState>({
         pageSize: 50,
         pageIndex: 0,
     });
@@ -37,6 +37,7 @@ export default function POS() {
     }), [pagination, filter, debouncedSearch, category]);
 
     const { data, isFetching } = useGetMenus(params);
+    const [menus, setMenus] = useState<Menu[]>([]);
     const [orderItems, setOrderItems] = useState<CreateOrderItemDTO[]>([]);
 
     const handleAddItem = (menu: Menu) => {
@@ -119,6 +120,13 @@ export default function POS() {
         setOrderItems(simulated);
     };
 
+    useEffect(() => {
+        if(data?.menus) {
+            if(pagination.pageIndex === 0) setMenus(data.menus);
+            else setMenus(prev => [...prev, ...data.menus])
+        }
+    }, [data])
+
     return (
         <PageContainer
             title="Point of Sale"
@@ -139,8 +147,11 @@ export default function POS() {
                     {/* PRODUCT GRID */}
                     <Products 
                         isFetching={isFetching} 
-                        menus={data?.menus || []}
+                        menus={menus}
                         handleAddItem={handleAddItem}
+                        page={data?.pagination.page || 1}
+                        totalPages={data?.pagination.totalPages || 1}
+                        handleSeeMore={() => setPagination(prev => ({ ...prev, pageIndex: prev.pageIndex + 1}))}
                     />
                 </div>
 
