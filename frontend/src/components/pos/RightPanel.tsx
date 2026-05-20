@@ -140,7 +140,7 @@ export default function RightPanel({
 
     }, [orderItems, paymentMethod, payment, grandTotal])
 
-    const placeOrder = () => {
+    const placeOrder = async () => {
         const isConfirmed = confirm('Place this order?');
 
         if(!isConfirmed) return;

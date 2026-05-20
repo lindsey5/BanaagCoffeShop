@@ -58,7 +58,7 @@ const getColumns = ({ setInventoryItem, setShowModal, handleDelete, hasAnyPermis
     },
     {
         header: "Stock",
-        cell: ({ row }) => `${row.original.quantity} ${row.original.unit.toUpperCase()}`,
+        cell: ({ row }) => `${row.original.quantity.toFixed(2)} ${row.original.unit.toUpperCase()}`,
         meta: { align: 'center' }
     },
     {
