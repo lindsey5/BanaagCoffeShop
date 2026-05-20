@@ -9,13 +9,13 @@ export interface OrderAttributes extends Document {
     grandTotal: number;
     payment: number;
     change: number;
+    specialRequest: string;
 }
 
 const OrderSchema: Schema<OrderAttributes> = new Schema(
     {
         order_id: {
             type: String,
-            required: true,
             unique: true
         },
 
@@ -48,9 +48,33 @@ const OrderSchema: Schema<OrderAttributes> = new Schema(
             type: Number, 
             required: true 
         },
+        specialRequest: {
+            type: String
+        }
     },
     { timestamps: true }
 );
+
+OrderSchema.pre("save", async function (this: OrderAttributes) {
+    if (!this.order_id) {
+        let unique = false;
+        let generatedId = "";
+
+        while (!unique) {
+            const random = Math.random().toString(36).substring(2, 7).toUpperCase();
+
+            generatedId = `ORD-${random}`;
+
+            const existing = await mongoose.models.Order.findOne({ order_id: generatedId });
+
+            if (!existing) unique = true;
+        }
+
+        this.order_id = generatedId;
+    }
+
+    return;
+});
 
 OrderSchema.virtual("orderItems", {
     ref: "OrderItem",

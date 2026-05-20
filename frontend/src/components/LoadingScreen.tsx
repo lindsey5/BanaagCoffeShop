@@ -1,14 +1,17 @@
-import { Coffee } from "lucide-react";
 
 export default function LoadingScreen() {
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-[var(--bg-loading)] backdrop-blur-md z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-panel backdrop-blur-md z-50">
 
             <div className="flex flex-col items-center gap-4">
 
                 {/* Logo */}
-                <div className="w-20 h-20 flex items-center justify-center rounded-full bg-[var(--bg-panel)] shadow-lg animate-pulse">
-                    <Coffee size={40} className="text-[var(--text-brown)]" />
+                <div className="w-30 h-30 p-2 flex items-center justify-center rounded-full bg-[var(--bg-panel)] shadow-lg overflow-hidden">
+                    <img
+                        src="/logo.jpg"
+                        alt="Banaag Coffee Logo"
+                        className="w-full h-full object-cover rounded-full"
+                    />
                 </div>
 
                 {/* Brand Name */}

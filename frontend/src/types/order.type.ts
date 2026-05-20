@@ -1,4 +1,5 @@
 import type { Menu } from "./menu.type";
+import type { ApiResponse } from "./types";
 
 export interface Order {
     _id: string;
@@ -39,12 +40,18 @@ export interface CreateOrderDTO {
     payment_method: 'cash' | 'e-wallet' | 'card';
     tax: number;
     discount: number;
+    payment: number;
     change: number;
     subtotal: number;
     grandTotal: number;
+    specialRequest: string;
 }
 
 export interface CreateOrderPayload {
     order: CreateOrderDTO;
     orderItems: CreateOrderItemDTO[];
+}
+
+export interface CreateOrderResponse extends ApiResponse{
+    order: Order;
 }

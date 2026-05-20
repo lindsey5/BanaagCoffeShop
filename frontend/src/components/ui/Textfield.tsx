@@ -51,7 +51,7 @@ export default function TextField({
                 placeholder={placeholder}
                 onChange={handleChange}
                 className={cn(
-                    "w-full p-3 pr-12 bg-input-ui border text-xs rounded-md outline-none transition-all",
+                    "w-full p-3 pr-12  border text-xs rounded-md outline-none transition-all",
                     icon ? (iconPosition === "left" ? "pl-10" : "pr-10") : "",
                     error
                     ? "border-red-500"

@@ -4,80 +4,163 @@ import MenuIngredient from "../models/MenuIngredient";
 import InventoryItem from "../models/InventoryItem";
 import { kgToGram, lToMl } from "../utils/conversion";
 import { deleteFile, uploadFile } from "../utils/cloudinaryUtils";
+import mongoose from "mongoose";
 
-export const createMenu = async (req: Request, res: Response, next: NextFunction) => {
+export const createMenu = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const session = await mongoose.startSession();
     let uploadedImage = null;
-    
-    try{
+
+    try {
+        session.startTransaction();
+
+        // 1. Check duplicates
         const existingItem = await Menu.findOne({
             status: "available",
-            $or: [ { name: req.body.menu.name }, { code: req.body.menu.code }]
-        });
+            $or: [
+                { name: req.body.menu.name },
+                { code: req.body.menu.code },
+            ],
+        }).session(session);
 
         if (existingItem) {
             if (existingItem.name === req.body.menu.name) {
-                return res.status(409).json({ success: false, message: `${req.body.menu.name} already exists`,});
+                throw {
+                    status: 409,
+                    message: `${req.body.menu.name} already exists`,
+                };
             }
 
             if (existingItem.code === req.body.menu.code) {
-                return res.status(409).json({ success: false, message: `${req.body.menu.code} already exists`,});
+                throw {
+                    status: 409,
+                    message: `${req.body.menu.code} already exists`,
+                };
             }
         }
 
-        if(!req.file) return res.status(404).json({ success: false, message: 'Image is required' });
+        // 2. Validate image
+        if (!req.file) {
+            throw {
+                status: 400,
+                message: "Image is required",
+            };
+        }
 
-        const { public_id: image_public_id, secure_url: image_url } = await uploadFile(req.file.buffer);
+        // 3. Upload image (external side effect)
+        const {
+            public_id: image_public_id,
+            secure_url: image_url,
+        } = await uploadFile(req.file.buffer);
 
-        const menu = await Menu.create({ ...JSON.parse(req.body.menu), image_public_id, image_url });
-        const menuIngredients = await MenuIngredient.insertMany(JSON.parse(req.body.menuIngredients).map((ingredient : any) => ({ ...ingredient, menu_id: menu._id })))
+        uploadedImage = image_public_id;
 
-        const ingredientIds = menuIngredients.map(i => i.inventory_item_id);
+        // 4. Create menu
+        const menu = await Menu.create(
+            [
+                {
+                    ...JSON.parse(req.body.menu),
+                    image_public_id,
+                    image_url,
+                },
+            ],
+            { session }
+        );
 
-        const items = await InventoryItem.find({ 
-            _id: { $in: ingredientIds }
-        })
+        // 5. Insert ingredients
+        const parsedIngredients = JSON.parse(
+            req.body.menuIngredients
+        );
 
-        let status : 'available' | 'unavailable' | 'deleted' = 'available';
-        for(const item of items) {
-            const ingredient = menuIngredients.find(i => i.inventory_item_id === item._id);
-            
-            if(!ingredient) continue;
+        const menuIngredients = await MenuIngredient.insertMany(
+            parsedIngredients.map((ingredient: any) => ({
+                ...ingredient,
+                menu_id: menu[0]._id,
+            })),
+            { session }
+        );
 
-            if(item.quantity < 0) status = 'unavailable';
+        // 6. Fetch inventory items
+        const ingredientIds = menuIngredients.map(
+            (i) => i.inventory_item_id
+        );
 
-            if(item.unit === ingredient.unit){
-                if(ingredient.amount > item.quantity) {
-                    status = 'unavailable';
+        const items = await InventoryItem.find({
+            _id: { $in: ingredientIds },
+        }).session(session);
+
+        // 7. Compute availability
+        let status: "available" | "unavailable" | "deleted" =
+            "available";
+
+        for (const item of items) {
+            const ingredient = menuIngredients.find(
+                (i) =>
+                    String(i.inventory_item_id) === String(item._id)
+            );
+
+            if (!ingredient) continue;
+
+            if (item.quantity < 0) status = "unavailable";
+
+            if (item.unit === ingredient.unit) {
+                if (ingredient.amount > item.quantity) {
+                    status = "unavailable";
                 }
             }
 
-            if(ingredient.unit === 'g' && item.unit === 'kg' && ingredient.amount > kgToGram(item.quantity)){
-                status = 'unavailable';
+            if (
+                ingredient.unit === "g" &&
+                item.unit === "kg" &&
+                ingredient.amount > kgToGram(item.quantity)
+            ) {
+                status = "unavailable";
             }
 
-            if(ingredient.unit === 'ml' && item.unit === 'l' && ingredient.amount > lToMl(item.quantity)){
-                status = 'unavailable';
+            if (
+                ingredient.unit === "ml" &&
+                item.unit === "l" &&
+                ingredient.amount > lToMl(item.quantity)
+            ) {
+                status = "unavailable";
             }
         }
 
-        menu.status = status;
-        await menu.save();
+        // 8. Update menu status
+        menu[0].status = status;
+        await menu[0].save({ session });
 
-        res.status(201).json({
+        // 9. Commit transaction
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.status(201).json({
             success: true,
-            message: 'Menu successfully created',
+            message: "Menu successfully created",
             menu: {
-                ...menu.toObject(),
-                menuIngredients
-            }
+                ...menu[0].toObject(),
+                menuIngredients,
+            },
         });
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
 
-    }catch(err){
-        if(uploadedImage) await deleteFile(uploadedImage);
+        // rollback uploaded image
+        if (uploadedImage) {
+            try {
+                await deleteFile(uploadedImage);
+            } catch (e) {
+                console.error("Image rollback failed:", e);
+            }
+        }
+
         next(err);
     }
-}
-
+};
 export const getMenus = async (req: Request, res: Response, next: NextFunction) => {
 
     try{
@@ -128,87 +211,168 @@ export const getMenus = async (req: Request, res: Response, next: NextFunction) 
     }
 }
 
-export const updateMenu = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMenu = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const session = await mongoose.startSession();
     let uploadedImage = null;
-    try{
+
+    try {
+        session.startTransaction();
+
         const id = req.params.id;
 
+        // 1. Check duplicates
         const existingItem = await Menu.findOne({
-            status: { $in: ['available', 'unavailable']},
-            $or: [ { name: req.body.menu.name }, { code: req.body.menu.code }],
-            _id: { $ne: id }
-        });
+            status: { $in: ["available", "unavailable"] },
+            $or: [
+                { name: req.body.menu.name },
+                { code: req.body.menu.code },
+            ],
+            _id: { $ne: id },
+        }).session(session);
 
         if (existingItem) {
             if (existingItem.name === req.body.menu.name) {
-                return res.status(409).json({ success: false, message: `${req.body.menu.name} already exists` });
+                throw {
+                    status: 409,
+                    message: `${req.body.menu.name} already exists`,
+                };
             }
 
             if (existingItem.code === req.body.menu.code) {
-                return res.status(409).json({ success: false, message: `${req.body.menu.code} already exists` });
+                throw {
+                    status: 409,
+                    message: `${req.body.menu.code} already exists`,
+                };
             }
         }
 
-        const menu = await Menu.findById(id);
+        // 2. Find menu
+        const menu = await Menu.findById(id).session(session);
 
-        if(!menu) return res.status(404).json({ success: false, message: "Menu not found" });
+        if (!menu) {
+            throw {
+                status: 404,
+                message: "Menu not found",
+            };
+        }
 
-        let image_public_id = menu?.image_public_id;
-        let image_url = menu?.image_url;
+        // 3. Handle image update
+        let image_public_id = menu.image_public_id;
+        let image_url = menu.image_url;
 
-        if(req.file){
-            await deleteFile(image_public_id);
+        if (req.file) {
+            await deleteFile(image_public_id); // external (not rollback-safe)
+
             const { public_id, secure_url } = await uploadFile(req.file.buffer);
+
+            uploadedImage = public_id;
+
             image_public_id = public_id;
             image_url = secure_url;
         }
 
-        menu.set({ ...req.body.menu, image_public_id, image_url });
-        await menu.save();
+        // 4. Update menu fields
+        menu.set({
+            ...req.body.menu,
+            image_public_id,
+            image_url,
+        });
 
-        await MenuIngredient.deleteMany({ menu_id: menu._id });
+        await menu.save({ session });
 
-        const menuIngredients = await MenuIngredient.insertMany(JSON.parse(req.body.menuIngredients).map((ingredient : any) => ({ ...ingredient, menu_id: menu._id })))
+        // 5. Replace ingredients
+        await MenuIngredient.deleteMany(
+            { menu_id: menu._id },
+            { session }
+        );
 
-        const ingredientIds = menuIngredients.map(i => i.inventory_item_id);
+        const parsedIngredients = JSON.parse(req.body.menuIngredients);
 
-        const items = await InventoryItem.find({ 
-            _id: { $in: ingredientIds }
-        })
+        const menuIngredients = await MenuIngredient.insertMany(
+            parsedIngredients.map((ingredient: any) => ({
+                ...ingredient,
+                menu_id: menu._id,
+            })),
+            { session }
+        );
 
-        let status : 'available' | 'unavailable' | 'deleted' = 'available';
-        for(const item of items) {
-            const ingredient = menuIngredients.find(i => i.inventory_item_id === item._id);
-            
-            if(!ingredient) continue;
+        // 6. Get inventory items
+        const ingredientIds = menuIngredients.map(
+            (i) => i.inventory_item_id
+        );
 
-            if(item.quantity < 0) status = 'unavailable';
+        const items = await InventoryItem.find({
+            _id: { $in: ingredientIds },
+        }).session(session);
 
-            if(item.unit === ingredient.unit){
-                if(ingredient.amount > item.quantity) {
-                    status = 'unavailable';
+        // 7. Compute status
+        let status: "available" | "unavailable" | "deleted" = "available";
+
+        for (const item of items) {
+            const ingredient = menuIngredients.find(
+                (i) =>
+                    String(i.inventory_item_id) === String(item._id)
+            );
+
+            if (!ingredient) continue;
+
+            if (item.quantity < 0) status = "unavailable";
+
+            if (item.unit === ingredient.unit) {
+                if (ingredient.amount > item.quantity) {
+                    status = "unavailable";
                 }
             }
 
-            if(ingredient.unit === 'g' && item.unit === 'kg' && ingredient.amount > kgToGram(item.quantity)){
-                status = 'unavailable';
+            if (
+                ingredient.unit === "g" &&
+                item.unit === "kg" &&
+                ingredient.amount > kgToGram(item.quantity)
+            ) {
+                status = "unavailable";
             }
 
-            if(ingredient.unit === 'ml' && item.unit === 'l' && ingredient.amount > lToMl(item.quantity)){
-                status = 'unavailable';
+            if (
+                ingredient.unit === "ml" &&
+                item.unit === "l" &&
+                ingredient.amount > lToMl(item.quantity)
+            ) {
+                status = "unavailable";
             }
         }
 
+        // 8. Update menu status
         menu.status = status;
-        await menu.save();
+        await menu.save({ session });
 
-        res.status(200).json({ success: true, message: 'Menu successfully updated' })
+        // 9. Commit transaction
+        await session.commitTransaction();
+        session.endSession();
 
-    }catch(err){
-        if(uploadedImage) await deleteFile(uploadedImage);
+        return res.status(200).json({
+            success: true,
+            message: "Menu successfully updated",
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+
+        // rollback uploaded image (external side-effect)
+        if (uploadedImage) {
+            try {
+                await deleteFile(uploadedImage);
+            } catch (e) {
+                console.error("Image rollback failed:", e);
+            }
+        }
+
         next(err);
     }
-}
+};
 
 export const deleteMenu = async (req: Request, res: Response, next: NextFunction) => {
     try{

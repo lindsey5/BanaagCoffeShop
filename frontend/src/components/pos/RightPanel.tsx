@@ -10,6 +10,9 @@ import Card, { WhiteCard } from "../ui/Card";
 import { cn, formatToPeso, kgToGram, lToMl } from "../../utils/utils";
 import OrderItem from "./OrderItem";
 import Button from "../ui/Button";
+import TextField from "../ui/Textfield";
+import { useCreateOrder } from "../../hooks/order/use-create-order.hook";
+import { promiseToast } from "../../utils/sileo";
 
 interface RightPanelProps {
     orderItems: CreateOrderItemDTO[];
@@ -32,7 +35,10 @@ export default function RightPanel({
     orderItems,
     setOrderItems
 }: RightPanelProps) {
-    const [paymentMethod, setPaymentMethod] = useState("cash");
+    const createOrderMutation = useCreateOrder();
+    const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | "e-wallet">("cash");
+    const [payment, setPayment] = useState(0);
+    const [specialRequest, setSpecialRequest] = useState("");
     const [discount, setDiscount] = useState(0);
 
     const { subtotal, tax, grandTotal } = useMemo(() => {
@@ -117,6 +123,41 @@ export default function RightPanel({
         setOrderItems([]);
     }
 
+    const change = useMemo(() => {
+        if(!orderItems.length) return 0;
+
+        return payment - grandTotal;
+    }, [payment, orderItems, grandTotal]);
+
+    const canPlaceOrder = useMemo(() => {
+        if(!orderItems.length) return false;
+
+        if(paymentMethod === 'cash' && (payment < grandTotal)) return false;
+
+        return true;
+
+    }, [orderItems, paymentMethod, payment, grandTotal])
+
+    const placeOrder = () => {
+        const isConfirmed = confirm('Place this order?');
+
+        if(!isConfirmed) return;
+
+        promiseToast(createOrderMutation.mutateAsync({
+            order: {
+                change,
+                discount,
+                grandTotal,
+                payment_method: paymentMethod,
+                subtotal,
+                tax,
+                payment,
+                specialRequest
+            },
+            orderItems
+        }));
+    }
+
     return (
         <Card className="w-90 flex flex-col max-h-full sticky top-0 gap-4 p-3">
 
@@ -180,16 +221,40 @@ export default function RightPanel({
                                     paymentMethod === p.value &&
                                         "bg-accent"
                                 )}
-                                onClick={() =>
-                                    setPaymentMethod(p.value)
-                                }
+                                onClick={() => {
+                                    setPaymentMethod(p.value as "cash" | "card" | "e-wallet")
+                                    if(p.value !== 'cash') setPayment(grandTotal)
+                                    else setPayment(0) 
+                                }}
                             >
                                 {p.label}
                             </button>
                         ))}
                     </div>
+                    {paymentMethod === 'cash' && (
+                        <TextField 
+                            label="Payment"
+                            placeholder="Enter payment"
+                            type="number"
+                            onChange={(e) => setPayment(Number(e.target.value))}
+                            disabled={orderItems.length < 1}
+                            value={payment || ""}
+                        />
+                    )}
                 </div>
+                <div className="space-y-2">
+                    <h1 className="text-sm font-bold">
+                        Special Request
+                    </h1>
 
+                    <textarea
+                        className="w-full min-h-20 p-2 text-sm bg-white border border-gray-400 rounded-md outline-none resize-none"
+                        placeholder="Add special request..."
+                        value={specialRequest}
+                        onChange={(e) => setSpecialRequest(e.target.value)}
+                        disabled={orderItems.length < 1}
+                    />
+                </div>
                 <div className="h-[1px] bg-brown" />
                 {/* PAYMENT SUMMARY */}
                 <div className="space-y-2">
@@ -211,12 +276,21 @@ export default function RightPanel({
                         </span>
                     </p>
 
-                    <p className="flex justify-between text-sm font-bold">
+                    <p className="flex justify-between text-md font-bold">
                         Total
                         <span>
                             {formatToPeso(grandTotal)}
                         </span>
                     </p>
+
+                    {payment >= grandTotal && (
+                        <p className="flex justify-between text-xs">
+                            Change
+                            <span>
+                                {formatToPeso(change)}
+                            </span>
+                        </p>
+                    )}
                 </div>
 
                 <div className="h-[1px] bg-brown" />
@@ -224,6 +298,8 @@ export default function RightPanel({
                 <div className="grid grid-cols-2 gap-2 text-sm mt-5">
                     <Button
                         className="rounded-md"
+                        disabled={!canPlaceOrder}
+                        onClick={placeOrder}
                     >Print</Button>
                     <button
                         className="bg-red-600 rounded-md text-white cursor-pointer"

@@ -78,54 +78,71 @@ export const getInventoryItems = async (req: Request, res: Response, next: NextF
     }
 };
 
+import mongoose from "mongoose";
+
 export const updateInventoryItem = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
+    const session = await mongoose.startSession();
+
     try {
+        session.startTransaction();
+
         const id = req.params.id;
 
         // 1. Check duplicates (name or code)
         const existingItem = await InventoryItem.findOne({
             status: "active",
             _id: { $ne: id },
-            $or: [{ name: req.body.name }, { code: req.body.code }],
-        });
+            $or: [
+                { name: req.body.name },
+                { code: req.body.code }
+            ],
+        }).session(session);
 
         if (existingItem) {
             if (existingItem.name === req.body.name) {
-                return res.status(409).json({
-                    success: false,
+                throw {
+                    status: 409,
                     message: `${req.body.name} already exists`,
-                });
+                };
             }
 
             if (existingItem.code === req.body.code) {
-                return res.status(409).json({
-                    success: false,
+                throw {
+                    status: 409,
                     message: `${req.body.code} already exists`,
-                });
+                };
             }
         }
 
-        // 2. Update inventory item
+        // 2. Get current inventory item (for old values)
+        const oldValues = await InventoryItem.findById(id).session(session);
+
+        if (!oldValues) {
+            throw {
+                status: 404,
+                message: "Item not found",
+            };
+        }
+
+        // 3. Update inventory item
         const inventoryItem = await InventoryItem.findByIdAndUpdate(
             id,
             req.body,
-            { new: true }
+            { new: true, session }
         );
 
         if (!inventoryItem) {
-            return res.status(404).json({
-                success: false,
+            throw {
+                status: 404,
                 message: "Item not found",
-            });
+            };
         }
 
-        const oldValues = inventoryItem;
-
-        // 3. Find affected menus
+        // 4. Find affected menus
         const affectedMenus = await Menu.aggregate([
             {
                 $lookup: {
@@ -139,7 +156,7 @@ export const updateInventoryItem = async (
             {
                 $match: {
                     "ingredients.inventory_item_id": inventoryItem._id,
-                    status: { $in: ['available', 'unavailable']}
+                    status: { $in: ["available", "unavailable"] },
                 },
             },
             {
@@ -147,70 +164,87 @@ export const updateInventoryItem = async (
                     _id: "$_id",
                 },
             },
-        ]);
+        ]).session(session);
 
         const menuIds = affectedMenus.map((m) => m._id);
 
-        // 4. Recalculate menu availability properly
+        // 5. Recalculate menu availability
         const menus = await Menu.find({
             _id: { $in: menuIds },
-        }).populate("menuIngredients");
+        })
+            .populate("menuIngredients")
+            .session(session);
 
         const bulkOps = [];
 
         for (const menu of menus) {
             const ingredients = await MenuIngredient.find({
                 menu_id: menu._id,
-            });
+            }).session(session);
 
             let isAvailable = true;
 
             for (const ing of ingredients) {
-                const inv = await InventoryItem.findById(ing.inventory_item_id);
+                const inv = await InventoryItem.findById(
+                    ing.inventory_item_id
+                ).session(session);
 
                 if (!inv) {
                     isAvailable = false;
                     break;
                 }
 
-                if(ing.unit === inv.unit){
-                    if(ing.amount > inv.quantity) {
+                if (ing.unit === inv.unit) {
+                    if (ing.amount > inv.quantity) {
                         isAvailable = false;
                         break;
                     }
                 }
 
-                if(ing.unit === 'g' && inv.unit === 'kg' && ing.amount > kgToGram(inv.quantity)){
+                if (
+                    ing.unit === "g" &&
+                    inv.unit === "kg" &&
+                    ing.amount > kgToGram(inv.quantity)
+                ) {
                     isAvailable = false;
                     break;
                 }
 
-                if(ing.unit === 'ml' && inv.unit === 'l' && ing.amount > lToMl(inv.quantity)) {
+                if (
+                    ing.unit === "ml" &&
+                    inv.unit === "l" &&
+                    ing.amount > lToMl(inv.quantity)
+                ) {
                     isAvailable = false;
                     break;
                 }
             }
+
+            const status = (isAvailable ? "available" : "unavailable") as
+                | "available"
+                | "unavailable";
 
             bulkOps.push({
                 updateOne: {
                     filter: { _id: menu._id },
                     update: {
                         $set: {
-                            status: isAvailable
-                                ? ("available" as "available" | "unavailable")
-                                : ("unavailable" as "available" | "unavailable"),
+                            status,
                         },
                     },
                 },
             });
         }
 
-        // 5. Apply bulk update
+        // 6. Apply bulk update
         if (bulkOps.length > 0) {
-            await Menu.bulkWrite(bulkOps);
+            await Menu.bulkWrite(bulkOps, { session });
         }
 
-        // 6. Response
+        // 7. Commit transaction
+        await session.commitTransaction();
+        session.endSession();
+
         return res.status(200).json({
             success: true,
             message: `${inventoryItem.name} successfully updated`,
@@ -218,23 +252,45 @@ export const updateInventoryItem = async (
             newValues: inventoryItem,
         });
     } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
         next(err);
     }
 };
 
-export const deleteInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
-    try{
+export const deleteInventoryItem = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const session = await mongoose.startSession();
+
+    try {
+        session.startTransaction();
+
         const id = req.params.id;
 
-        const inventoryItem = await InventoryItem.findById(id);
+        // 1. Find inventory item
+        const inventoryItem = await InventoryItem.findById(id).session(session);
 
-        if(!inventoryItem) return res.status(404).json({ success: false, message: 'Item not found' });
+        if (!inventoryItem) {
+            throw {
+                status: 404,
+                message: "Item not found",
+            };
+        }
 
-        inventoryItem.status = 'deleted';
-        await inventoryItem.save();
+        // 2. Soft delete inventory item
+        inventoryItem.status = "deleted";
+        await inventoryItem.save({ session });
 
-        await MenuIngredient.deleteMany({ inventory_item_id: inventoryItem._id });
+        // 3. Delete related menu ingredients
+        await MenuIngredient.deleteMany(
+            { inventory_item_id: inventoryItem._id },
+            { session }
+        );
 
+        // 4. Find menus that became empty
         const result = await Menu.aggregate([
             {
                 $lookup: {
@@ -252,20 +308,38 @@ export const deleteInventoryItem = async (req: Request, res: Response, next: Nex
             {
                 $project: { _id: 1 },
             },
-        ]);
+        ]).session(session);
 
-        const unavailableMenuIds = result.map(m => m._id);
-        
-        await Menu.updateMany(
-            { _id: { $in: unavailableMenuIds }, status: 'available' },
-            { $set: { status: "unavailable" } }
-        );
+        const unavailableMenuIds = result.map((m) => m._id);
 
-        res.status(200).json({ success: true, message: 'Item successfully removed' });
-    }catch(err) {
+        // 5. Update menu status
+        if (unavailableMenuIds.length > 0) {
+            await Menu.updateMany(
+                {
+                    _id: { $in: unavailableMenuIds },
+                    status: "available",
+                },
+                {
+                    $set: { status: "unavailable" },
+                },
+                { session }
+            );
+        }
+
+        // 6. Commit transaction
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.status(200).json({
+            success: true,
+            message: "Item successfully removed",
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
         next(err);
     }
-}
+};
 
 export const getInventoryItemById = async (req: Request, res: Response, next: NextFunction) => {
     try{
