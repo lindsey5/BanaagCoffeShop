@@ -24,6 +24,7 @@ export default function Products ({ isFetching, menus, handleAddItem } : Product
                 <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                     {menus.map((menu) => (
                     <button
+                        key={menu._id}
                         className="cursor-pointer"
                         onClick={() => handleAddItem(menu)}
                         disabled={menu.status !== 'available'}
@@ -33,7 +34,7 @@ export default function Products ({ isFetching, menus, handleAddItem } : Product
                             className="flex flex-col items-center gap-3"
                         >
                             <img
-                                className="w-full h-35 object-contain"
+                                className="w-full h-35 object-cover"
                                 src={menu.image_url || "/placeholder.png"}
                                 alt={menu.name}
                             />

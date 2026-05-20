@@ -195,6 +195,7 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
                             <Button
                                 type="submit"
                                 className="px-6 py-2 text-sm"
+                                disabled={updateMenuMutation.isPending || createMenuMutation.isPending}
                             >
                                 {selectedMenu ? 'Save' : 'Submit'}
                             </Button>

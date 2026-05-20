@@ -67,54 +67,70 @@ export default function RightPanel({
     }, [orderItems, discount, paymentMethod]);
 
     const handleQuantity = (menu_id: string, change: number) => {
-        setOrderItems(prev =>
-            prev.map(item => {
+        setOrderItems(prev => {
+            // 1. simulate update first
+            const simulated = prev.map(item => {
                 if (item.menu_id !== menu_id) return item;
 
                 const newQuantity = item.quantity + change;
-                if (newQuantity <= 0) return item;
-
-                let allowed = true;
-
-                for (const ing of item.menu.menuIngredients) {
-                    const inv = ing.inventoryItem;
-                    if (!inv) {
-                        allowed = false;
-                        break;
-                    }
-
-                    const ingAmount = ing.amount * newQuantity;
-
-                    const isSameUnit = inv.unit === ing.unit;
-                    const isKgToG = inv.unit === "kg" && ing.unit === "g";
-                    const isLToMl = inv.unit === "l" && ing.unit === "ml";
-
-                    const availableQty = isKgToG
-                        ? kgToGram(inv.quantity)
-                        : isLToMl
-                        ? lToMl(inv.quantity)
-                        : inv.quantity;
-
-                    if (!isSameUnit && !isKgToG && !isLToMl) {
-                        allowed = false;
-                        break;
-                    }
-
-                    if (availableQty < ingAmount) {
-                        allowed = false;
-                        break;
-                    }
-                }
-
-                if (!allowed) return item;
+                if (newQuantity < 0) return item;
 
                 return {
                     ...item,
                     quantity: newQuantity,
                     total: newQuantity * item.price
                 };
-            })
-        );
+            });
+
+            // 2. compute GLOBAL ingredient usage
+            const ingredientUsage: Record<string, number> = {};
+
+            for (const item of simulated) {
+                for (const ing of item.menu.menuIngredients) {
+                    const inv = ing.inventoryItem;
+                    if (!inv) continue;
+
+                    const key = inv._id;
+
+                    const amountUsed = ing.amount * item.quantity;
+
+                    ingredientUsage[key] =
+                        (ingredientUsage[key] || 0) + amountUsed;
+                }
+            }
+
+            // 3. validate against inventory
+            for (const item of simulated) {
+                for (const ing of item.menu.menuIngredients) {
+                    const inv = ing.inventoryItem;
+                    if (!inv) continue;
+
+                    const key = inv._id;
+                    const used = ingredientUsage[key];
+
+                    const availableQty =
+                        inv.unit === "kg"
+                            ? kgToGram(inv.quantity)
+                            : inv.unit === "l"
+                            ? lToMl(inv.quantity)
+                            : inv.quantity;
+
+                    const isValidUnit =
+                        inv.unit === ing.unit ||
+                        (inv.unit === "kg" && ing.unit === "g") ||
+                        (inv.unit === "l" && ing.unit === "ml");
+
+                    if (!isValidUnit) return prev;
+
+                    if (used > availableQty) {
+                        return prev; // block update
+                    }
+                }
+            }
+
+            // 4. commit if valid
+            return simulated;
+        });
     };
 
     const handleRemove = (menu_id: string) => {
@@ -137,6 +153,8 @@ export default function RightPanel({
         if(!orderItems.length) return false;
 
         if(paymentMethod === 'cash' && (payment < grandTotal)) return false;
+
+        if(orderItems.every(item => item.quantity < 1)) return false;
 
         return true;
 

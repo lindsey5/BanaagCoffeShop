@@ -39,51 +39,85 @@ export default function POS() {
     const { data, isFetching } = useGetMenus(params);
     const [orderItems, setOrderItems] = useState<CreateOrderItemDTO[]>([]);
 
-    const handleAddItem = (menu : Menu) => {
+    const handleAddItem = (menu: Menu) => {
         const existingItem = orderItems.find(item => item.menu_id === menu._id);
 
-        let allowed = true;
-        
-        if(existingItem){
-            const nextQty = existingItem.quantity + 1;
-            for (const ing of existingItem.menu.menuIngredients) {
+        const simulated = existingItem
+            ? orderItems.map(item =>
+                item.menu_id === menu._id
+                    ? {
+                            ...item,
+                            quantity: item.quantity + 1,
+                            total: (item.quantity + 1) * item.price
+                        }
+                    : item
+            )
+            : [
+                ...orderItems,
+                {
+                    menu,
+                    menu_id: menu._id,
+                    price: menu.price,
+                    quantity: 1,
+                    total: menu.price
+                }
+            ];
+
+        // =========================
+        // GLOBAL INGREDIENT USAGE CHECK
+        // =========================
+        const ingredientUsage: Record<string, number> = {};
+
+        for (const item of simulated) {
+            for (const ing of item.menu.menuIngredients) {
                 const inv = ing.inventoryItem;
-                const ingAmount = ing.amount * nextQty;
+                if (!inv) continue;
 
-                const isSameUnit =
-                    inv.unit === ing.unit;
+                const key = inv._id.toString();
 
-                const isKgToG =
-                    inv.unit === "kg" && ing.unit === "g";
+                const amountUsed = ing.amount * item.quantity;
 
-                const isLToMl =
-                    inv.unit === "l" && ing.unit === "ml";
+                ingredientUsage[key] =
+                    (ingredientUsage[key] || 0) + amountUsed;
+            }
+        }
+
+        // =========================
+        // VALIDATION AGAINST INVENTORY
+        // =========================
+        for (const item of simulated) {
+            for (const ing of item.menu.menuIngredients) {
+                const inv = ing.inventoryItem;
+                if (!inv) continue;
+
+                const key = inv._id.toString();
+                const used = ingredientUsage[key];
 
                 const availableQty =
-                    isKgToG
+                    inv.unit === "kg"
                         ? kgToGram(inv.quantity)
-                        : isLToMl
-                            ? lToMl(inv.quantity)
-                            : inv.quantity;
+                        : inv.unit === "l"
+                        ? lToMl(inv.quantity)
+                        : inv.quantity;
 
-                if (!isSameUnit && !isKgToG && !isLToMl) {
-                    allowed = false;
-                    break;
-                }
+                const isValidUnit =
+                    inv.unit === ing.unit ||
+                    (inv.unit === "kg" && ing.unit === "g") ||
+                    (inv.unit === "l" && ing.unit === "ml");
 
-                if (availableQty < ingAmount) {
-                    allowed = false;
-                    break;
+                if (!isValidUnit) return;
+
+                if (used > availableQty) {
+                    return; // block add
                 }
             }
         }
 
-        if(!allowed) return;
-
-        setOrderItems(prev => existingItem ? prev.map(item => item.menu_id === menu._id ? { ...item, quantity: item.quantity + 1, total: item.quantity * item.price } : item) : 
-        [...prev, { menu, menu_id: menu._id, price: menu.price, quantity: 1, total: menu.price }])
-
-    }
+        // =========================
+        // COMMIT STATE ONLY IF VALID
+        // =========================
+        setOrderItems(simulated);
+    };
 
     return (
         <PageContainer
