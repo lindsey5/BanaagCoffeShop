@@ -15,7 +15,6 @@ export const PERMISSIONS = {
 
     // User management
     USER_CREATE: 'user:create',
-    USER_READ: 'user:read',
     USER_READ_ALL: 'user:read:all',
     USER_UPDATE: 'user:update',
     USER_DELETE: 'user:delete',
@@ -76,9 +75,9 @@ export const PERMISSION_DESCRIPTIONS: Record<string, PermissionGroup> = {
     },
 
     "Order Management": {
-        description: "Manage orders by creating transactions and viewing sales records.",
+        description: "Manage orders by creating transactions and viewing order history.",
         ORDER_READ_ALL: "View all orders",
-        ORDER_CREATE: "Access the POS and create an order",
+        ORDER_CREATE: "Access the POS and create transaction",
     },
 };
 

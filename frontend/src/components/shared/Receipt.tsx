@@ -30,7 +30,7 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
         window.print();
 
         document.body.innerHTML = originalContent;
-        //window.location.reload();
+        window.location.reload();
     };
 
     return (

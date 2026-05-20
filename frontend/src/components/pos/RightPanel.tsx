@@ -332,12 +332,13 @@ export default function RightPanel({
                 <div className="grid grid-cols-2 gap-2 text-sm mt-5">
                     <Button
                         className="rounded-md"
-                        disabled={!canPlaceOrder}
                         onClick={placeOrder}
+                        disabled={createOrderMutation.isPending || !canPlaceOrder}
                     >Print</Button>
                     <button
                         className="bg-red-600 rounded-md text-white cursor-pointer"
                         onClick={handleRemoveAll}
+                        disabled={createOrderMutation.isPending}
                     >Cancel</button>
                 </div>
 
