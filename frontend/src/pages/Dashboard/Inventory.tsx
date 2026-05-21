@@ -145,6 +145,8 @@ export default function Inventory() {
     }
 
     const onRowClick = (row: InventoryItem) => {
+        if(!hasPermissions([PERMISSIONS.INVENTORY_UPDATE])) return;
+
         setInventoryItem(row);
         setShowModal(true);
     }

@@ -37,9 +37,11 @@ export default function Roles () {
                                     <p className="text-sm">Users: {role.usersCount}</p>
                                 </div>
                             </div>
-                            <button className="hover:opacity-50 cursor-pointer" onClick={() => navigate(`/dashboard/role/${role._id}`)}>
-                                <Pencil size={20} />
-                        </button>
+                            {hasPermissions([PERMISSIONS.ROLE_UPDATE]) && (
+                                <button className="hover:opacity-50 cursor-pointer" onClick={() => navigate(`/dashboard/role/${role._id}`)}>
+                                    <Pencil size={20} />
+                                </button>
+                            )}
                         </div>
                         <div className="h-[2px] bg-white/50"/>
                         <p className="text-white/80 text-sm xl:text-md">{role.description}</p>

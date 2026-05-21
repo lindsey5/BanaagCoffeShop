@@ -15,3 +15,11 @@ export const inventoryStatusOptions = [
     { label: 'Low Stock', value: 'low-stock' },
     { label: 'Out of Stock', value: 'out-of-stock'}
 ]
+
+export const transactionTypeOptions = [
+    { label: 'All', value: '' },
+    { label: 'Sale', value: 'sale' },
+    { label: 'Damage', value: 'damage' },
+    { label: 'Expired', value: 'expired' },
+    { label: 'Adjustment', value: 'adjustment' }
+]

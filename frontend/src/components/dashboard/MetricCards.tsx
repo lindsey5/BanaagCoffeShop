@@ -4,6 +4,7 @@ import { formatToPeso } from "../../utils/utils";
 import MetricCard, { MetricCardSkeleton } from "./MetricCard";
 import { useGetLowStockItems } from "../../hooks/inventory/use-get-total-low-stocks.hook";
 import { useGetTotalItems } from "../../hooks/inventory/use-get-total-items.hook";
+import { useGetTotalOutOfStocks } from "../../hooks/inventory/use-get-total-out-of-stocks.hook";
 
 export const OrderSalesToday = () => {
     const { data, isFetching } = useGetOrderSalesByPeriod("today");
@@ -69,6 +70,20 @@ export const TotalLowStockItems = () => {
     return (
         <MetricCard 
             title="Low Stocks"
+            content={data?.total.toString() || ""}
+            icon={<TriangleAlert size={25}/>}
+        />
+    )
+}
+
+export const TotalOutOfStocks = () => {
+    const { data, isFetching} = useGetTotalOutOfStocks();
+
+    if(isFetching) return <MetricCardSkeleton />
+
+    return (
+        <MetricCard 
+            title="Out of Stocks"
             content={data?.total.toString() || ""}
             icon={<TriangleAlert size={25}/>}
         />

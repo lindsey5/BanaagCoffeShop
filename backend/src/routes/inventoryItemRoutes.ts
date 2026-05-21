@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, authorizePermission, hasAnyPermission } from "../middlewares/authMiddleware";
 import PERMISSIONS from "../utils/permissions";
-import { createInventoryItem, deleteInventoryItem, getInventoryItemById, getInventoryItems, getTotalInventoryItems, getTotalLowStockInventoryItems, updateInventoryItem } from "../controllers/inventoryItemController";
+import { createInventoryItem, deleteInventoryItem, getInventoryItemById, getInventoryItems, getTotalInventoryItems, getTotalLowStockInventoryItems, getTotalOutOfStocks, updateInventoryItem } from "../controllers/inventoryItemController";
 
 const router = Router();
 
@@ -15,7 +15,7 @@ router.post(
 router.get(
     '/',
     authenticate,
-    authorizePermission(PERMISSIONS.INVENTORY_READ_ALL),
+    hasAnyPermission(PERMISSIONS.INVENTORY_READ_ALL, PERMISSIONS.STOCK_OUT_CREATE),
     getInventoryItems
 )
 
@@ -24,6 +24,13 @@ router.get(
     authenticate,
     authorizePermission(PERMISSIONS.DASHBOARD_VIEW),
     getTotalLowStockInventoryItems
+)
+
+router.get(
+    '/out-of-stocks',
+    authenticate,
+    authorizePermission(PERMISSIONS.DASHBOARD_VIEW),
+    getTotalOutOfStocks
 )
 
 router.get(

@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import SearchField from "../ui/SearchField";
-import { categoryOptions } from "../../lib/contants/inventory";
+import { categoryOptions, transactionTypeOptions } from "../../lib/contants/inventory";
 import Dropdown from "../ui/Dropdown";
 import Button from "../ui/Button";
 import { Plus } from "lucide-react";
@@ -9,14 +9,6 @@ import usePermissions from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../config/permissions";
 import DateInput from "../ui/DateInput";
 import type { PaginationState } from "@tanstack/react-table";
-
-const transactionTypeOptions = [
-    { label: 'All', value: '' },
-    { label: 'Sale', value: 'sale' },
-    { label: 'Damage', value: 'damage' },
-    { label: 'Expired', value: 'expired' },
-    { label: 'Adjustment', value: 'adjustment' }
-]
 
 interface StockOutControlsProps {
     search: string;
@@ -30,6 +22,7 @@ interface StockOutControlsProps {
     transactionType: string;
     setTransactionType: Dispatch<SetStateAction<string>>;
     setPagination: Dispatch<SetStateAction<PaginationState>>;
+    setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function StockOutControls ({ 
@@ -43,7 +36,8 @@ export default function StockOutControls ({
     setEndDate,
     transactionType,
     setTransactionType,
-    setPagination
+    setPagination,
+    setShowModal
 } : StockOutControlsProps) {
     const { hasPermissions } = usePermissions();
 
@@ -51,10 +45,10 @@ export default function StockOutControls ({
         <div className="flex-1 flex gap-3 items-end justify-between">
             <div className="flex gap-5 items-center">
                 <SearchField
-                    className="w-50 lg:w-100"
+                    className="w-60 lg:w-100"
                     onChange={(e) => setSearch(e.target.value)}
                     value={search}
-                    placeholder="Search inventory items..."
+                    placeholder="Search inventory item..."
                 />
                 <FiltersMenu 
                     containerStyle="space-y-3 grid grid-cols-2 gap-3 w-100 z-50 left-0 -translate-x-50"
@@ -99,7 +93,7 @@ export default function StockOutControls ({
                 </FiltersMenu>
             </div>
             {hasPermissions([PERMISSIONS.STOCK_OUT_CREATE]) && (
-                <Button className="w-40 text-xs rounded-md">
+                <Button className="w-40 text-sm rounded-md" onClick={() => setShowModal(true)}>
                     <Plus size={18}/>
                     Create Stock Out
                 </Button>

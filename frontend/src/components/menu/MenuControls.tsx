@@ -7,6 +7,8 @@ import Button from "../ui/Button";
 import { Plus } from "lucide-react";
 import SearchField from "../ui/SearchField";
 import type { SortOption } from "../../types/types";
+import usePermissions from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../config/permissions";
 
 interface MenuControlsProps{
     search: string;
@@ -31,6 +33,8 @@ export default function MenuControls ({
     status,
     setStatus
 } : MenuControlsProps) {
+    const { hasPermissions } = usePermissions();
+
     return (
         <div className="flex-1 flex gap-3 items-end justify-between">
             <SearchField
@@ -62,10 +66,12 @@ export default function MenuControls ({
                         label="Sort"
                     />
                 </div>
-                <Button className="w-35 text-sm rounded-md" onClick={() => setShowModal(true)}>
-                    <Plus size={18}/>
-                    Create Menu
-                </Button>
+                {hasPermissions([PERMISSIONS.MENU_CREATE]) && (
+                    <Button className="w-35 text-sm rounded-md" onClick={() => setShowModal(true)}>
+                        <Plus size={18}/>
+                        Create Menu
+                    </Button>
+                )}
                 <FiltersMenu 
                     className="lg:hidden"
                     containerStyle="space-y-3"

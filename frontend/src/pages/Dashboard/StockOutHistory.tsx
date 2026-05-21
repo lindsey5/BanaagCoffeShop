@@ -7,6 +7,7 @@ import { useGetStockOutHistory } from "../../hooks/stock-out/use-get-stock-outs.
 import Chip from "../../components/ui/Chip";
 import { formatDate } from "../../utils/dateUtils";
 import StockOutControls from "../../components/Inventory/StockOutControls";
+import CreateStockOut from "../../components/Inventory/CreateStockOut";
 
 const columns : ColumnDef<StockOut>[]= [
     {
@@ -54,8 +55,9 @@ export default function StockOutHistory () {
     const [category, setCategory] = useState('');
     const debouncedSearch = useDebounce(search, 0.8);
     const [transactionType, setTransactionType] = useState('');
-     const [startDate, setStartDate] = useState("");
+    const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [showModal, setShowModal] = useState(false);
 
     const params = useMemo<GetStockOutHistoryParams>(() => ({
         limit: pagination.pageSize,
@@ -71,6 +73,10 @@ export default function StockOutHistory () {
 
     return (
         <div className="space-y-3">
+            <CreateStockOut 
+                close={() => setShowModal(false)}
+                show={showModal}
+            />
             <h1 className="font-bold text-lg">Stock Out</h1>
             <StockOutControls 
                 search={search}
@@ -84,6 +90,7 @@ export default function StockOutHistory () {
                 transactionType={transactionType}
                 setTransactionType={setTransactionType}
                 setPagination={setPagination}
+                setShowModal={setShowModal}
             />
             <CustomizedTable 
                 isLoading={isFetching}

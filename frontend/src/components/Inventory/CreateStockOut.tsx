@@ -7,23 +7,22 @@ import type { InventoryItem } from "../../types/inventory.type";
 import { WhiteCard } from "../ui/Card";
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
-import type { MenuIngredientDTO } from "../../types/menu.type";
 import TextField from "../ui/Textfield";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { menuIngredientSchema, type MenuIngredientFormData } from "../../schemas/menuSchema";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { X } from "lucide-react";
 import UnitDropdown from "../shared/UnitDropdown";
+import { stockOutSchema, type StockOutFormData } from "../../schemas/stockOutSchema";
+import { useCreateStockOut } from "../../hooks/stock-out/use-create-stock-out.hook";
+import { promiseToast } from "../../utils/sileo";
+import Dropdown from "../ui/Dropdown";
+import { transactionTypeOptions } from "../../lib/contants/inventory";
 
-interface AddIngredientModalProps { 
-    show: boolean;
-    close: () => void; 
-    handleAdd: (item: MenuIngredientDTO) => void;
-}
-
-export default function AddMenuIngredient({ show, close, handleAdd } : AddIngredientModalProps) {
-    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<MenuIngredientFormData>({
-        resolver: zodResolver(menuIngredientSchema),
+export default function CreateStockOut({ show, close } : { show: boolean, close: () => void }) {
+    const createStockOutMutation = useCreateStockOut();
+    
+    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<StockOutFormData>({
+        resolver: zodResolver(stockOutSchema),
     });
    
     const [item, setItem] = useState<InventoryItem | null>();
@@ -54,15 +53,16 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
         setOnFocus(false);
     };
 
-    const onSubmit : SubmitHandler<MenuIngredientFormData> = (data) => {
-        handleAdd(data);
-        close();
-        setItem(null)
-        reset({
-            amount: undefined,
-            inventory_item_id: undefined,
-            unit: undefined
-        })
+    const onSubmit : SubmitHandler<StockOutFormData> = (data) => {
+        const isConfirmed = confirm('Create this stock out?');
+    
+        if(!isConfirmed) return;
+
+        promiseToast(createStockOutMutation.mutateAsync({
+            ...data,
+            unit: data.unit as "kg" | "g" | "ml" | "l" | "pcs",
+            transaction_type: data.transaction_type as "sale" | "damage" | "expired" | "adjustment"
+        }))
     }
 
     useEffect(() => {
@@ -80,7 +80,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
         >
             <WhiteCard>
                 <form className="relative space-y-3" onSubmit={handleSubmit(onSubmit)}>
-                <h1 className="font-bold">Add Ingredient</h1>
+                <h1 className="font-bold">Create Stock out</h1>
                 <button type="button" className="absolute top-0 right-0 cursor-pointer" onClick={close}>
                     <X size={20} />
                 </button>
@@ -88,7 +88,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                     <SearchField
                         onChange={(e) => setSearch(e.target.value)}
                         value={search}
-                        placeholder="Search ingredients..."
+                        placeholder="Search items..."
                         onFocus={() => setOnFocus(true)}
                         onBlur={() => {
                             setTimeout(() => {
@@ -117,7 +117,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                                 ))
                             ) : (
                                 <div className="p-2 text-sm">
-                                    No ingredients found
+                                    No items found
                                 </div>
                             )}
                             {!isFetching && (data?.pagination.page || 0) < (data?.pagination.totalPages || 0) && (
@@ -141,7 +141,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                     <>
                         <div className="mt-3 p-3 rounded-md bg-panel border border-hover space-y-2">
                             <h1 className="text-sm font-semibold text-brown">
-                                Selected Ingredient
+                                Selected Item
                             </h1>
 
                             <div className="text-sm space-y-1">
@@ -154,16 +154,16 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                         </div>
                         <div className="flex gap-3 items-start">
                             <TextField 
-                                label="Amount"
-                                placeholder="Enter amount"
-                                registration={register('amount', { valueAsNumber: true })}
+                                label="Quantity"
+                                placeholder="Enter quantity"
+                                registration={register('quantity', { valueAsNumber: true })}
                                 onKeyDown={(e) => {
                                     if ((e.key === "." || e.key === "," || e.key === "e" || e.key === "-") && item.unit === 'pcs') {
                                         e.preventDefault();
                                     }
                                 }}
                                 type="number"
-                                error={errors.amount?.message}
+                                error={errors.quantity?.message}
                             />
                             <UnitDropdown 
                                 item={item}
@@ -172,9 +172,14 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                                 }}
                                 value={watch('unit')}
                                 error={errors.unit?.message}
-                            
                             />
                         </div>
+                        <Dropdown 
+                            onChange={(value) => setValue('transaction_type', value)}
+                            options={transactionTypeOptions.filter(opt => opt.label !== 'All' )}
+                            value={watch('transaction_type')}
+                            label="Transaction Type"
+                        />
                     </>
                 )}
 
@@ -183,7 +188,7 @@ export default function AddMenuIngredient({ show, close, handleAdd } : AddIngred
                         disabled={!item}
                         type="submit"
                         className="px-6 text-sm py-2 rounded-md"
-                    >Add Ingredient</Button>
+                    >Create</Button>
                 </div>
                 </form>
             </WhiteCard>

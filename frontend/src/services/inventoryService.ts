@@ -20,6 +20,11 @@ export const inventoryService = {
             method: HttpMethod.GET,
         }),
 
+    getTotalOutOfStocks: () =>
+        apiAxios<GetTotalInventoryItemsResponse>(`${baseUrl}/out-of-stocks`, {
+            method: HttpMethod.GET,
+        }),
+
     getTotalInventoryItems: () =>
         apiAxios<GetTotalInventoryItemsResponse>(`${baseUrl}/total`, {
             method: HttpMethod.GET,

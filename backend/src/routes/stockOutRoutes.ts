@@ -1,9 +1,16 @@
 import { Router } from "express";
 import { authenticate, authorizePermission } from "../middlewares/authMiddleware";
 import PERMISSIONS from "../utils/permissions";
-import { getStockOutHistory } from "../controllers/stockOutController";
+import { createStockOut, getStockOutHistory } from "../controllers/stockOutController";
 
 const router = Router();
+
+router.post(
+    '/',
+    authenticate,
+    authorizePermission(PERMISSIONS.STOCK_OUT_CREATE),
+    createStockOut
+)
 
 router.get(
     '/',

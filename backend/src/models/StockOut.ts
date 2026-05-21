@@ -35,7 +35,7 @@ const StockOutSchema: Schema<StockOutAttributes> = new Schema(
 
         transaction_type: {
             type: String,
-            enum: ["sale", "damage", "transfer", "adjustment"],
+            enum: ["sale", "damage", "expired", "adjustment"],
             required: true,
         },
     },

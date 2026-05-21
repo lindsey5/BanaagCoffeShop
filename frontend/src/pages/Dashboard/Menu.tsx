@@ -131,6 +131,7 @@ export default function Menu () {
     }
 
     const onRowClick = (row : Menu) => {
+        if(!hasPermissions([PERMISSIONS.MENU_UPDATE])) return;
         setSelectedMenu(row);
         setShowModal(true);
     }

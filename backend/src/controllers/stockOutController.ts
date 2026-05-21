@@ -1,6 +1,29 @@
 import { NextFunction, Request, Response } from "express";
 import { setEndDate, setStartDate } from "../utils/dateUtils";
 import StockOut from "../models/StockOut";
+import InventoryItem from "../models/InventoryItem";
+
+export const createStockOut = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const inventoryItem = await InventoryItem.findById(req.body.inventory_item_id);
+
+        if(!inventoryItem) return res.status(404).json({ success: false, message: 'Inventory item id not exist'});
+
+        const stockOut = await StockOut.create(req.body);
+
+        inventoryItem.quantity -= stockOut.quantity;
+        await inventoryItem.save();
+
+        res.status(201).json({
+            success: true,
+            message: "Stock out successfully recorded",
+            stockOut
+        })
+
+    }catch(err){
+        next(err);
+    }
+}
 
 export const getStockOutHistory = async (
     req: Request,
