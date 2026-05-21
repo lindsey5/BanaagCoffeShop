@@ -74,8 +74,8 @@ export default function CreateStockOut({ show, close } : { show: boolean, close:
             return;
         }
 
-        const isConfirmed = confirm('Create this stock out?');
-    
+        const isConfirmed = confirm('Are you sure you want to create this stock out? You cannot undo this action.');
+        
         if(!isConfirmed) return;
 
         promiseToast(createStockOutMutation.mutateAsync({
