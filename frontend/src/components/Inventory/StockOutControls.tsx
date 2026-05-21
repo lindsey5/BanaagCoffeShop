@@ -45,13 +45,13 @@ export default function StockOutControls ({
         <div className="flex-1 flex gap-3 items-end justify-between">
             <div className="flex gap-5 items-center">
                 <SearchField
-                    className="w-60 lg:w-100"
+                    className="w-82 lg:w-100"
                     onChange={(e) => {
                         setSearch(e.target.value);
                         setPagination(prev => ({ ...prev, pageIndex: 0 }))
                     }}
                     value={search}
-                    placeholder="Search inventory item..."
+                    placeholder="Search stock out (Stock Out Id/Name/Code)"
                 />
                 <FiltersMenu 
                     containerStyle="space-y-3 grid grid-cols-2 gap-3 w-100 z-50 left-0 -translate-x-50"

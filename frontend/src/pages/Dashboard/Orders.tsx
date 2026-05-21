@@ -116,7 +116,7 @@ export default function Orders () {
                             setPagination(prev => ({ ...prev, pageIndex: 0 }))
                         }}
                         value={search}
-                        placeholder="Search orders..."
+                        placeholder="Search orders (Order # / Order ID / Customer Name"
                     />
 
                     <div className="lg:flex gap-3 items-center hidden">

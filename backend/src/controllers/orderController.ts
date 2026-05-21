@@ -114,6 +114,7 @@ export const getOrders = async (req: Request, res: Response, next: NextFunction)
             filter.$or = [
                 { customer_name: { $regex: search, $options: "i" } },
                 { order_id: { $regex: search, $options: "i" } },
+                { order_no: search }
             ];
         }
 

@@ -18,7 +18,7 @@ export default function POSControls ({ search, setSearch, filter, setFilter, set
     return (
         <div className="flex items-end gap-3">
             <SearchField
-                placeholder="Search products by code or name..."
+                placeholder="Search products (Code/Name)"
                 onChange={(e) => {
                     setSearch(e.target.value);
                     setPagination(prev => ({ ...prev, pageIndex: 0 }))

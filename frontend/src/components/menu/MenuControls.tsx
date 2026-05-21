@@ -41,13 +41,13 @@ export default function MenuControls ({
     return (
         <div className="flex-1 flex gap-3 items-end justify-between">
             <SearchField
-                className="max-w-50 lg:max-w-100"
+                className="max-w-60 lg:max-w-100"
                 onChange={(e) => {
                     setSearch(e.target.value);
                     setPagination(prev => ({ ...prev, pageIndex: 0 }))
                 }}
                 value={search}
-                placeholder="Search menu..."
+                placeholder="Search menu (Name/Code)"
             />
             <div className="flex items-end gap-3">
                 <div className="lg:flex gap-3 items-center hidden">
