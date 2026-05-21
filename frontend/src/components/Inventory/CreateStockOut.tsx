@@ -75,7 +75,7 @@ export default function CreateStockOut({ show, close } : { show: boolean, close:
         }
 
         const isConfirmed = confirm('Are you sure you want to create this stock out? You cannot undo this action.');
-        
+
         if(!isConfirmed) return;
 
         promiseToast(createStockOutMutation.mutateAsync({
@@ -169,7 +169,7 @@ export default function CreateStockOut({ show, close } : { show: boolean, close:
 
                                 <p>Code: {item.code}</p>
 
-                                <p>Stock: {item.quantity.toFixed(2)}{item.unit.toUpperCase()}</p>
+                                <p>Stock: {item.unit !== 'pcs' ? item.quantity.toFixed(2) : item.quantity}{item.unit.toUpperCase()}</p>
                             </div>
                         </div>
                         <div className="flex gap-3 items-start">
