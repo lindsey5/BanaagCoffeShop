@@ -1,5 +1,6 @@
-import { OrderSalesThisMonth, OrderSalesThisWeek, OrderSalesThisYear, OrderSalesToday } from "../../components/dashboard/MetricCards";
+import { OrderSalesThisMonth, OrderSalesThisWeek, OrderSalesThisYear, OrderSalesToday, TotalInventoryItems, TotalLowStockItems } from "../../components/dashboard/MetricCards";
 import MonthlySales from "../../components/dashboard/MonthlySales";
+import TopProducts from "../../components/dashboard/TopProducts";
 import PageContainer from "../../components/ui/PageContainer";
 
 export default function Dashboard () {
@@ -10,8 +11,13 @@ export default function Dashboard () {
                 <OrderSalesThisWeek />
                 <OrderSalesThisMonth />
                 <OrderSalesThisYear />
+                <TotalLowStockItems />
+                <TotalInventoryItems />
            </div>
-           <MonthlySales />
+           <div className="flex lg:flex-row flex-col gap-5">
+                <MonthlySales />
+                <TopProducts />
+           </div>
         </PageContainer>
     )
 }

@@ -42,11 +42,11 @@ export const PERMISSION_DESCRIPTIONS: Record<string, PermissionGroup> = {
     },
 
     "Menu Management": {
-        description: "Manage menu items including viewing, adding, editing, and removing menu products.",
-        MENU_READ_ALL: "View all menu items",
-        MENU_CREATE: "Add new menu item",
-        MENU_UPDATE: "Update menu item details",
-        MENU_DELETE: "Delete menu item",
+        description: "Manage menu including viewing, adding, editing, and removing menu products.",
+        MENU_READ_ALL: "View all menu",
+        MENU_CREATE: "Add new menu",
+        MENU_UPDATE: "Update menu details",
+        MENU_DELETE: "Delete menu",
     },
 
     "Inventory Management": {
@@ -76,7 +76,7 @@ export const PERMISSION_DESCRIPTIONS: Record<string, PermissionGroup> = {
 
     "Order Management": {
         description: "Manage orders by creating transactions and viewing order history.",
-        ORDER_READ_ALL: "View all orders",
+        ORDER_READ_ALL: "View order history",
         ORDER_CREATE: "Access the POS and create transaction",
     },
 };

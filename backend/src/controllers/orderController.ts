@@ -101,7 +101,6 @@ export const getOrders = async (req: Request, res: Response, next: NextFunction)
 
         if (search) {
             filter.$or = [
-                { order_no: { $regex: search, $options: "i" } },
                 { customer_name: { $regex: search, $options: "i" } },
                 { order_id: { $regex: search, $options: "i" } },
             ];

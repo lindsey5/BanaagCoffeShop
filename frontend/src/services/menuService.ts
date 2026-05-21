@@ -1,5 +1,5 @@
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
-import type { CreateMenuResponse, GetMenusParams, GetMenusResponse } from "../types/menu.type";
+import type { CreateMenuResponse, GetMenusParams, GetMenusResponse, GetTopProductsResponse } from "../types/menu.type";
 import type { ApiResponse } from "../types/types";
 
 const baseUrl = 'menus'
@@ -9,6 +9,11 @@ export const menuService = {
         apiAxios<GetMenusResponse>(`${baseUrl}`, {
             method: HttpMethod.GET,
             params
+        }),
+
+    getGetTopProducts: () =>
+        apiAxios<GetTopProductsResponse>(`${baseUrl}/top-products`, {
+            method: HttpMethod.GET,
         }),
 
     createMenu: (data: FormData) => apiAxios<CreateMenuResponse>(`${baseUrl}`, {

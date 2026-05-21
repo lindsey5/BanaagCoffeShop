@@ -174,7 +174,7 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
                         </div>
                         <h2>Ingredients</h2>
                         {watch('menuIngredients').length > 0 ? (
-                            <div className="mt-3 p-3 rounded-md bg-panel border border-hover space-y-2">
+                            <div className="mt-3 p-3 rounded-md bg-panel border border-hover space-y-3">
                                 {watch('menuIngredients').map(ingredient => (
                                     <Ingredient key={ingredient.inventory_item_id} ingredient={ingredient} remove={handleRemove}/>
                                 ))}

@@ -45,3 +45,8 @@ export interface GetInventoryByIdResponse {
     success: boolean;
     inventoryItem: InventoryItem;
 }
+
+export interface GetTotalInventoryItemsResponse {
+    success: boolean;
+    total: number;
+}

@@ -5,6 +5,7 @@ import InventoryItem from "../models/InventoryItem";
 import { kgToGram, lToMl } from "../utils/conversion";
 import { deleteFile, uploadFile } from "../utils/cloudinaryUtils";
 import mongoose from "mongoose";
+import OrderItem from "../models/OrderItem";
 
 export const createMenu = async (
     req: Request,
@@ -386,6 +387,48 @@ export const deleteMenu = async (req: Request, res: Response, next: NextFunction
         await deleteFile(menu.image_public_id);
 
         res.status(200).json({ success: true, message: 'Menu successfully deleted' });
+    }catch(err){
+        next(err);
+    }
+}
+
+export const getTopProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const topProducts = await OrderItem.aggregate([
+            {
+                $group: {
+                    _id: "$menu_id",
+
+                    totalSold: {
+                        $sum: "$quantity"
+                    }
+                }
+            },
+
+            {
+                $sort: {
+                    totalSold: -1
+                }
+            },
+
+            {
+                $limit: 10
+            },
+
+            {
+                $lookup: {
+                    from: "menus",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "menu"
+                }
+            },
+            {
+                $unwind: "$menu"
+            }
+        ]);
+
+        res.status(200).json({ success: true, topProducts })
     }catch(err){
         next(err);
     }

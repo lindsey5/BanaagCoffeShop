@@ -53,3 +53,13 @@ export interface MenuDTO {
 export interface CreateMenuResponse extends ApiResponse {
     menu: Menu;
 }
+
+export interface TopProduct {
+    _id: string;
+    totalSold: number;
+    menu: Menu;
+}
+
+export interface GetTopProductsResponse {
+    topProducts: TopProduct[];
+}

@@ -11,9 +11,9 @@ export default function Ingredient ({ ingredient, remove } : { ingredient: MenuI
     if(!data?.inventoryItem) return null;
 
     return (
-        <div className="flex justify-between items-center text-xs">
-            <p>{data.inventoryItem.name} {ingredient.amount}{ingredient.unit.toUpperCase()}</p>
-            <button className="cursor-pointer" onClick={handleRemove}>Remove</button>
+        <div className="flex justify-between items-center">
+            <p className="text-sm">{data.inventoryItem.name} {ingredient.amount}{ingredient.unit.toUpperCase()}</p>
+            <button className="text-xs cursor-pointer" onClick={handleRemove}>Remove</button>
         </div>
     )
 }

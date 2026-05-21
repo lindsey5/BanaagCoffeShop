@@ -1,5 +1,5 @@
 import { apiAxios, HttpMethod } from "../lib/api/apiAxios";
-import type { InventoryDTO, InventoryResponse, GetInventoryParams, GetInventoryResponse, GetInventoryByIdResponse } from "../types/inventory.type";
+import type { InventoryDTO, InventoryResponse, GetInventoryParams, GetInventoryResponse, GetInventoryByIdResponse, GetTotalInventoryItemsResponse } from "../types/inventory.type";
 import type { ApiResponse } from "../types/types";
 
 const baseUrl = 'inventory-items'
@@ -12,6 +12,16 @@ export const inventoryService = {
         }),
     getInventoryItemById: (id: string) =>
         apiAxios<GetInventoryByIdResponse>(`${baseUrl}/${id}`, {
+            method: HttpMethod.GET,
+        }),
+
+    getTotalLowStockItems: () =>
+        apiAxios<GetTotalInventoryItemsResponse>(`${baseUrl}/low-stocks`, {
+            method: HttpMethod.GET,
+        }),
+
+    getTotalInventoryItems: () =>
+        apiAxios<GetTotalInventoryItemsResponse>(`${baseUrl}/total`, {
             method: HttpMethod.GET,
         }),
 

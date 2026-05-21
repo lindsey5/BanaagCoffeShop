@@ -20,7 +20,7 @@ router.get(
 )
 
 router.get(
-    '/low-stock',
+    '/low-stocks',
     authenticate,
     authorizePermission(PERMISSIONS.DASHBOARD_VIEW),
     getTotalLowStockInventoryItems
