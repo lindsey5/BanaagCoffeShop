@@ -1,5 +1,5 @@
 import type React from "react";
-import { Menu } from "lucide-react";
+import { Filter } from "lucide-react";
 import { cn } from "../../utils/utils";
 import { WhiteCard } from "./Card";
 import { useEffect, useRef, useState } from "react";
@@ -35,7 +35,7 @@ export default function FiltersMenu({
                 className="p-2 rounded-md cursor-pointer"
                 onClick={() => setShow((prev) => !prev)}
             >
-                <Menu size={20} className={cn(show && "text-brown")} />
+                <Filter size={20} className={cn(show && "text-brown")} />
             </button>
 
             <WhiteCard

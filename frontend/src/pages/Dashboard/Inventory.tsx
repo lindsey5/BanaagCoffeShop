@@ -21,7 +21,7 @@ const getStockStatus = (inventoryItem: InventoryItem) : { label: string, variant
         return { label: "Out of Stock", variant: "danger" };
     }
 
-    if (inventoryItem.quantity < inventoryItem.threshold) {
+    if (inventoryItem.quantity <= inventoryItem.threshold) {
         return { label: "Low Stock", variant: "warning" };
     }
 
@@ -64,6 +64,7 @@ const getColumns = ({ setInventoryItem, setShowModal, handleDelete, hasAnyPermis
     {
         header: "Threshold",
         accessorKey: 'threshold',
+        cell: ({ row }) => `${row.original.unit !== 'pcs' ? row.original.threshold.toFixed(2) : row.original.threshold} ${row.original.unit.toUpperCase()}`,
         meta: { align: 'center' }
     },
     {

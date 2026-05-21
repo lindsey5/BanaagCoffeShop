@@ -13,11 +13,12 @@ export const PERMISSIONS = {
     INVENTORY_UPDATE: 'inventory:update',
     INVENTORY_DELETE: 'inventory:delete',
 
-    // User management
-    USER_CREATE: 'user:create',
-    USER_READ_ALL: 'user:read:all',
-    USER_UPDATE: 'user:update',
-    USER_DELETE: 'user:delete',
+    STOCK_OUT_REAL_ALL: 'stock-out:read:all',
+    STOCK_OUT_CREATE: 'stock-out:create',
+
+    // Order management
+    ORDER_READ_ALL: 'order:read:all',
+    ORDER_CREATE: 'order:create',
 
     // Role management
     ROLE_CREATE: 'role:create',
@@ -25,9 +26,11 @@ export const PERMISSIONS = {
     ROLE_UPDATE: 'role:update',
     ROLE_DELETE: 'role:delete',
 
-    // Order management
-    ORDER_READ_ALL: 'order:read:all',
-    ORDER_CREATE: 'order:create',
+    // User management
+    USER_CREATE: 'user:create',
+    USER_READ_ALL: 'user:read:all',
+    USER_UPDATE: 'user:update',
+    USER_DELETE: 'user:delete',
 };
 
 type PermissionGroup = {
@@ -55,6 +58,8 @@ export const PERMISSION_DESCRIPTIONS: Record<string, PermissionGroup> = {
         INVENTORY_CREATE: "Add new inventory items",
         INVENTORY_UPDATE: "Update inventory item details",
         INVENTORY_DELETE: "Delete inventory item",
+        STOCK_OUT_CREATE: "Create stock out",
+        STOCK_OUT_REAL_ALL: "View stock out history"
     },
 
     "User Management": {

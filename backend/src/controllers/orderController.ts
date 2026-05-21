@@ -8,6 +8,7 @@ import Menu from "../models/Menu";
 import { gramToKg, mlToL } from "../utils/conversion";
 import OrderService from "../services/OrderService";
 import { setEndDate, setStartDate } from "../utils/dateUtils";
+import StockOut from "../models/StockOut";
 
 export const createOrder = async (
     req: AuthRequest,
@@ -65,6 +66,16 @@ export const createOrder = async (
                     inv.quantity -= mlToL(ing.amount);
                     await inv.save({ session });
                 }
+
+
+                await StockOut.create([
+                    {
+                    inventory_item_id: inv._id,
+                        quantity: ing.amount,
+                        unit: ing.unit,
+                        transaction_type: 'sale'
+                    }
+                ], { session })
             }
         }
 

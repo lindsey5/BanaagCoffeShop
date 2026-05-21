@@ -11,6 +11,7 @@ import inventoryItemRoutes from "./routes/inventoryItemRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
 import menuRoutes from "./routes/menuRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import stockOutRoutes from "./routes/stockOutRoutes";
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use("/api/roles", roleRoutes);
 app.use("/api/inventory-items", inventoryItemRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/stock-outs', stockOutRoutes);
 
 app.use(errorHandler);
 

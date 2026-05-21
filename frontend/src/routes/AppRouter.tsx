@@ -11,6 +11,7 @@ import POS from "../pages/Dashboard/POS";
 import Orders from "../pages/Dashboard/Orders";
 import Roles from "../pages/Dashboard/Roles";
 import Role from "../pages/Dashboard/Role";
+import StockOutHistory from "../pages/Dashboard/StockOutHistory";
 
 const router = createBrowserRouter([
     {
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
                         Component: () => (
                             <ProtectedRoute requiredPermissions={[PERMISSIONS.INVENTORY_READ_ALL]}>
                                 <Inventory />
+                            </ProtectedRoute>
+                        )
+                    },
+                    {
+                        path: 'stock-out',
+                        Component: () => (
+                            <ProtectedRoute requiredPermissions={[PERMISSIONS.STOCK_OUT_REAL_ALL]}>
+                                <StockOutHistory />
                             </ProtectedRoute>
                         )
                     }

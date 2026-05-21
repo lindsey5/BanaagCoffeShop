@@ -7,3 +7,11 @@ export interface User {
     role: string;
     createdAt: Date;
 }
+
+export interface CreateUserDTO {
+    firstname: string;
+    lastname: string;
+    password: string;
+    email: string;
+    role_id: string;
+}

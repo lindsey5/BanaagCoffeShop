@@ -110,6 +110,11 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
                             registration={register('quantity', { valueAsNumber: true })}
                             type="number"
                             error={errors.quantity?.message}
+                            onKeyDown={(e) => {
+                                if ((e.key === "." || e.key === "," || e.key === "e" || e.key === "-") && watch('unit') === 'pcs') {
+                                    e.preventDefault();
+                                }
+                            }}
                         />
                         <Dropdown 
                             label="Unit"
@@ -121,7 +126,11 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
                                 { label: 'ml', value: 'ml' },
                                 { label: 'pcs', value: 'pcs' }
                             ]}
-                            onChange={(value) => setValue('unit', value)}
+                            onChange={(value) => {
+                                setValue('quantity', 0);
+                                setValue('threshold', 0);
+                                setValue('unit', value);
+                            }}
                             value={watch('unit')}
                             error={errors.unit?.message}
                             disabled={inventoryItem !== null}
@@ -133,6 +142,11 @@ export default function InventoryItemModal ({ close, inventoryItem, show } : Inv
                         registration={register('threshold', { valueAsNumber: true })}
                         type="number"
                         error={errors.threshold?.message}
+                        onKeyDown={(e) => {
+                            if ((e.key === "." || e.key === "," || e.key === "e" || e.key === "-") && watch('unit') === 'pcs') {
+                                e.preventDefault();
+                            }
+                        }}
                     />
                     <div className="flex justify-end">
                         <Button className="text-sm px-5" type="submit" disabled={createInventoryMutation.isPending || updateInventoryMutation.isPending}>

@@ -12,7 +12,7 @@ export default function Chip({
     className,
 }: ChipProps) {
     const variants = {
-        default: "bg-panel/80 text-brown",
+        default: "bg-brown/50 text-white",
         success: "bg-green-100 text-green-700",
         warning: "bg-yellow-100 text-yellow-700",
         danger: "bg-red-100 text-red-700",

@@ -2,14 +2,9 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface PurchaseOrderItem {
     inventory_item_id: mongoose.Types.ObjectId;
-    code: string;
-    name: string;
-    brand: string;
-    category: string;
-    unit: "kg" | "g" | "ml" | "l" | "pcs";
     quantity: number;
-    cost: number;
-    total: number;
+    unit_cost: number;
+    total_cost: number;
 }
 
 export interface PurchaseOrderAttributes extends Document {
@@ -45,38 +40,17 @@ const PurchaseOrderSchema: Schema<PurchaseOrderAttributes> = new Schema(
                     ref: "InventoryItem",
                     required: true,
                 },
-                code: {
-                    type: String,
-                    required: true,
-                },
-                name: {
-                    type: String,
-                    required: true,
-                },
-                brand: {
-                    type: String,
-                    required: true,
-                },
-                category: {
-                    type: String,
-                    required: true,
-                },
-                unit: {
-                    type: String,
-                    required: true,
-                    enum: ["kg", "g", "l", "ml", "pcs"],
-                },
                 quantity: {
                     type: Number,
                     required: true,
                     min: [1, "Quantity must be at least 1."],
                 },
-                cost: {
+                unit_cost: {
                     type: Number,
                     required: true,
                     min: [0, "Cost cannot be negative."],
                 },
-                total: {
+                cost_total: {
                     type: Number,
                     required: true,
                     min: [0, "Total cannot be negative."],
