@@ -46,7 +46,10 @@ export default function StockOutControls ({
             <div className="flex gap-5 items-center">
                 <SearchField
                     className="w-60 lg:w-100"
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                        setSearch(e.target.value);
+                        setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                    }}
                     value={search}
                     placeholder="Search inventory item..."
                 />

@@ -9,6 +9,7 @@ import { Plus } from "lucide-react";
 import FiltersMenu from "../ui/FiltersMenu";
 import usePermissions from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../config/permissions";
+import type { PaginationState } from "@tanstack/react-table";
 
 interface InventoryControlsProps {
     search: string;
@@ -20,6 +21,7 @@ interface InventoryControlsProps {
     setShowModal:  Dispatch<SetStateAction<boolean>>;
     status: string;
     setStatus: Dispatch<SetStateAction<string>>;
+    setPagination: Dispatch<SetStateAction<PaginationState>>;
 }
 
 const filterOptions :  Record<string, SortOption> = {
@@ -36,7 +38,8 @@ export default function InventoryControls ({
     setFilter,
     setShowModal,
     status,
-    setStatus
+    setStatus,
+    setPagination
 } : InventoryControlsProps) {
     const { hasPermissions } = usePermissions();
 
@@ -44,7 +47,10 @@ export default function InventoryControls ({
         <div className="flex-1 flex gap-3 items-end justify-between">
             <SearchField
                 className="max-w-50 lg:max-w-100"
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                }}
                 value={search}
                 placeholder="Search inventory items..."
             />
@@ -52,20 +58,29 @@ export default function InventoryControls ({
                 <div className="lg:flex gap-3 items-center hidden">
                     <Dropdown 
                         className="w-40"
-                        onChange={(value) => setCategory(value)}
+                        onChange={(value) => {
+                            setCategory(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={[{ label: 'All', value: '' }, ...categoryOptions]}
                         value={category}
                         label="Category"
                     />
                     <Dropdown 
                         className="w-30"
-                        onChange={(value) => setStatus(value)}
+                        onChange={(value) => {
+                            setStatus(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={inventoryStatusOptions}
                         value={status}
                         label="Status"
                     />
                     <Dropdown 
-                        onChange={(value) => setFilter(filterOptions[value])}
+                        onChange={(value) => {
+                            setFilter(filterOptions[value]);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={Object.keys(filterOptions).map(opt => ({ label: opt, value: opt }))}
                         value={getKeyByValue(filterOptions, filter) || ""}
                         label="Sort"
@@ -82,19 +97,28 @@ export default function InventoryControls ({
                     containerStyle="space-y-3"
                 >
                     <Dropdown 
-                        onChange={(value) => setCategory(value)}
+                        onChange={(value) => {
+                            setCategory(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={[{ label: 'All', value: '' }, ...categoryOptions]}
                         value={category}
                         label="Category"
                     />
                     <Dropdown 
-                        onChange={(value) => setStatus(value)}
+                        onChange={(value) => {
+                            setStatus(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={inventoryStatusOptions}
                         value={status}
                         label="Status"
                     />
                     <Dropdown 
-                        onChange={(value) => setFilter(filterOptions[value])}
+                        onChange={(value) => {
+                            setFilter(filterOptions[value]);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={Object.keys(filterOptions).map(opt => ({ label: opt, value: opt }))}
                         value={getKeyByValue(filterOptions, filter) || ""}
                         label="Sort"

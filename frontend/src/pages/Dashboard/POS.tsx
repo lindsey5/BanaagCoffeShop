@@ -143,7 +143,13 @@ export default function POS() {
                     <CategoryTab category={category} setCategory={setCategory}/>
 
                     {/* SEARCH + SORT */}
-                    <POSControls search={search} setSearch={setSearch} filter={filter} setFilter={setFilter}/>
+                    <POSControls 
+                        search={search} 
+                        setSearch={setSearch} 
+                        filter={filter} 
+                        setFilter={setFilter}
+                        setPagination={setPagination}
+                    />
 
                     {/* PRODUCT GRID */}
                     <Products 

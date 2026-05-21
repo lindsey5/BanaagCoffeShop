@@ -9,6 +9,7 @@ import SearchField from "../ui/SearchField";
 import type { SortOption } from "../../types/types";
 import usePermissions from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../config/permissions";
+import type { PaginationState } from "@tanstack/react-table";
 
 interface MenuControlsProps{
     search: string;
@@ -20,6 +21,7 @@ interface MenuControlsProps{
     setShowModal: Dispatch<SetStateAction<boolean>>;
     status: string;
     setStatus: Dispatch<SetStateAction<string>>;
+    setPagination: Dispatch<SetStateAction<PaginationState>>;
 }
 
 export default function MenuControls ({ 
@@ -31,7 +33,8 @@ export default function MenuControls ({
     setFilter,
     setShowModal,
     status,
-    setStatus
+    setStatus,
+    setPagination
 } : MenuControlsProps) {
     const { hasPermissions } = usePermissions();
 
@@ -39,7 +42,10 @@ export default function MenuControls ({
         <div className="flex-1 flex gap-3 items-end justify-between">
             <SearchField
                 className="max-w-50 lg:max-w-100"
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                }}
                 value={search}
                 placeholder="Search menu..."
             />
@@ -47,20 +53,29 @@ export default function MenuControls ({
                 <div className="lg:flex gap-3 items-center hidden">
                     <Dropdown 
                         className="w-40"
-                        onChange={(value) => setCategory(value)}
+                        onChange={(value) => {
+                            setCategory(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={[{ label: 'All', value: '' }, ...menuCategoryOptions]}
                         value={category}
                         label="Category"
                     />
                     <Dropdown 
                         className="w-30"
-                        onChange={(value) => setStatus(value)}
+                        onChange={(value) => {
+                            setStatus(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={menuStatusOptions}
                         value={status}
                         label="Status"
                     />
                     <Dropdown 
-                        onChange={(value) => setFilter(menuFilterOptions[value])}
+                        onChange={(value) => { 
+                            setFilter(menuFilterOptions[value]);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={Object.keys(menuFilterOptions).map(opt => ({ label: opt, value: opt }))}
                         value={getKeyByValue(menuFilterOptions, filter) || ""}
                         label="Sort"
@@ -77,19 +92,28 @@ export default function MenuControls ({
                     containerStyle="space-y-3"
                 >
                     <Dropdown 
-                        onChange={(value) => setCategory(value)}
+                        onChange={(value) => { 
+                            setCategory(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }));
+                        }}
                         options={[{ label: 'All', value: '' }, ...menuCategoryOptions]}
                         value={category}
                         label="Category"
                     />
                     <Dropdown 
-                        onChange={(value) => setStatus(value)}
+                        onChange={(value) => { 
+                            setStatus(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }));
+                        }}
                         options={menuStatusOptions}
                         value={status}
                         label="Status"
                     />
                     <Dropdown 
-                        onChange={(value) => setFilter(menuFilterOptions[value])}
+                        onChange={(value) => { 
+                            setFilter(menuFilterOptions[value]);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         options={Object.keys(menuFilterOptions).map(opt => ({ label: opt, value: opt }))}
                         value={getKeyByValue(menuFilterOptions, filter) || ""}
                         label="Sort"

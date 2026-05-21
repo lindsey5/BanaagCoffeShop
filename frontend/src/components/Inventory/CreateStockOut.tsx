@@ -108,7 +108,7 @@ export default function CreateStockOut({ show, close } : { show: boolean, close:
                     <SearchField
                         onChange={(e) => setSearch(e.target.value)}
                         value={search}
-                        placeholder="Search items..."
+                        placeholder="Search item..."
                         onFocus={() => setOnFocus(true)}
                         onBlur={() => {
                             setTimeout(() => {

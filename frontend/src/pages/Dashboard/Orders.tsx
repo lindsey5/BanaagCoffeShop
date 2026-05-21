@@ -111,7 +111,10 @@ export default function Orders () {
                 <div className="flex-1 flex gap-3 items-end justify-between">
                     <SearchField
                         className="max-w-50 lg:max-w-100"
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
                         value={search}
                         placeholder="Search orders..."
                     />
@@ -145,7 +148,10 @@ export default function Orders () {
                         containerStyle="space-y-3"
                     >
                         <Dropdown 
-                            onChange={(value) => setPaymentMethod(value)}
+                            onChange={(value) => { 
+                                setPaymentMethod(value);
+                                setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                            }}
                             options={paymentMethods}
                             value={paymentMethod}
                             label="Payment Method"

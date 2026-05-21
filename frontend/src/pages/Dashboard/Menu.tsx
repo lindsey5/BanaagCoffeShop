@@ -152,6 +152,7 @@ export default function Menu () {
                     setShowModal={setShowModal}
                     status={status}
                     setStatus={setStatus}
+                    setPagination={setPagination}
                 />
                 <CustomizedTable 
                     isLoading={isFetching}

@@ -172,6 +172,7 @@ export default function Inventory() {
                 setShowModal={setShowModal}
                 status={status}
                 setStatus={setStatus}
+                setPagination={setPagination}
             />
             <CustomizedTable 
                 isLoading={isFetching}
