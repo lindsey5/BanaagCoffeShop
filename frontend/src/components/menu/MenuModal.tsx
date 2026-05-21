@@ -86,14 +86,6 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
         promiseToast(selectedMenu ? updateMenuMutation.mutateAsync({ data: formData, id: selectedMenu._id }) : createMenuMutation.mutateAsync(formData))
     }
 
-    const handleRemove = (id: string) => {
-        const isConfirmed = confirm('Are you sure you want to remove this ingredient?');
-
-        if(!isConfirmed) return;
-
-        setValue('menuIngredients', watch('menuIngredients').filter(ingredient => ingredient.inventory_item_id !== id))
-    }
-
     useEffect(() => {
         if(selectedMenu) {
             reset(selectedMenu);
@@ -176,7 +168,12 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
                         {watch('menuIngredients').length > 0 ? (
                             <div className="mt-3 p-3 rounded-md bg-panel border border-hover space-y-3">
                                 {watch('menuIngredients').map(ingredient => (
-                                    <Ingredient key={ingredient.inventory_item_id} ingredient={ingredient} remove={handleRemove}/>
+                                    <Ingredient 
+                                        key={ingredient.inventory_item_id} 
+                                        ingredient={ingredient} 
+                                        setValue={setValue}
+                                        watch={watch}
+                                    />
                                 ))}
                             </div>
                         ) : (
