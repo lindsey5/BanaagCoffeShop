@@ -90,6 +90,7 @@ export const createMenu = async (
         );
 
         const items = await InventoryItem.find({
+            status: 'active',
             _id: { $in: ingredientIds },
         }).session(session);
 
@@ -103,7 +104,10 @@ export const createMenu = async (
                     String(i.inventory_item_id) === String(item._id)
             );
 
-            if (!ingredient) continue;
+            if (!ingredient) {
+                status = "unavailable";
+                continue;
+            };
 
             if (item.quantity < 0) status = "unavailable";
 
@@ -307,6 +311,7 @@ export const updateMenu = async (
         );
 
         const items = await InventoryItem.find({
+            status: 'active',
             _id: { $in: ingredientIds },
         }).session(session);
 
@@ -319,7 +324,10 @@ export const updateMenu = async (
                     String(i.inventory_item_id) === String(item._id)
             );
 
-            if (!ingredient) continue;
+            if (!ingredient) {
+                status = "unavailable";
+                continue;
+            };
 
             if (item.quantity < 0) status = "unavailable";
 
