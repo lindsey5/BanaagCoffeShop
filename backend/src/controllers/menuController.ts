@@ -176,6 +176,7 @@ export const getMenus = async (req: Request, res: Response, next: NextFunction) 
         const sort = req.query.sort ? String(req.query.sort) : 'name';
         const order = req.query.order === 'asc' ? 1 : -1;
         const search = req.query.search;
+        const status = req.query.status;
 
         const filter : any = { status: { $in: ['unavailable', 'available']} }
 
@@ -184,6 +185,10 @@ export const getMenus = async (req: Request, res: Response, next: NextFunction) 
                 { name: { $regex: search, $options: "i" }},
                 { code: { $regex: search, $options: "i" }}
             ]
+        }
+
+        if(status) {
+            filter.status = status;
         }
 
         if(category) {
