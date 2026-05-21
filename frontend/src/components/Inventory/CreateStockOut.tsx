@@ -17,11 +17,12 @@ import { useCreateStockOut } from "../../hooks/stock-out/use-create-stock-out.ho
 import { promiseToast } from "../../utils/sileo";
 import Dropdown from "../ui/Dropdown";
 import { transactionTypeOptions } from "../../lib/contants/inventory";
+import { kgToGram, lToMl } from "../../utils/utils";
 
 export default function CreateStockOut({ show, close } : { show: boolean, close: () => void }) {
     const createStockOutMutation = useCreateStockOut();
     
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<StockOutFormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, setError } = useForm<StockOutFormData>({
         resolver: zodResolver(stockOutSchema),
     });
    
@@ -54,6 +55,25 @@ export default function CreateStockOut({ show, close } : { show: boolean, close:
     };
 
     const onSubmit : SubmitHandler<StockOutFormData> = (data) => {
+        if(item) {
+            if(item.unit === data.unit && item.quantity < data.quantity) {
+                setError('quantity', { message: `Quantity should not greater than ${item.quantity}`});
+                return;
+            }
+
+            if(item.unit === 'kg' && data.unit === 'g' && kgToGram(item.quantity) < data.quantity) {
+                setError('quantity', { message: `Quantity should not greater than ${kgToGram(item.quantity)}`});
+                return;
+            }
+
+            if(item.unit === 'l' && data.unit === 'ml' && lToMl(item.quantity) < data.quantity) {
+                setError('quantity', { message: `Quantity should not greater than ${kgToGram(item.quantity)}`});
+                return;
+            }
+
+            return;
+        }
+
         const isConfirmed = confirm('Create this stock out?');
     
         if(!isConfirmed) return;
@@ -185,7 +205,7 @@ export default function CreateStockOut({ show, close } : { show: boolean, close:
 
                 <div className="flex justify-end">
                     <Button
-                        disabled={!item}
+                        disabled={!item || createStockOutMutation.isPending}
                         type="submit"
                         className="px-6 text-sm py-2 rounded-md"
                     >Create</Button>
