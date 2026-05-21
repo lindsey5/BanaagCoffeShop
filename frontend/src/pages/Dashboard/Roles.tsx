@@ -46,10 +46,10 @@ export default function Roles () {
                         <p className="text-white/60 text-xs xl:text-sm mt-2">Permissions ({role.permissions.length})</p>
                         <div className="flex flex-wrap gap-2">
                             {role.permissions.slice(0, 5).map(perm => (
-                                <Chip key={perm.action} label={getPermissionKey(perm.action) || ""} />
+                                <Chip variant="success" key={perm.action} label={getPermissionKey(perm.action) || ""} />
                             ))}
                             {role.permissions.length > 5 && (
-                                <Chip label={`+${role.permissions.length - 5}`}/>
+                                <Chip variant="success" label={`+${role.permissions.length - 5}`}/>
                             )}
                         </div>
                     </Card>
