@@ -13,6 +13,7 @@ import Roles from "../pages/Dashboard/Roles";
 import Role from "../pages/Dashboard/Role";
 import StockOutHistory from "../pages/Dashboard/StockOutHistory";
 import Users from "../pages/Dashboard/Users";
+import Suppliers from "../pages/Dashboard/Suppliers";
 
 const router = createBrowserRouter([
     {
@@ -52,6 +53,14 @@ const router = createBrowserRouter([
                         Component: () => (
                             <ProtectedRoute requiredPermissions={[PERMISSIONS.STOCK_OUT_REAL_ALL]}>
                                 <StockOutHistory />
+                            </ProtectedRoute>
+                        )
+                    },
+                    {
+                        path: 'suppliers',
+                        Component: () => (
+                            <ProtectedRoute requiredPermissions={[PERMISSIONS.SUPPLIER_READ_ALL]}>
+                                <Suppliers />
                             </ProtectedRoute>
                         )
                     }
