@@ -19,7 +19,6 @@ router.get(
         PERMISSIONS.ROLE_READ_ALL, 
         PERMISSIONS.USER_CREATE, 
         PERMISSIONS.USER_READ_ALL, 
-        PERMISSIONS.USER_DELETE, 
         PERMISSIONS.USER_UPDATE
     ),
     getAllRoles

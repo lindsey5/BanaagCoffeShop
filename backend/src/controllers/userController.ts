@@ -69,11 +69,13 @@ export const getUsers = async (req: AuthRequest, res: Response, next: NextFuncti
 
         res.status(200).json({
             success: true,
-            page,
-            limit,
-            totalPages,
-            total,
             users,
+            pagination: {
+                page,
+                limit,
+                totalPages,
+                total,
+            }
         });
 
     } catch (err) {

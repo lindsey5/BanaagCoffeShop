@@ -3,20 +3,23 @@ import { NavLink, useLocation } from "react-router-dom";
 import { PointOfSale } from "@mui/icons-material";
 import Card from "./Card";
 import { useAuthStore } from "../../lib/store/authStore";
+import usePermissions from "../../hooks/usePermissions";
+import { PERMISSIONS } from "../../config/permissions";
 
 const items = [
-    { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
-    { path: "/dashboard/inventory", label: "Inventory", icon: <Archive size={18} /> },
-    { path: "/dashboard/menu", label: "Menu Management", icon: <Coffee size={18} /> },
-    { path: "/dashboard/pos", label: "POS", icon: <PointOfSale sx={{ width: 18, height: 18 }} /> },
-    { path: "/dashboard/orders", label: "Orders", icon: <ClipboardList size={18} /> },
-    { path: '/dashboard/roles', label: "Roles", icon: <Shield size={18}/>},
-    { path: '/dashboard/users', label: 'Users', icon: <User size={18}/>}
+    { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, permission: PERMISSIONS.DASHBOARD_VIEW },
+    { path: "/dashboard/inventory", label: "Inventory", icon: <Archive size={18} />, permission: PERMISSIONS.INVENTORY_READ_ALL },
+    { path: "/dashboard/menu", label: "Menu Management", icon: <Coffee size={18} />, permission: PERMISSIONS.MENU_READ_ALL },
+    { path: "/dashboard/pos", label: "POS", icon: <PointOfSale sx={{ width: 18, height: 18 }} />, permission: PERMISSIONS.ORDER_CREATE },
+    { path: "/dashboard/orders", label: "Orders", icon: <ClipboardList size={18} />, permission: PERMISSIONS.ORDER_READ_ALL},
+    { path: '/dashboard/roles', label: "Roles", icon: <Shield size={18}/>, permission: PERMISSIONS.ROLE_READ_ALL },
+    { path: '/dashboard/users', label: 'Users', icon: <User size={18}/>, permission: PERMISSIONS.USER_READ_ALL }
 ];
 
 export default function Sidebar() {
     const location = useLocation();
     const { user, logout } = useAuthStore();
+    const { hasPermissions } = usePermissions();
 
     return (
         <aside className="text-white w-60 fixed left-3 bottom-3 top-20 z-30">
@@ -39,6 +42,8 @@ export default function Sidebar() {
                     <nav className="flex flex-col gap-3">
                         {items.map((item) => {
                             const active = location.pathname === item.path;
+                            
+                            if(!hasPermissions([item.permission])) return null;
 
                             return (
                                 <NavLink
