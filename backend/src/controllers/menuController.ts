@@ -234,7 +234,7 @@ export const updateMenu = async (
 
         const id = req.params.id;
 
-        // 1. Check duplicates
+        // Check duplicates
         const existingItem = await Menu.findOne({
             status: { $in: ["available", "unavailable"] },
             $or: [
@@ -260,8 +260,8 @@ export const updateMenu = async (
             }
         }
 
-        // 2. Find menu
-        const menu = await Menu.findById(id).session(session);
+        // Find menu
+        const menu = await Menu.findById(id);
 
         if (!menu) {
             throw {
@@ -270,7 +270,7 @@ export const updateMenu = async (
             };
         }
 
-        // 3. Handle image update
+        // Handle image update
         let image_public_id = menu.image_public_id;
         let image_url = menu.image_url;
 
@@ -285,16 +285,7 @@ export const updateMenu = async (
             image_url = secure_url;
         }
 
-        // 4. Update menu fields
-        menu.set({
-            ...req.body.menu,
-            image_public_id,
-            image_url,
-        });
-
-        await menu.save({ session });
-
-        // 5. Replace ingredients
+        // Replace ingredients
         await MenuIngredient.deleteMany(
             { menu_id: menu._id },
             { session }
@@ -310,7 +301,7 @@ export const updateMenu = async (
             { session }
         );
 
-        // 6. Get inventory items
+        // Get inventory items
         const ingredientIds = menuIngredients.map(
             (i) => i.inventory_item_id
         );
@@ -320,7 +311,7 @@ export const updateMenu = async (
             _id: { $in: ingredientIds },
         }).session(session);
 
-        // 7. Compute status
+        // Compute status
         let status: "available" | "unavailable" | "deleted" = "available";
 
         for (const item of items) {
@@ -359,11 +350,17 @@ export const updateMenu = async (
             }
         }
 
-        // 8. Update menu status
-        menu.status = status;
+        // Update menu 
+        menu.set({
+            ...JSON.parse(req.body.menu),
+            image_public_id,
+            image_url,
+            status
+        });
+
         await menu.save({ session });
 
-        // 9. Commit transaction
+        // Commit transaction
         await session.commitTransaction();
         session.endSession();
 

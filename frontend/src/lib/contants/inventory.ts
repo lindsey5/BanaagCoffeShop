@@ -1,10 +1,13 @@
 export const categories = [
-    "Coffee Ingredients",
     "Baking Ingredients",
-    "Sweeteners Ingredients",
+    "Bread & Pastry Supplies",
+    "Cans",
+    "Coffee Ingredients",
     "Dairy Ingredients",
     "Flavor Toppings Ingredients",
-    "Operational Supplies"
+    "Operational Supplies",
+    "Sheets",
+    "Sweeteners Ingredients"
 ]
 
 export const categoryOptions = categories.map(cat => ({ label: cat, value: cat }));
