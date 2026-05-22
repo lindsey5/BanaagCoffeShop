@@ -22,7 +22,9 @@ export default function Sidebar() {
     const { hasAnyPermissions, hasPermissions } = usePermissions();
 
     const inventoryPath = () => {
-        if(hasPermissions([PERMISSIONS.STOCK_IN_READ_ALL])) return "/dashboard/stock-in";
+        if(hasPermissions([PERMISSIONS.INVENTORY_READ_ALL])) return "/dashboard/inventory";
+        
+        else if(hasPermissions([PERMISSIONS.STOCK_IN_READ_ALL])) return "/dashboard/stock-in";
 
         else if(hasPermissions([PERMISSIONS.STOCK_OUT_READ_ALL])) return "/dashboard/stock-out";
 

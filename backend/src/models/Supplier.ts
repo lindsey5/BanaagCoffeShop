@@ -13,7 +13,6 @@ const SupplierSchema: Schema<SupplierAttributes> = new Schema(
         code: {
             type: String,
             required: [true, "code is required."],
-            unique: true,
             minlength: [3, "code must be at least 3 characters."],
             maxlength: [50, "code must be at most 50 characters."],
             trim: true,
@@ -22,7 +21,6 @@ const SupplierSchema: Schema<SupplierAttributes> = new Schema(
         name: {
             type: String,
             required: [true, "supplier name is required."],
-            unique: true,
             minlength: [3, "supplier name must be at least 3 characters."],
             maxlength: [100, "supplier name must be at most 100 characters."],
             trim: true,
