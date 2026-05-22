@@ -9,9 +9,15 @@ const ROLES = {
 
     MANAGER: {
         name: "Manager",
-        description: "Manages sales, menu, inventory, and staff operations",
+        description: "Manages operations, inventory, suppliers, and staff",
         permissions: [
             PERMISSIONS.DASHBOARD_VIEW,
+
+            // Users
+            PERMISSIONS.USER_READ_ALL,
+            PERMISSIONS.USER_CREATE,
+            PERMISSIONS.USER_UPDATE,
+            PERMISSIONS.USER_DELETE,
 
             // Menu
             PERMISSIONS.MENU_READ_ALL,
@@ -23,24 +29,33 @@ const ROLES = {
             PERMISSIONS.INVENTORY_READ_ALL,
             PERMISSIONS.INVENTORY_CREATE,
             PERMISSIONS.INVENTORY_UPDATE,
-            PERMISSIONS.INVENTORY_DELETE,
 
-            // Users
-            PERMISSIONS.USER_READ_ALL,
-            PERMISSIONS.USER_UPDATE,
+            // Stock In
+            PERMISSIONS.STOCK_IN_READ_ALL,
 
-            // Roles
-            PERMISSIONS.ROLE_READ_ALL,
+            // Stock Out
+            PERMISSIONS.STOCK_OUT_REAL_ALL,
+            PERMISSIONS.STOCK_OUT_CREATE,
+
+            // Suppliers
+            PERMISSIONS.SUPPLIER_READ_ALL,
+            PERMISSIONS.SUPPLIER_CREATE,
+            PERMISSIONS.SUPPLIER_UPDATE,
+            PERMISSIONS.SUPPLIER_DELETE,
+
+            // Purchase Orders
+            PERMISSIONS.PURCHASE_ORDER_READ_ALL,
+            PERMISSIONS.PURCHASE_ORDER_CREATE,
+            PERMISSIONS.PURCHASE_ORDER_UPDATE,
 
             // Orders
             PERMISSIONS.ORDER_READ_ALL,
-            PERMISSIONS.ORDER_CREATE,
         ],
     },
 
     CASHIER: {
         name: "Cashier",
-        description: "Handles POS transactions and customer orders",
+        description: "Handles customer orders and POS transactions",
         permissions: [
             PERMISSIONS.DASHBOARD_VIEW,
 
@@ -48,14 +63,14 @@ const ROLES = {
             PERMISSIONS.ORDER_CREATE,
             PERMISSIONS.ORDER_READ_ALL,
 
-            // Menu (view only)
+            // Menu
             PERMISSIONS.MENU_READ_ALL,
         ],
     },
 
     INVENTORY_CLERK: {
         name: "Inventory Clerk",
-        description: "Manages inventory stocks and updates inventory records",
+        description: "Handles inventory, stock movement, and suppliers",
         permissions: [
             PERMISSIONS.DASHBOARD_VIEW,
 
@@ -64,7 +79,21 @@ const ROLES = {
             PERMISSIONS.INVENTORY_CREATE,
             PERMISSIONS.INVENTORY_UPDATE,
 
-            // Menu (view only)
+            // Stock In
+            PERMISSIONS.STOCK_IN_READ_ALL,
+
+            // Stock Out
+            PERMISSIONS.STOCK_OUT_REAL_ALL,
+            PERMISSIONS.STOCK_OUT_CREATE,
+
+            // Suppliers
+            PERMISSIONS.SUPPLIER_READ_ALL,
+
+            // Purchase Orders
+            PERMISSIONS.PURCHASE_ORDER_READ_ALL,
+            PERMISSIONS.PURCHASE_ORDER_CREATE,
+
+            // Menu
             PERMISSIONS.MENU_READ_ALL,
         ],
     },

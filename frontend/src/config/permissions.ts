@@ -13,8 +13,23 @@ export const PERMISSIONS = {
     INVENTORY_UPDATE: 'inventory:update',
     INVENTORY_DELETE: 'inventory:delete',
 
+    // Stock Out management
     STOCK_OUT_REAL_ALL: 'stock-out:read:all',
     STOCK_OUT_CREATE: 'stock-out:create',
+
+    // Stock In management
+    STOCK_IN_READ_ALL: 'stock-in:read:all',
+
+    // Supplier management
+    SUPPLIER_READ_ALL: 'supplier:read:all',
+    SUPPLIER_CREATE: 'supplier:create',
+    SUPPLIER_UPDATE: 'supplier:update',
+    SUPPLIER_DELETE: 'supplier:delete',
+
+    // Purchase Order management
+    PURCHASE_ORDER_READ_ALL: 'purchase-order:read:all',
+    PURCHASE_ORDER_CREATE: 'purchase-order:create',
+    PURCHASE_ORDER_UPDATE: 'purchase-order:update',
 
     // Order management
     ORDER_READ_ALL: 'order:read:all',
@@ -40,49 +55,66 @@ type PermissionGroup = {
 
 export const PERMISSION_DESCRIPTIONS: Record<string, PermissionGroup> = {
     Dashboard: {
-        description: "Control access to dashboard features and summary reports.",
-        DASHBOARD_VIEW: "View the dashboard",
+        description: "Control access to dashboard features and reports.",
+        DASHBOARD_VIEW: "View dashboard",
     },
 
     "Menu Management": {
-        description: "Manage menu including viewing, adding, editing, and removing menu products.",
+        description: "Manage menu products and categories.",
         MENU_READ_ALL: "View all menu",
-        MENU_CREATE: "Add new menu",
-        MENU_UPDATE: "Update menu details",
+        MENU_CREATE: "Create menu",
+        MENU_UPDATE: "Update menu",
         MENU_DELETE: "Delete menu",
     },
 
     "Inventory Management": {
-        description: "Manage inventory items including stock monitoring and inventory updates.",
-        INVENTORY_READ_ALL: "View all inventory items",
-        INVENTORY_CREATE: "Add new inventory items",
-        INVENTORY_UPDATE: "Update inventory item details",
+        description: "Manage inventory stocks and inventory records.",
+        INVENTORY_READ_ALL: "View inventory items",
+        INVENTORY_CREATE: "Create inventory item",
+        INVENTORY_UPDATE: "Update inventory item",
         INVENTORY_DELETE: "Delete inventory item",
+
         STOCK_OUT_CREATE: "Create stock out",
-        STOCK_OUT_REAL_ALL: "View stock out history"
+        STOCK_OUT_REAL_ALL: "View stock out history",
+
+        STOCK_IN_READ_ALL: "View stock in history",
+    },
+
+    "Supplier Management": {
+        description: "Manage suppliers and supplier records.",
+        SUPPLIER_READ_ALL: "View suppliers",
+        SUPPLIER_CREATE: "Create supplier",
+        SUPPLIER_UPDATE: "Update supplier",
+        SUPPLIER_DELETE: "Delete supplier",
+    },
+
+    "Purchase Order Management": {
+        description: "Manage purchase orders and procurement records.",
+        PURCHASE_ORDER_READ_ALL: "View purchase orders",
+        PURCHASE_ORDER_CREATE: "Create purchase order",
+        PURCHASE_ORDER_UPDATE: "Update purchase order",
+    },
+
+    "Order Management": {
+        description: "Manage POS transactions and order history.",
+        ORDER_READ_ALL: "View order history",
+        ORDER_CREATE: "Create order transaction",
     },
 
     "User Management": {
-        description: "Manage system users including creating, updating, and deleting accounts.",
-        USER_CREATE: "Create new users",
-        USER_READ: "View user details",
+        description: "Manage system users and staff accounts.",
+        USER_CREATE: "Create users",
         USER_READ_ALL: "View all users",
-        USER_UPDATE: "Update user details",
+        USER_UPDATE: "Update users",
         USER_DELETE: "Delete users",
     },
 
     "Role Management": {
-        description: "Manage roles and configure permission-based access control.",
-        ROLE_CREATE: "Create new roles",
+        description: "Manage roles and access permissions.",
+        ROLE_CREATE: "Create roles",
         ROLE_READ_ALL: "View all roles",
-        ROLE_UPDATE: "Update role details",
+        ROLE_UPDATE: "Update roles",
         ROLE_DELETE: "Delete roles",
-    },
-
-    "Order Management": {
-        description: "Manage orders by creating transactions and viewing order history.",
-        ORDER_READ_ALL: "View order history",
-        ORDER_CREATE: "Access the POS and create transaction",
     },
 };
 

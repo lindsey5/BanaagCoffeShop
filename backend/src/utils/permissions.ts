@@ -29,6 +29,17 @@ const PERMISSIONS = {
     STOCK_OUT_REAL_ALL: 'stock-out:read:all',
     STOCK_OUT_CREATE: 'stock-out:create',
 
+    STOCK_IN_READ_ALL: 'stock-in:read:all',
+
+    SUPPLIER_READ_ALL: 'supplier:read:all',
+    SUPPLIER_CREATE: 'supplier:create',
+    SUPPLIER_UPDATE: 'supplier:update',
+    SUPPLIER_DELETE: 'supplier:delete',
+
+    PURCHASE_ORDER_READ_ALL: 'purchase-order:read:all',
+    PURCHASE_ORDER_CREATE: 'purchase-order:create',
+    PURCHASE_ORDER_UPDATE: 'purchase-order:update',
+
     ORDER_CREATE: 'order:create',
     ORDER_READ_ALL: 'order:read:all',
 }
