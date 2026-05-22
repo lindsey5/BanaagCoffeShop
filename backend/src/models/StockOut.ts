@@ -43,12 +43,21 @@ const StockOutSchema: Schema<StockOutAttributes> = new Schema(
 );
 
 StockOutSchema.pre<StockOutAttributes>("save", async function (this: StockOutAttributes) {
-    if(!this.stock_out_id) {
-        const total = await mongoose.models.StockOut.countDocuments();
+    if (!this.stock_out_id) {
+        let unique = false;
+        let generatedId = "";
 
-        const nextNumber = total + 1;
+        while (!unique) {
+            const random = Math.random().toString(36).substring(2, 7).toUpperCase();
 
-        this.stock_out_id = `SO-${String(nextNumber).padStart(5, "0")}`;
+            generatedId = `SO-${random}`;
+
+            const existing = await mongoose.models.StockOut.findOne({ stock_out_id: generatedId });
+
+            if (!existing) unique = true;
+        }
+
+        this.stock_out_id = generatedId;
     }
 });
 

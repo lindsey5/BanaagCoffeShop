@@ -5,7 +5,6 @@ export interface SupplierAttributes extends Document {
     name: string;
     phone?: string;
     email?: string;
-    address?: string;
     status: "active" | "deleted";
 }
 
@@ -42,12 +41,6 @@ const SupplierSchema: Schema<SupplierAttributes> = new Schema(
             lowercase: true,
         },
 
-        address: {
-            type: String,
-            maxlength: [200, "address must be at most 200 characters."],
-            trim: true,
-        },
-
         status: {
             type: String,
             default: "active",
@@ -56,10 +49,6 @@ const SupplierSchema: Schema<SupplierAttributes> = new Schema(
     },
     { timestamps: true }
 );
-
-// indexes
-SupplierSchema.index({ code: 1 });
-SupplierSchema.index({ name: 1 });
 
 const Supplier: Model<SupplierAttributes> = mongoose.model(
     "Supplier",

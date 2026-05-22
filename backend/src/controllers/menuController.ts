@@ -315,10 +315,7 @@ export const updateMenu = async (
         let status: "available" | "unavailable" | "deleted" = "available";
 
         for (const item of items) {
-            const ingredient = menuIngredients.find(
-                (i) =>
-                    String(i.inventory_item_id) === String(item._id)
-            );
+            const ingredient = menuIngredients.find((i) => String(i.inventory_item_id) === String(item._id));
 
             if (!ingredient) {
                 status = "unavailable";

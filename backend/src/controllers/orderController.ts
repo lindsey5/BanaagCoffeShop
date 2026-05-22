@@ -70,7 +70,7 @@ export const createOrder = async (
 
                 await StockOut.create([
                     {
-                    inventory_item_id: inv._id,
+                        inventory_item_id: inv._id,
                         quantity: ing.amount,
                         unit: ing.unit,
                         transaction_type: 'sale'
