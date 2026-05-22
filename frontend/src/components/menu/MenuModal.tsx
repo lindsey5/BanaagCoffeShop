@@ -109,17 +109,15 @@ export default function MenuModal ({ close, show, selectedMenu } : MenuModalProp
                         <button type="button" className="absolute top-0 right-0 cursor-pointer" onClick={handleClose}>
                             <X size={20} />
                         </button>
-                        <div className="flex flex-col items-center">
-                            <div className="w-30 h-30 flex items-center justify-center overflow-hidden rounded">
-                                {imageSrc ? 
-                                    <img
-                                        src={imageSrc}
-                                        alt="Thumbnail"
-                                        className="object-contain w-full h-full"
-                                    /> : 
-                                    <Image className="w-full h-full" strokeWidth={0.7}/>
-                                }
-                            </div>
+                        <div className="flex flex-col gap-3 items-center">
+                            {imageSrc ? 
+                                <img
+                                    src={imageSrc}
+                                    alt="Thumbnail"
+                                    className="object-cover rounded-md w-30 h-30"
+                                /> : 
+                                <Image className="w-30 h-30" strokeWidth={0.7}/>
+                            }
                             <input
                                 type="file"
                                 accept="image/*"

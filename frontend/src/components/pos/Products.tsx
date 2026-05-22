@@ -44,7 +44,7 @@ export default function Products({
                             >
                                 <Card className="flex flex-col items-center gap-3">
                                     <img
-                                        className="w-full h-35 object-cover"
+                                        className="w-full h-35 object-cover rounded-md"
                                         src={menu.image_url || "/placeholder.png"}
                                         alt={menu.name}
                                     />

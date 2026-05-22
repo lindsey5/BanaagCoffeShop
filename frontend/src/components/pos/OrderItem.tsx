@@ -12,7 +12,7 @@ export default function OrderItem ({ item, handleQuantity, handleRemove } : Orde
     return (
         <div className="flex gap-3">
             <img
-                className="w-20 h-20 object-cover"
+                className="w-20 h-20 object-cover rounded-md"
                 src={item.menu.image_url}
                 alt={item.menu.name}
             />

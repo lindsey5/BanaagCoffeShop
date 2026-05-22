@@ -10,7 +10,7 @@ export default function TopProducts () {
             <div className="space-y-2 min-h-0 flex-grow overflow-y-auto">
                 {data?.topProducts.map(product => (
                     <div className="flex gap-3">
-                        <img className="w-20 h-20 object-cover" src={product.menu.image_url} alt={product.menu.name} />
+                        <img className="w-20 h-20 object-cover rounded-md" src={product.menu.image_url} alt={product.menu.name} />
                         <div className="space-y-2">
                             <h1 className="font-bold">{product.menu.name}</h1>
                             <p>Total Sold: {product.totalSold}</p>
