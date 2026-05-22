@@ -1,12 +1,10 @@
 export const categories = [
     "Baking Ingredients",
     "Bread & Pastry Supplies",
-    "Cans",
     "Coffee Ingredients",
     "Dairy Ingredients",
     "Flavor Toppings Ingredients",
     "Operational Supplies",
-    "Sheets",
     "Sweeteners Ingredients"
 ]
 
