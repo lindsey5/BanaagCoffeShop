@@ -12,6 +12,8 @@ import usePermissions from "../../hooks/usePermissions";
 import SupplierModal from "../../components/supplier/SupplierModal";
 import SearchField from "../../components/ui/SearchField";
 import Button from "../../components/ui/Button";
+import { useDeleteSupplier } from "../../hooks/supplier/use-delete-supplier.hook";
+import { promiseToast } from "../../utils/sileo";
 
 interface GetColumnsParams {
     setSupplier: Dispatch<SetStateAction<Supplier | null>>;
@@ -80,6 +82,7 @@ const getColumns = ({ setSupplier, setShowModal, handleDelete, hasAnyPermissions
 ]  
 
 export default function Suppliers () {
+    const deleteSupplierMutation = useDeleteSupplier();
     const [supplier, setSupplier] = useState<Supplier | null>(null);
     const [showModal, setShowModal] = useState(false);
 
@@ -99,7 +102,11 @@ export default function Suppliers () {
     const { data, isFetching } = useGetSuppliers(params);
 
     const handleDelete = (id: string) => {
+        const isConfirmed = confirm('Are you sure you want to delete this supplier?');
 
+        if(!isConfirmed) return;
+
+        promiseToast(deleteSupplierMutation.mutateAsync(id))
     }
 
     const onRowClick = (row : Supplier) => {
