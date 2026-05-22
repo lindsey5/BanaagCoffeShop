@@ -3,7 +3,7 @@ export const categories = [
     "Bread & Pastry Supplies",
     "Coffee Ingredients",
     "Dairy Ingredients",
-    "Flavor Toppings Ingredients",
+    "Flavor & Toppings Ingredients",
     "Operational Supplies",
     "Sweeteners Ingredients"
 ]
