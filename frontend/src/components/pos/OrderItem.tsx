@@ -10,7 +10,7 @@ interface OrderItemProps {
 
 export default function OrderItem ({ item, handleQuantity, handleRemove } : OrderItemProps) {
     return (
-        <div className="flex gap-3">
+        <div className="flex gap-3 border-b pb-3">
             <img
                 className="w-20 h-20 object-cover rounded-md"
                 src={item.menu.image_url}

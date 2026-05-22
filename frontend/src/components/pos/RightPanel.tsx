@@ -200,7 +200,7 @@ export default function RightPanel({
             order={order}
             show={order !== null}
         />
-        <Card className="w-90 flex flex-col max-h-full sticky top-0 gap-4 p-3">
+        <Card className="w-90 flex flex-col max-h-[calc(100vh+240px)] sticky top-0 gap-4 p-3">
             {/* HEADER */}
             <div className="flex justify-between">
                 <h1 className="font-bold text-lg">
