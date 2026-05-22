@@ -1,10 +1,11 @@
-import { BarChart3, Package, TriangleAlert } from "lucide-react";
+import { BarChart3, Package, TriangleAlert, User } from "lucide-react";
 import { useGetOrderSalesByPeriod } from "../../hooks/order/use-get-sales-by-period.hook";
 import { formatToPeso } from "../../utils/utils";
 import MetricCard, { MetricCardSkeleton } from "./MetricCard";
 import { useGetLowStockItems } from "../../hooks/inventory/use-get-total-low-stocks.hook";
 import { useGetTotalItems } from "../../hooks/inventory/use-get-total-items.hook";
 import { useGetTotalOutOfStocks } from "../../hooks/inventory/use-get-total-out-of-stocks.hook";
+import { useGetTotalUsers } from "../../hooks/user/use-get-total-users.hook";
 
 export const OrderSalesToday = () => {
     const { data, isFetching } = useGetOrderSalesByPeriod("today");
@@ -100,6 +101,20 @@ export const TotalInventoryItems = () => {
             title="Items in Inventory"
             content={data?.total.toString() || ""}
             icon={<Package size={25}/>}
+        />
+    )
+}
+
+export const TotalUsers = () => {
+    const { data, isFetching} = useGetTotalUsers();
+
+    if(isFetching) return <MetricCardSkeleton />
+
+    return (
+        <MetricCard 
+            title="Total Users"
+            content={data?.totalUsers.toString() || ""}
+            icon={<User size={25}/>}
         />
     )
 }
