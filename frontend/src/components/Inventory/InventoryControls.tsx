@@ -27,6 +27,10 @@ interface InventoryControlsProps {
 const filterOptions :  Record<string, SortOption> = {
     'Newest': { sort: 'createdAt', order: 'desc' },
     'Oldest': { sort: 'createdAt', order: 'asc' },
+    'Name (A-Z)' : { sort: 'name', order: 'asc' },
+    'Name (Z-A)' : { sort: 'name', order: 'desc' },
+    'Code (A-Z)' : { sort: 'code', order: 'asc' },
+    'Code (Z-A)' : { sort: 'code', order: 'desc' },
 }
 
 export default function InventoryControls ({ 
@@ -77,6 +81,7 @@ export default function InventoryControls ({
                         label="Status"
                     />
                     <Dropdown 
+                        className="w-30"
                         onChange={(value) => {
                             setFilter(filterOptions[value]);
                             setPagination(prev => ({ ...prev, pageIndex: 0 }))

@@ -15,8 +15,10 @@ export const unitOptions = units.map(u => ({ label: u, value: u }));
 export const menuFilterOptions :  Record<string, SortOption> = {
     'Newest': { sort: 'createdAt', order: 'desc' },
     'Oldest': { sort: 'createdAt', order: 'asc' },
-    'A-Z' : { sort: 'name', order: 'asc' },
-    'Z-A' : { sort: 'name', order: 'desc' }
+    'Name (A-Z)' : { sort: 'name', order: 'asc' },
+    'Name (Z-A)' : { sort: 'name', order: 'desc' },
+    'Code (A-Z)' : { sort: 'code', order: 'asc' },
+    'Code (Z-A)' : { sort: 'code', order: 'desc' },
 }
 
 export const menuStatusOptions = [

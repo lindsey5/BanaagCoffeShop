@@ -72,6 +72,7 @@ export default function MenuControls ({
                         label="Status"
                     />
                     <Dropdown 
+                        className="w-30"
                         onChange={(value) => { 
                             setFilter(menuFilterOptions[value]);
                             setPagination(prev => ({ ...prev, pageIndex: 0 }))
