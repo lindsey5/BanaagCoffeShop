@@ -14,7 +14,7 @@ export const PERMISSIONS = {
     INVENTORY_DELETE: 'inventory:delete',
 
     // Stock Out management
-    STOCK_OUT_REAL_ALL: 'stock-out:read:all',
+    STOCK_OUT_READ_ALL: 'stock-out:read:all',
     STOCK_OUT_CREATE: 'stock-out:create',
 
     // Stock In management
@@ -75,7 +75,7 @@ export const PERMISSION_DESCRIPTIONS: Record<string, PermissionGroup> = {
         INVENTORY_DELETE: "Delete inventory item",
 
         STOCK_OUT_CREATE: "Create stock out",
-        STOCK_OUT_REAL_ALL: "View stock out history",
+        STOCK_OUT_READ_ALL: "View stock out history",
 
         STOCK_IN_READ_ALL: "View stock in history",
     },

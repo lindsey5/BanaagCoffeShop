@@ -15,7 +15,7 @@ router.post(
 router.get(
     '/',
     authenticate,
-    hasAnyPermission(PERMISSIONS.INVENTORY_READ_ALL, PERMISSIONS.STOCK_OUT_CREATE),
+    hasAnyPermission(PERMISSIONS.INVENTORY_READ_ALL, PERMISSIONS.STOCK_OUT_CREATE, PERMISSIONS.PURCHASE_ORDER_CREATE),
     getInventoryItems
 )
 

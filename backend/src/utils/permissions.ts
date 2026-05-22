@@ -26,7 +26,7 @@ const PERMISSIONS = {
     INVENTORY_UPDATE: 'inventory:update',
     INVENTORY_DELETE: 'inventory:delete',
 
-    STOCK_OUT_REAL_ALL: 'stock-out:read:all',
+    STOCK_OUT_READ_ALL: 'stock-out:read:all',
     STOCK_OUT_CREATE: 'stock-out:create',
 
     STOCK_IN_READ_ALL: 'stock-in:read:all',

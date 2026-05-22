@@ -7,19 +7,31 @@ import usePermissions from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../config/permissions";
 
 const items = [
-    { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, permission: PERMISSIONS.DASHBOARD_VIEW },
-    { path: "/dashboard/inventory", label: "Inventory", icon: <Archive size={18} />, permission: PERMISSIONS.INVENTORY_READ_ALL },
-    { path: "/dashboard/menu", label: "Menu Management", icon: <Coffee size={18} />, permission: PERMISSIONS.MENU_READ_ALL },
-    { path: "/dashboard/pos", label: "POS", icon: <PointOfSale sx={{ width: 18, height: 18 }} />, permission: PERMISSIONS.ORDER_CREATE },
-    { path: "/dashboard/orders", label: "Orders", icon: <ClipboardList size={18} />, permission: PERMISSIONS.ORDER_READ_ALL},
-    { path: '/dashboard/roles', label: "Roles", icon: <Shield size={18}/>, permission: PERMISSIONS.ROLE_READ_ALL },
-    { path: '/dashboard/users', label: 'Users', icon: <User size={18}/>, permission: PERMISSIONS.USER_READ_ALL }
+    { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, permissions: [PERMISSIONS.DASHBOARD_VIEW] },
+    { path: "/dashboard/inventory", label: "Inventory", icon: <Archive size={18} />, permissions: [PERMISSIONS.INVENTORY_READ_ALL, PERMISSIONS.STOCK_IN_READ_ALL, PERMISSIONS.STOCK_OUT_READ_ALL, PERMISSIONS.SUPPLIER_READ_ALL, PERMISSIONS.PURCHASE_ORDER_READ_ALL] },
+    { path: "/dashboard/menu", label: "Menu Management", icon: <Coffee size={18} />, permissions: [PERMISSIONS.MENU_READ_ALL] },
+    { path: "/dashboard/pos", label: "POS", icon: <PointOfSale sx={{ width: 18, height: 18 }} />, permissions: [PERMISSIONS.ORDER_CREATE] },
+    { path: "/dashboard/orders", label: "Orders", icon: <ClipboardList size={18} />, permissions: [PERMISSIONS.ORDER_READ_ALL]},
+    { path: '/dashboard/roles', label: "Roles", icon: <Shield size={18}/>, permissions: [PERMISSIONS.ROLE_READ_ALL] },
+    { path: '/dashboard/users', label: 'Users', icon: <User size={18}/>, permissions: [PERMISSIONS.USER_READ_ALL] }
 ];
 
 export default function Sidebar() {
     const location = useLocation();
     const { user, logout } = useAuthStore();
-    const { hasPermissions } = usePermissions();
+    const { hasAnyPermissions, hasPermissions } = usePermissions();
+
+    const inventoryPath = () => {
+        if(hasPermissions([PERMISSIONS.STOCK_IN_READ_ALL])) return "/dashboard/stock-in";
+
+        else if(hasPermissions([PERMISSIONS.STOCK_OUT_READ_ALL])) return "/dashboard/stock-out";
+
+        else if(hasPermissions([PERMISSIONS.SUPPLIER_READ_ALL])) return "/dashboard/suppliers";
+
+        else if(hasPermissions([PERMISSIONS.PURCHASE_ORDER_READ_ALL])) return "/dashboard/purchase-orders";
+
+        return "/dashboard/inventory";
+    }
 
     return (
         <aside className="text-white w-60 fixed left-3 bottom-3 top-20 z-30">
@@ -43,12 +55,12 @@ export default function Sidebar() {
                         {items.map((item) => {
                             const active = location.pathname === item.path;
                             
-                            if(!hasPermissions([item.permission])) return null;
+                            if(!hasAnyPermissions(item.permissions)) return null;
 
                             return (
                                 <NavLink
                                     key={item.path}
-                                    to={item.path}
+                                    to={item.label === 'Inventory' ? inventoryPath() : item.path}
                                     className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${
                                         active ? "bg-white/20" : "hover:bg-white/10"
                                     }`}

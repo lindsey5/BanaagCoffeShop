@@ -15,7 +15,7 @@ router.post(
 router.get(
     '/',
     authenticate,
-    authorizePermission(PERMISSIONS.STOCK_OUT_REAL_ALL),
+    authorizePermission(PERMISSIONS.STOCK_OUT_READ_ALL),
     getStockOutHistory
 )
 

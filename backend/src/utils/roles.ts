@@ -34,7 +34,7 @@ const ROLES = {
             PERMISSIONS.STOCK_IN_READ_ALL,
 
             // Stock Out
-            PERMISSIONS.STOCK_OUT_REAL_ALL,
+            PERMISSIONS.STOCK_OUT_READ_ALL,
             PERMISSIONS.STOCK_OUT_CREATE,
 
             // Suppliers
@@ -83,7 +83,7 @@ const ROLES = {
             PERMISSIONS.STOCK_IN_READ_ALL,
 
             // Stock Out
-            PERMISSIONS.STOCK_OUT_REAL_ALL,
+            PERMISSIONS.STOCK_OUT_READ_ALL,
             PERMISSIONS.STOCK_OUT_CREATE,
 
             // Suppliers

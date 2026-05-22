@@ -51,7 +51,7 @@ const router = createBrowserRouter([
                     {
                         path: 'stock-out',
                         Component: () => (
-                            <ProtectedRoute requiredPermissions={[PERMISSIONS.STOCK_OUT_REAL_ALL]}>
+                            <ProtectedRoute requiredPermissions={[PERMISSIONS.STOCK_OUT_READ_ALL]}>
                                 <StockOutHistory />
                             </ProtectedRoute>
                         )
