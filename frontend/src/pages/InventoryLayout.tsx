@@ -8,7 +8,7 @@ import usePermissions from "../hooks/usePermissions";
 const menu = [
     { label: "Inventory", path: "/dashboard/inventory", icon: <Package size={16} />, permission: PERMISSIONS.INVENTORY_READ_ALL },
     { label: "Stock In", path: "/dashboard/inventory/stock-in", icon: <PlusCircle size={16} />, permission: PERMISSIONS.STOCK_IN_READ_ALL },
-    { label: "Stock out", path: "/dashboard/inventory/stock-out", icon: <MinusCircle size={16} />, permission: PERMISSIONS.STOCK_OUT_REAL_ALL },
+    { label: "Stock out", path: "/dashboard/inventory/stock-out", icon: <MinusCircle size={16} />, permission: PERMISSIONS.STOCK_OUT_READ_ALL },
     { label: "Suppliers", path: "/dashboard/inventory/suppliers", icon: <Truck size={16} />, permission: PERMISSIONS.SUPPLIER_READ_ALL },
     { label: "Purchase Orders", path: "/dashboard/inventory/purchase-orders", icon: <ClipboardList size={16} />, permission: PERMISSIONS.PURCHASE_ORDER_READ_ALL },
 ];
