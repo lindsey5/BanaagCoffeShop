@@ -16,6 +16,7 @@ import DateInput from "../../components/ui/DateInput";
 import { PERMISSIONS } from "../../config/permissions";
 import Button from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
+import PurchaseOrderModal from "../../components/purchase-order/PurchaseOrderModal";
 
 const statusOptions = [
     { label: 'All', value: '' },
@@ -114,10 +115,13 @@ export default function PurchaseOrders () {
         setPurchaseOrder(row);
     }
 
-    console.log(purchaseOrder);
-
     return (
         <div className="space-y-3">
+            <PurchaseOrderModal 
+                close={() => setPurchaseOrder(null)}
+                show={purchaseOrder !== null}
+                purchaseOrder={purchaseOrder}
+            />
             <h1 className="font-bold text-lg">Purchase Orders</h1>
             <div className="flex-1 flex gap-3 items-end justify-between">
                 <SearchField

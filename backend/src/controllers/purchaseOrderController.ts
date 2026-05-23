@@ -4,6 +4,7 @@ import PurchaseOrder from "../models/PurchaseOrder";
 import mongoose from "mongoose";
 import InventoryItem from "../models/InventoryItem";
 import { gramToKg, kgToGram, lToMl, mlToL } from "../utils/conversion";
+import StockIn from "../models/StockIn";
 
 export const createPurchaseOrder = async (req: Request, res: Response, next: NextFunction) => {
     try{
@@ -73,23 +74,71 @@ export const getPurchaseOrders = async (
         const result = await PurchaseOrder.aggregate([
             {
                 $lookup: {
-                from: "suppliers",
-                localField: "supplier_id",
-                foreignField: "_id",
-                as: "supplier",
+                    from: "suppliers",
+                    localField: "supplier_id",
+                    foreignField: "_id",
+                    as: "supplier",
                 },
             },
             { $unwind: "$supplier" },
+
+            // populate inventory items inside items array
+            {
+                $lookup: {
+                    from: "inventoryitems",
+                    localField: "items.inventory_item_id",
+                    foreignField: "_id",
+                    as: "inventoryItems",
+                },
+            },
+
+            {
+                $addFields: {
+                    items: {
+                        $map: {
+                            input: "$items",
+                            as: "item",
+                            in: {
+                                $mergeObjects: [
+                                    "$$item",
+                                    {
+                                        inventoryItem: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$inventoryItems",
+                                                        as: "inv",
+                                                        cond: {
+                                                            $eq: [
+                                                                "$$inv._id",
+                                                                "$$item.inventory_item_id",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+
+            { $project: { inventoryItems: 0 } }, // remove temp array
+
             { $match: match },
             { $sort: { createdAt: -1 } },
+
             {
                 $facet: {
-                data: [{ $skip: skip }, { $limit: limit }],
-                totalCount: [{ $count: "count" }],
+                    data: [{ $skip: skip }, { $limit: limit }],
+                    totalCount: [{ $count: "count" }],
                 },
             },
         ]);
-
         const purchaseOrders = result[0]?.data || [];
         const total = result[0]?.totalCount?.[0]?.count || 0;
         const totalPages = Math.ceil(total / limit);
@@ -169,6 +218,13 @@ export const updatePurchaseOrder = async (req: Request, res: Response, next: Nex
                 }
 
                 inv.save({ session });
+                await StockIn.create({
+                    inventory_item_id: item.inventory_item_id,
+                    quantity: item.quantity,
+                    unit_cost: item.unit_cost,
+                    unit: item.unit,
+                    total_cost: item.total_cost
+                })
             }
             purchaseOrder.dateReceived = new Date();
         }

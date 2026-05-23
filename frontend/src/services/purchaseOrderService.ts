@@ -18,7 +18,7 @@ export const purchaseOrderService = {
 
     updatePurchaseOrderStatus: (id: string, status: string) =>
         apiAxios<PurchaseOrderResponse>(`${baseUrl}/${id}`, {
-            method: HttpMethod.PUT,
+            method: HttpMethod.PATCH,
             data: { status }
         }),
 };

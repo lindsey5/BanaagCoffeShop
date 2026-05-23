@@ -71,7 +71,7 @@ export default function CreatePurchaseOrder () {
         promiseToast(createPurchaseOrderMutation.mutateAsync({
             ...data,
             grandTotal
-        }))
+        }), "top-center", () => window.location.href = '/dashboard/inventory/purchase-orders')
     }
 
     return (
@@ -177,7 +177,7 @@ export default function CreatePurchaseOrder () {
                                             Unit: {item.unit.toUpperCase()}
                                         </p>
                                         <h2 className="font-semibold text-sm text-brown">
-                                            Total Cost: {formatToPeso(watch(`items.${i}.total_cost`))}
+                                            Cost: {formatToPeso(watch(`items.${i}.total_cost`))}
                                         </h2>
                                     </div>
                                     <div className="flex justify-end">
@@ -193,10 +193,12 @@ export default function CreatePurchaseOrder () {
                     )}
                 </div>
                 <p className="text-xs text-red-500">{errors.items?.message}</p>
+                <p className="font-bold">Total Cost: {formatToPeso(grandTotal)}</p>
                 <div className="flex justify-end">
                     <Button
                         className="rounded-md text-sm"
                         type="submit"
+                        disabled={createPurchaseOrderMutation.isPending}
                     >
                         Create Purchase Order
                     </Button>
