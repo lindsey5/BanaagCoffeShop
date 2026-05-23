@@ -56,7 +56,8 @@ export const getInventoryItems = async (req: Request, res: Response, next: NextF
         if (search) {
             filter.$or = [
                 { name: { $regex: search, $options: "i" }},
-                { code: { $regex: search, $options: "i" }}
+                { code: { $regex: search, $options: "i" }},
+                { brand: { $regex: search, $options: "i" }}
             ];
         }
 

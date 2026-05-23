@@ -53,7 +53,7 @@ export default function SupplierModal ({
             code: supplier.code,
             email: supplier.email,
             name: supplier.name,
-            phone: supplier.code
+            phone: supplier.phone
         })
     }, [supplier])
 

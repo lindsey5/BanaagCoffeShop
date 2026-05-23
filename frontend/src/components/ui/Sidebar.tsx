@@ -1,10 +1,11 @@
-import { Archive, LayoutDashboard, Coffee, ClipboardList, LogOut, Shield, User } from "lucide-react";
+import { Archive, LayoutDashboard, Coffee, ClipboardList, LogOut, Shield, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { PointOfSale } from "@mui/icons-material";
 import Card from "./Card";
 import { useAuthStore } from "../../lib/store/authStore";
 import usePermissions from "../../hooks/usePermissions";
 import { PERMISSIONS } from "../../config/permissions";
+import { cn } from "../../utils/utils";
 
 const items = [
     { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, permissions: [PERMISSIONS.DASHBOARD_VIEW] },
@@ -13,7 +14,7 @@ const items = [
     { path: "/dashboard/pos", label: "POS", icon: <PointOfSale sx={{ width: 18, height: 18 }} />, permissions: [PERMISSIONS.ORDER_CREATE] },
     { path: "/dashboard/orders", label: "Orders", icon: <ClipboardList size={18} />, permissions: [PERMISSIONS.ORDER_READ_ALL]},
     { path: '/dashboard/roles', label: "Roles", icon: <Shield size={18}/>, permissions: [PERMISSIONS.ROLE_READ_ALL] },
-    { path: '/dashboard/users', label: 'Users', icon: <User size={18}/>, permissions: [PERMISSIONS.USER_READ_ALL] }
+    { path: '/dashboard/users', label: 'Users', icon: <Users size={18}/>, permissions: [PERMISSIONS.USER_READ_ALL] }
 ];
 
 export default function Sidebar() {
@@ -23,7 +24,7 @@ export default function Sidebar() {
 
     const inventoryPath = () => {
         if(hasPermissions([PERMISSIONS.INVENTORY_READ_ALL])) return "/dashboard/inventory";
-        
+
         else if(hasPermissions([PERMISSIONS.STOCK_IN_READ_ALL])) return "/dashboard/stock-in";
 
         else if(hasPermissions([PERMISSIONS.STOCK_OUT_READ_ALL])) return "/dashboard/stock-out";
@@ -63,9 +64,10 @@ export default function Sidebar() {
                                 <NavLink
                                     key={item.path}
                                     to={item.label === 'Inventory' ? inventoryPath() : item.path}
-                                    className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+                                    className={cn(
+                                        'flex items-center gap-3 px-4 py-2 rounded-lg transition',
                                         active ? "bg-white/20" : "hover:bg-white/10"
-                                    }`}
+                                    )}
                                 >
                                     {item.icon}
                                     <span>{item.label}</span>

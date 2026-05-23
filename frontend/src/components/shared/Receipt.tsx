@@ -120,6 +120,13 @@ export default function Receipt({ show, close, order }: ReceiptProps) {
 
                     <div className="border-t border-gray-400 my-4" />
 
+                    <div className="space-y-1">
+                        <p className="text-xs">Special Request:</p>
+                        <p className="text-xs">{order.specialRequest || 'N/A'}</p>
+                    </div>
+
+                    <div className="border-t border-gray-400 my-4" />
+
                     {/* Payment */}
                     <div className="text-xs space-y-1">
                         <div className="flex justify-between">

@@ -4,6 +4,7 @@ export interface PurchaseOrderItem {
     inventory_item_id: mongoose.Types.ObjectId;
     quantity: number;
     unit_cost: number;
+    unit: "kg" | "g" | "ml" | "l" | "pcs"; 
     total_cost: number;
 }
 
@@ -11,9 +12,10 @@ export interface PurchaseOrderAttributes extends Document {
     poNumber: string;
     supplier_id: mongoose.Types.ObjectId;
     items: PurchaseOrderItem[];
-    status: "pending" | "approved" | "received" | "cancelled";
+    status: "pending" | "received" | "cancelled";
     grandTotal: number;
     notes?: string;
+    dateReceived: Date;
 }
 
 const PurchaseOrderSchema: Schema<PurchaseOrderAttributes> = new Schema(
@@ -44,6 +46,11 @@ const PurchaseOrderSchema: Schema<PurchaseOrderAttributes> = new Schema(
                     type: Number,
                     required: true,
                     min: [1, "Quantity must be at least 1."],
+                },
+                unit: {
+                    type: String,
+                    required: [true, "unit is required."],
+                    enum: ["kg", "g", "l", "ml", "pcs"],
                 },
                 unit_cost: {
                     type: Number,
@@ -76,6 +83,9 @@ const PurchaseOrderSchema: Schema<PurchaseOrderAttributes> = new Schema(
             maxlength: [300, "Notes must be at most 300 characters."],
             trim: true,
         },
+        dateReceived: {
+            type: Date
+        }
     },
     { timestamps: true }
 );
@@ -83,7 +93,17 @@ const PurchaseOrderSchema: Schema<PurchaseOrderAttributes> = new Schema(
 // indexes
 PurchaseOrderSchema.index({ poNumber: 1 });
 PurchaseOrderSchema.index({ status: 1 });
-PurchaseOrderSchema.index({ supplierName: 1 });
+
+PurchaseOrderSchema.virtual("supplier", {
+    ref: "Supplier",
+    localField: "supplier_id",
+    foreignField: "_id",
+    justOne: true
+})
+
+PurchaseOrderSchema.set("toObject", { virtuals: true });
+PurchaseOrderSchema.set("toJSON", { virtuals: true });
+
 
 const PurchaseOrder: Model<PurchaseOrderAttributes> = mongoose.model(
     "PurchaseOrder",

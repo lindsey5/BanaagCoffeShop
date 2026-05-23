@@ -16,6 +16,7 @@ export interface Order {
     subtotal: number;
     grandTotal: number;
     orderItems: OrderItem[];
+    specialRequest: string;
     user_id: string;
     user: User;
     createdAt: string;

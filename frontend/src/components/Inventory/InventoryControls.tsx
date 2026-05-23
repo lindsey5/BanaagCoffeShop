@@ -56,7 +56,7 @@ export default function InventoryControls ({
                     setPagination(prev => ({ ...prev, pageIndex: 0 }))
                 }}
                 value={search}
-                placeholder="Search items (Name/Code)"
+                placeholder="Search items (Name/Code/Brand)"
             />
             <div className="flex items-end gap-3">
                 <div className="lg:flex gap-3 items-center hidden">

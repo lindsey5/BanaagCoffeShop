@@ -122,7 +122,10 @@ export default function Orders () {
                     <div className="lg:flex gap-3 items-center hidden">
                         <Dropdown 
                             className="w-40"
-                            onChange={(value) => setPaymentMethod(value)}
+                            onChange={(value) => {
+                                setPaymentMethod(value);
+                                setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                            }}
                             options={paymentMethods}
                             value={paymentMethod}
                             label="Payment Method"

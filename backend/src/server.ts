@@ -14,6 +14,7 @@ import orderRoutes from "./routes/orderRoutes";
 import stockOutRoutes from "./routes/stockOutRoutes";
 import userRoutes from "./routes/userRoutes";
 import supplierRoutes from "./routes/supplierRoutes";
+import purchaseOrderRoutes from "./routes/purchaseOrderRoutes";
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/stock-outs', stockOutRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/suppliers', supplierRoutes);
+app.use('/api/purchase-orders', purchaseOrderRoutes);
 
 app.use(errorHandler);
 
