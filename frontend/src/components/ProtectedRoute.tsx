@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 import usePermissions from '../hooks/usePermissions';
 import { useAuthStore } from '../lib/store/authStore';
 import LoadingScreen from './LoadingScreen';
+import Unauthorized from './Unauthorized';
 
 type ProtectedRouteProps = {
     children: ReactNode;
@@ -36,7 +37,7 @@ export const ProtectedRoute = ({
         const hasRequiredPermissions = hasPermissions(requiredPermissions);
 
         if (!hasRequiredPermissions) {
-            return <div>Unauthorized</div>
+            return <Unauthorized>{children}</Unauthorized>;
         }
     }
 
@@ -44,7 +45,7 @@ export const ProtectedRoute = ({
         const hasAnyPermission = hasAnyPermissions(anyPermissions);
 
         if (!hasAnyPermission) {
-            return <div>Unauthorized</div>
+            return <Unauthorized>{children}</Unauthorized>;
         }
     }
     

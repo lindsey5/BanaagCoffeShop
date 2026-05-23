@@ -58,7 +58,7 @@ export default function Sidebar() {
                         {items.map((item) => {
                             const active = location.pathname === item.path;
                             
-                            if(!hasAnyPermissions(item.permissions)) return null;
+                            if(!hasAnyPermissions(item.permissions) && item.label !== 'Dashboard') return null;
 
                             return (
                                 <NavLink
