@@ -34,10 +34,9 @@ function PurchaseOrderStatus ({ status } : { status : string }) {
 
 interface GetColumnsParams {
     setPurchaseOrder: Dispatch<SetStateAction<PurchaseOrder | null>>;
-    setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const getColumns = ({ setPurchaseOrder, setShowModal } : GetColumnsParams) : ColumnDef<PurchaseOrder>[] => [
+const getColumns = ({ setPurchaseOrder } : GetColumnsParams) : ColumnDef<PurchaseOrder>[] => [
     {
         header: 'PO #',
         accessorKey: 'poNumber'
@@ -74,10 +73,7 @@ const getColumns = ({ setPurchaseOrder, setShowModal } : GetColumnsParams) : Col
         cell: ({ row }) => (
             <div className="flex items-center justify-center">
                 <IconButton
-                    onClick={() => {
-                        setShowModal(true);
-                        setPurchaseOrder(row.original)
-                    }}
+                    onClick={() => setPurchaseOrder(row.original)}
                     icon={<Eye size={18} />}
                 />
             </div>
@@ -87,7 +83,6 @@ const getColumns = ({ setPurchaseOrder, setShowModal } : GetColumnsParams) : Col
 ]  
 
 export default function PurchaseOrders () {
-    const [showModal, setShowModal] = useState(false);
     const [purchaseOrder, setPurchaseOrder] = useState<PurchaseOrder | null>(null);
     const { hasPermissions } = usePermissions();
 
@@ -117,7 +112,6 @@ export default function PurchaseOrders () {
     }
 
     console.log(purchaseOrder);
-    console.log(showModal)
 
     return (
         <div className="space-y-3">
@@ -191,7 +185,7 @@ export default function PurchaseOrders () {
                         />
                     </FiltersMenu>
                     {hasPermissions([PERMISSIONS.PURCHASE_ORDER_CREATE]) && (
-                        <Button className="w-50 text-sm rounded-md" onClick={() => setShowModal(true)}>
+                        <Button className="w-50 text-sm rounded-md">
                             <Plus size={18}/>
                             Create Purchase Order
                         </Button>
@@ -201,7 +195,7 @@ export default function PurchaseOrders () {
             <CustomizedTable 
                 isLoading={isFetching}
                 data={data?.purchaseOrders || []}
-                columns={getColumns({ setShowModal, setPurchaseOrder})}
+                columns={getColumns({ setPurchaseOrder})}
                 pagination={pagination}
                 setPagination={setPagination}
                 totalPages={data?.pagination.totalPages}
