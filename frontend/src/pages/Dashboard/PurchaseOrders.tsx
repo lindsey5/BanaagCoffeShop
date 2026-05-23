@@ -116,6 +116,9 @@ export default function PurchaseOrders () {
         setPurchaseOrder(row);
     }
 
+    console.log(purchaseOrder);
+    console.log(showModal)
+
     return (
         <div className="space-y-3">
             <h1 className="font-bold text-lg">Purchase Orders</h1>
