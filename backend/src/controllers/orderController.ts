@@ -20,66 +20,99 @@ export const createOrder = async (
     try {
         session.startTransaction();
 
+        const { order, orderItems } = req.body;
+
         // 1. Create Order
-        const order = await Order.create([{...req.body.order, user_id: req.user._id }], { session });
+        const createdOrder = await Order.create(
+            [{ ...order, user_id: req.user._id }],
+            { session }
+        );
+
+        const orderId = createdOrder[0]._id;
 
         // 2. Create Order Items
-        const orderItems = await OrderItem.insertMany(
-            req.body.orderItems.map((item: any) => ({
+        const items = await OrderItem.insertMany(
+            orderItems.map((item: any) => ({
                 ...item,
-                order_id: order[0]._id,
+                order_id: orderId,
             })),
             { session }
         );
 
-        const newOrder = await order[0].populate("user");
+        // 3. Preload menus (FAST - removes N+1 query)
+        const menus = await Menu.find({
+            _id: { $in: orderItems.map((i: any) => i.menu_id) },
+        })
+            .populate("menuIngredients")
+            .session(session);
 
-        // 3. Deduct inventory
-        for (const item of orderItems) {
-            const menu = await Menu.findById(item.menu_id)
-                .populate("menuIngredients")
-                .session(session);
+        const menuMap = new Map(
+            menus.map((m: any) => [m._id.toString(), m])
+        );
 
-            if (!menu) continue;
+        // 4. Prepare bulk operations
+        const stockOutBulk: any[] = [];
+        const inventoryUpdates: any[] = [];
 
-            for (const ing of menu.menuIngredients) {
-                const inv = await InventoryItem.findById(
-                    ing.inventory_item_id
-                ).session(session);
+        // 5. Process all items in parallel
+        await Promise.all(
+            orderItems.map(async (item: any) => {
+                const menu = menuMap.get(item.menu_id.toString());
+                if (!menu) return;
 
-                if (!inv) continue;
+                await Promise.all(
+                    menu.menuIngredients.map(async (ing: any) => {
+                        const inv = await InventoryItem.findById(
+                            ing.inventory_item_id
+                        ).session(session);
 
-                // same unit
-                if (ing.unit === inv.unit) {
-                    inv.quantity -= ing.amount;
-                    await inv.save({ session });
-                }
+                        if (!inv) return;
 
-                // grams → kg
-                if (ing.unit === "g" && inv.unit === "kg") {
-                    inv.quantity -= gramToKg(ing.amount);
-                    await inv.save({ session });
-                }
+                        let deduction = ing.amount;
 
-                // ml → l
-                if (ing.unit === "ml" && inv.unit === "l") {
-                    inv.quantity -= mlToL(ing.amount);
-                    await inv.save({ session });
-                }
+                        // unit conversion
+                        if (ing.unit === "g" && inv.unit === "kg") {
+                            deduction = gramToKg(ing.amount);
+                        }
 
+                        if (ing.unit === "ml" && inv.unit === "l") {
+                            deduction = mlToL(ing.amount);
+                        }
 
-                await StockOut.create([
-                    {
-                        inventory_item_id: inv._id,
-                        quantity: ing.amount,
-                        unit: ing.unit,
-                        transaction_type: 'sale'
-                    }
-                ], { session })
-            }
+                        // OPTIMIZED: use atomic update instead of save()
+                        inventoryUpdates.push({
+                            updateOne: {
+                                filter: { _id: inv._id },
+                                update: { $inc: { quantity: -deduction } },
+                            },
+                        });
+
+                        stockOutBulk.push({
+                            stock_out_id: `SO-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+                            inventory_item_id: inv._id,
+                            quantity: ing.amount,
+                            unit: ing.unit,
+                            transaction_type: "sale",
+                        });
+                    })
+                );
+            })
+        );
+
+        // 6. Bulk update inventory (FASTEST WAY)
+        if (inventoryUpdates.length > 0) {
+            await InventoryItem.bulkWrite(inventoryUpdates, { session });
         }
 
-        // 4. Commit transaction
+        // 7. Bulk insert stock out logs
+        if (stockOutBulk.length > 0) {
+            await StockOut.insertMany(stockOutBulk, { session });
+        }
+
+        // 8. Populate user
+        const newOrder = await createdOrder[0].populate("user");
+
+        // 9. Commit transaction
         await session.commitTransaction();
         session.endSession();
 
@@ -88,7 +121,7 @@ export const createOrder = async (
             message: "Order successfully created.",
             order: {
                 ...newOrder.toObject(),
-                orderItems,
+                orderItems: items,
             },
         });
     } catch (err) {
