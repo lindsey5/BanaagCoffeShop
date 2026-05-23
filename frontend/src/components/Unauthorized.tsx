@@ -1,5 +1,5 @@
 import React from "react";
-import Card, { WhiteCard } from "./ui/Card";
+import { WhiteCard } from "./ui/Card";
 import { Lock } from "lucide-react";
 
 export default function Unauthorized({
