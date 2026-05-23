@@ -23,8 +23,8 @@ export default function POS() {
     const debouncedSearch = useDebounce(search, 0.8);
 
     const [filter, setFilter] = useState<SortOption>({
-        sort: "createdAt",
-        order: "desc",
+        sort: "name",
+        order: "asc",
     });
 
     const params = useMemo(() => ({

@@ -14,10 +14,10 @@ interface POSControlsProps {
 }
 
 export const menuFilterOptions :  Record<string, SortOption> = {
-    'Newest': { sort: 'createdAt', order: 'desc' },
-    'Oldest': { sort: 'createdAt', order: 'asc' },
     'Name (A-Z)' : { sort: 'name', order: 'asc' },
     'Name (Z-A)' : { sort: 'name', order: 'desc' },
+    'Newest': { sort: 'createdAt', order: 'desc' },
+    'Oldest': { sort: 'createdAt', order: 'asc' },
 }
 
 export default function POSControls ({ search, setSearch, filter, setFilter, setPagination } : POSControlsProps) {
