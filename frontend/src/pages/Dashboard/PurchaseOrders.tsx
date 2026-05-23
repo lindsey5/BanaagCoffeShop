@@ -15,6 +15,7 @@ import FiltersMenu from "../../components/ui/FiltersMenu";
 import DateInput from "../../components/ui/DateInput";
 import { PERMISSIONS } from "../../config/permissions";
 import Button from "../../components/ui/Button";
+import { useNavigate } from "react-router-dom";
 
 const statusOptions = [
     { label: 'All', value: '' },
@@ -67,6 +68,7 @@ const getColumns = ({ setPurchaseOrder } : GetColumnsParams) : ColumnDef<Purchas
         header: 'Date Received',
         accessorKey: 'dateReceived',
         cell: info => info.getValue() ? formatDate(info.getValue() as string) : 'N/A',
+        meta: { align: 'center' }
     },
     {
         header: "Action",
@@ -83,6 +85,7 @@ const getColumns = ({ setPurchaseOrder } : GetColumnsParams) : ColumnDef<Purchas
 ]  
 
 export default function PurchaseOrders () {
+    const navigate = useNavigate();
     const [purchaseOrder, setPurchaseOrder] = useState<PurchaseOrder | null>(null);
     const { hasPermissions } = usePermissions();
 
@@ -185,7 +188,7 @@ export default function PurchaseOrders () {
                         />
                     </FiltersMenu>
                     {hasPermissions([PERMISSIONS.PURCHASE_ORDER_CREATE]) && (
-                        <Button className="w-50 text-sm rounded-md">
+                        <Button className="w-50 text-sm rounded-md" onClick={() => navigate('/dashboard/purchase-order/create')}>
                             <Plus size={18}/>
                             Create Purchase Order
                         </Button>

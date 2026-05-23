@@ -15,6 +15,7 @@ import StockOutHistory from "../pages/Dashboard/StockOutHistory";
 import Users from "../pages/Dashboard/Users";
 import Suppliers from "../pages/Dashboard/Suppliers";
 import PurchaseOrders from "../pages/Dashboard/PurchaseOrders";
+import CreatePurchaseOrder from "../pages/Dashboard/CreatePurchaseOrder";
 
 const router = createBrowserRouter([
     {
@@ -39,7 +40,11 @@ const router = createBrowserRouter([
             },
             {
                 path: 'inventory',
-                Component: () => <InventoryLayout />,
+                Component: () => (
+                    <ProtectedRoute anyPermissions={[PERMISSIONS.INVENTORY_READ_ALL, PERMISSIONS.STOCK_IN_READ_ALL, PERMISSIONS.STOCK_OUT_READ_ALL, PERMISSIONS.SUPPLIER_READ_ALL, PERMISSIONS.PURCHASE_ORDER_READ_ALL]}>
+                        <InventoryLayout />
+                    </ProtectedRoute>
+                ),
                 children: [
                     {
                         index: true,
@@ -128,6 +133,14 @@ const router = createBrowserRouter([
                 Component: () => (
                     <ProtectedRoute requiredPermissions={[PERMISSIONS.USER_READ_ALL]}>
                         <Users />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'purchase-order/create',
+                Component: () => (
+                    <ProtectedRoute requiredPermissions={[PERMISSIONS.PURCHASE_ORDER_CREATE]}>
+                        <CreatePurchaseOrder />
                     </ProtectedRoute>
                 )
             }

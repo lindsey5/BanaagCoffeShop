@@ -1,9 +1,11 @@
+import type { InventoryItem } from "./inventory.type";
 import type { PaginationParams, PaginationResponse } from "./pagination.type";
 import type { Supplier } from "./supplier.type";
 import type { ApiResponse } from "./types";
 
 export interface PurchaseOrderItem {
     inventory_item_id: string;
+    inventoryItem: InventoryItem;
     quantity: number;
     unit_cost: number;
     unit: "kg" | "g" | "ml" | "l" | "pcs"; 
@@ -23,9 +25,17 @@ export interface PurchaseOrder {
     createdAt: string;
 }
 
+export interface CreatePurchaseOrderItemDTO {
+    inventory_item_id: string;
+    quantity: number;
+    unit_cost: number;
+    unit: "kg" | "g" | "ml" | "l" | "pcs"; 
+    total_cost: number;
+}
+
 export interface CreatePurchaseOrderDTO {
     supplier_id: string;
-    items: PurchaseOrderItem[];
+    items: CreatePurchaseOrderItemDTO[];
     grandTotal: number;
     notes?: string;
 }

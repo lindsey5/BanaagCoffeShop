@@ -36,15 +36,19 @@ export const getPurchaseOrders = async (
         const limit = req.query.limit ? Number(req.query.limit) : 10;
         const page = req.query.page ? Number(req.query.page) : 1;
         const skip = (page - 1) * limit;
-        const search = req.query.search ? String(req.query.search) : "";
-        const status = req.query.status;
-        const startDate = req.query.startDate
-            ? setStartDate(req.query.startDate as string)
-            : null;
-        const endDate = req.query.endDate
-            ? setEndDate(req.query.endDate as string)
-            : null;
 
+        const search = req.query.search ? String(req.query.search) : "";
+        const status = req.query.status ? String(req.query.status) : undefined;
+
+        const startDate = req.query.startDate
+        ? setStartDate(String(req.query.startDate))
+        : undefined;
+
+        const endDate = req.query.endDate
+        ? setEndDate(String(req.query.endDate))
+        : undefined;
+
+        // Build match object
         const match: any = {};
 
         if (startDate || endDate) {
@@ -62,17 +66,17 @@ export const getPurchaseOrders = async (
             ];
         }
 
-        if(status) {
+        if (status) {
             match.status = status;
         }
 
         const result = await PurchaseOrder.aggregate([
             {
                 $lookup: {
-                    from: "suppliers",
-                    localField: "supplier",
-                    foreignField: "_id",
-                    as: "supplier",
+                from: "suppliers",
+                localField: "supplier_id",
+                foreignField: "_id",
+                as: "supplier",
                 },
             },
             { $unwind: "$supplier" },
@@ -80,13 +84,8 @@ export const getPurchaseOrders = async (
             { $sort: { createdAt: -1 } },
             {
                 $facet: {
-                    data: [
-                        { $skip: skip },
-                        { $limit: limit },
-                    ],
-                    totalCount: [
-                        { $count: "count" },
-                    ],
+                data: [{ $skip: skip }, { $limit: limit }],
+                totalCount: [{ $count: "count" }],
                 },
             },
         ]);
