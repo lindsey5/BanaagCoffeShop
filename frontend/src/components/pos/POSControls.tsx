@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from "react";
-import { menuFilterOptions } from "../../lib/contants/menu";
 import { getKeyByValue } from "../../utils/utils";
 import Dropdown from "../ui/Dropdown";
 import SearchField from "../ui/SearchField";
@@ -12,6 +11,13 @@ interface POSControlsProps {
     filter: SortOption;
     setFilter: Dispatch<SetStateAction<SortOption>>;
     setPagination: Dispatch<SetStateAction<PaginationState>>;
+}
+
+export const menuFilterOptions :  Record<string, SortOption> = {
+    'Newest': { sort: 'createdAt', order: 'desc' },
+    'Oldest': { sort: 'createdAt', order: 'asc' },
+    'Name (A-Z)' : { sort: 'name', order: 'asc' },
+    'Name (Z-A)' : { sort: 'name', order: 'desc' },
 }
 
 export default function POSControls ({ search, setSearch, filter, setFilter, setPagination } : POSControlsProps) {
