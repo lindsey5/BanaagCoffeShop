@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface SupplierAttributes extends Document {
     code: string;
     name: string;
+    category: string;
     phone?: string;
     email?: string;
     status: "active" | "deleted";
@@ -24,6 +25,13 @@ const SupplierSchema: Schema<SupplierAttributes> = new Schema(
             minlength: [3, "supplier name must be at least 3 characters."],
             maxlength: [100, "supplier name must be at most 100 characters."],
             trim: true,
+        },
+
+        category: {
+            type: String,
+            required: true,
+            minlength: [5, "category must be at least 5 characters."],
+            maxlength: [100, "category must be at most 100 characters."],
         },
 
         phone: {

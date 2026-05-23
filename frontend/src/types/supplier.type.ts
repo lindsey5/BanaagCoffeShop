@@ -8,6 +8,7 @@ export interface Supplier {
     phone?: string;
     email?: string;
     status: "active" | "deleted";
+    category: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -15,6 +16,7 @@ export interface Supplier {
 export interface SupplierDTO {
     code: string;
     name: string;
+    category: string;
     phone?: string;
     email?: string;
 }
@@ -25,6 +27,7 @@ export interface SupplierResponse extends ApiResponse {
 
 export interface GetSuppliersParams extends PaginationParams {
     search: string;
+    category: string;
 }
 
 export interface GetSuppliersResponse extends PaginationResponse {

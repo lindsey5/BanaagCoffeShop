@@ -11,6 +11,8 @@ import { useCreateSupplier } from "../../hooks/supplier/use-create-supplier.hook
 import { useUpdateSupplier } from "../../hooks/supplier/use-update-supplier.hook";
 import { promiseToast } from "../../utils/sileo";
 import { useEffect } from "react";
+import Dropdown from "../ui/Dropdown";
+import { categoryOptions } from "../../lib/contants/inventory";
 
 interface SupplierModalProps {
     show: boolean;
@@ -25,7 +27,7 @@ export default function SupplierModal ({
 } : SupplierModalProps) {
     const createSupplierMutation = useCreateSupplier();
     const updateSupplierMutation = useUpdateSupplier();
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<SupplierFormData>({
+    const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<SupplierFormData>({
         resolver: zodResolver(supplierSchema),
     });
     
@@ -53,7 +55,8 @@ export default function SupplierModal ({
             code: supplier.code,
             email: supplier.email,
             name: supplier.name,
-            phone: supplier.phone
+            phone: supplier.phone,
+            category: supplier.category
         })
     }, [supplier])
 
@@ -93,6 +96,13 @@ export default function SupplierModal ({
                     placeholder="Enter phone number"
                     registration={register('phone')}
                     error={errors.phone?.message}
+                />
+                <Dropdown 
+                    label="Category"
+                    options={categoryOptions}
+                    onChange={(value) => setValue('category', value)}
+                    value={watch('category')}
+                    error={errors.category?.message}
                 />
                 <div className="flex justify-end">
                     <Button className="text-sm px-5" type="submit" disabled={createSupplierMutation.isPending || updateSupplierMutation.isPending}>

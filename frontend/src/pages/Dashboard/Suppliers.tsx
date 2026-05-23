@@ -14,6 +14,8 @@ import SearchField from "../../components/ui/SearchField";
 import Button from "../../components/ui/Button";
 import { useDeleteSupplier } from "../../hooks/supplier/use-delete-supplier.hook";
 import { promiseToast } from "../../utils/sileo";
+import Dropdown from "../../components/ui/Dropdown";
+import { categoryOptions } from "../../lib/contants/inventory";
 
 interface GetColumnsParams {
     setSupplier: Dispatch<SetStateAction<Supplier | null>>;
@@ -43,6 +45,11 @@ const getColumns = ({ setSupplier, setShowModal, handleDelete, hasAnyPermissions
         header: "Phone",
         accessorKey: 'phone',
         cell: info => info.getValue() ? info.getValue() : 'N/A',
+        meta: { align: 'center' }
+    },
+    {
+        header: "Category",
+        accessorKey: 'category',
         meta: { align: 'center' }
     },
     {
@@ -91,13 +98,16 @@ export default function Suppliers () {
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 0.8);
     
+    const [category, setCategory] = useState("");
+
     const [pagination, setPagination] = useState<PaginationState>({ pageSize: 50, pageIndex: 0 });
 
     const params = useMemo(() => ({
         limit: pagination.pageSize,
         page: pagination.pageIndex + 1,
-        search: debouncedSearch
-    }), [debouncedSearch, pagination]);
+        search: debouncedSearch,
+        category
+    }), [debouncedSearch, pagination, category]);
 
     const { data, isFetching } = useGetSuppliers(params);
 
@@ -139,12 +149,24 @@ export default function Suppliers () {
                     value={search}
                     placeholder="Search suppliers (Code/Name/Email)"
                 />
-                {hasPermissions([PERMISSIONS.SUPPLIER_CREATE]) && (
-                    <Button className="w-40 text-sm rounded-md" onClick={() => setShowModal(true)}>
-                        <Plus size={18}/>
-                        Create Supplier
-                    </Button>
-                )}
+                <div className="flex items-end gap-3">
+                    <Dropdown 
+                        className="w-40"
+                        onChange={(value) => {
+                            setCategory(value);
+                            setPagination(prev => ({ ...prev, pageIndex: 0 }))
+                        }}
+                        options={[{ label: 'All', value: '' }, ...categoryOptions]}
+                        value={category}
+                        label="Category"
+                    />
+                    {hasPermissions([PERMISSIONS.SUPPLIER_CREATE]) && (
+                        <Button className="w-40 text-sm rounded-md" onClick={() => setShowModal(true)}>
+                            <Plus size={18}/>
+                            Create Supplier
+                        </Button>
+                    )}
+                </div>
             </div>
             <CustomizedTable 
                 isLoading={isFetching}

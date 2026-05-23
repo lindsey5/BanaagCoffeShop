@@ -37,6 +37,7 @@ export const getSuppliers = async (req: Request, res: Response, next: NextFuncti
         const limit = req.query.limit ? Number(req.query.limit) : 10;
         const skip = (page - 1) * limit;
         const search = req.query.search;
+        const category = req.query.category;
 
         const filter : any = { status: 'active' };
 
@@ -46,6 +47,10 @@ export const getSuppliers = async (req: Request, res: Response, next: NextFuncti
                 { code: { $regex: search, $options: "i" }},
                 { email: { $regex: search, $options: "i" }},
             ]
+        }
+
+        if(category) {
+            filter.category = category;
         }
 
         const suppliers = await Supplier.find(filter).skip(skip).limit(limit);

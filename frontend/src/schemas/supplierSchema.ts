@@ -13,6 +13,9 @@ export const supplierSchema = z.object({
         .min(3, "Name must be at least 3 characters")
         .max(100, "Name must not exceed 100 characters"),
 
+    category: z.string({ error: 'Category is required' })
+        .min(1, "Category is required"),
+
     phone: z
         .string()
         .trim()
