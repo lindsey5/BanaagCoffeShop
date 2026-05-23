@@ -51,7 +51,7 @@ const columns : ColumnDef<StockIn>[]= [
         meta: { align: 'center'}
     },
     {
-        header: 'Date',
+        header: 'Date Received',
         accessorKey: 'createdAt',
         cell: info => formatDate(info.getValue() as string),
         meta: { align: 'center'}
