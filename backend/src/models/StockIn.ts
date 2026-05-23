@@ -63,7 +63,7 @@ StockInSchema.pre<StockInAttributes>("save", async function (this: StockInAttrib
         while (!unique) {
             const random = Math.random().toString(36).substring(2, 7).toUpperCase();
 
-            generatedId = `SO-${random}`;
+            generatedId = `SI-${random}`;
 
             const existing = await mongoose.models.StockOut.findOne({ stock_in_id: generatedId });
 
