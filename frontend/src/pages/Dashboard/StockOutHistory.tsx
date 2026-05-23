@@ -100,7 +100,7 @@ export default function StockOutHistory () {
                 setPagination={setPagination}
                 totalPages={data?.pagination.totalPages}
                 showPagination
-                noDataMessage="No Items Found"
+                noDataMessage="No Stock Out Found"
                 total={data?.pagination.total}
             />
         </div>

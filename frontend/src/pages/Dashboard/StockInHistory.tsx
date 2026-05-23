@@ -156,7 +156,7 @@ export default function StockInHistory () {
                 setPagination={setPagination}
                 totalPages={data?.pagination.totalPages}
                 showPagination
-                noDataMessage="No Items Found"
+                noDataMessage="No Stock In Found"
                 total={data?.pagination.total}
             />
         </div>
