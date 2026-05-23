@@ -1,7 +1,8 @@
 import Card from "./Card";
-import { formatLongDate } from "../../utils/dateUtils";
+import { formatLongDate, getTime } from "../../utils/dateUtils";
 import { useAuthStore } from "../../lib/store/authStore";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function Header() {
     const { user } = useAuthStore();
@@ -9,6 +10,16 @@ export default function Header() {
 
     const firstInitial = user?.firstname?.charAt(0) ?? "";
     const lastInitial = user?.lastname?.charAt(0) ?? "";
+
+    const [time, setTime] = useState("");
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTime(getTime());
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <header className="z-30 fixed inset-x-0 top-0">
@@ -18,7 +29,7 @@ export default function Header() {
                 </h1>
 
                 <div className="flex gap-3 items-center">
-                    <p>{formatLongDate(new Date())}</p>
+                    <p>{formatLongDate(new Date())} | {time}</p>
 
                     <button 
                         className="cursor-pointer bg-panel text-brown p-1 rounded-full w-8 h-8 flex items-center justify-center font-bold"
