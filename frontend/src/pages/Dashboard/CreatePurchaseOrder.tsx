@@ -34,7 +34,7 @@ export default function CreatePurchaseOrder () {
             setValue('items', watch('items').map(i => i.inventory_item_id === item._id ? ({
                 ...i, 
                 quantity: i.quantity + 1,
-                total_cost: i.unit_cost * i.quantity + 1
+                total_cost: i.unit_cost * (i.quantity + 1)
                 }) : i)
             )
         }else {
