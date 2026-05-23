@@ -34,6 +34,12 @@ const getColumns = (setOrder : Dispatch<SetStateAction<Order | null>>) : ColumnD
         meta: { align: 'center' }
     },
     {
+        header: 'Order Type',
+        accessorKey: 'orderType',
+        cell: info => <span className="capitalize">{info.getValue() as string}</span>,
+        meta: { align: 'center' }
+    },
+    {
         header: 'Customer Name',
         accessorKey: 'customer_name',
         meta: { align: 'center' }

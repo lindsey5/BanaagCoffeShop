@@ -5,6 +5,7 @@ export interface OrderAttributes extends Document {
     order_no: number;
     customer_name: string;
     payment_method: "cash" | "e-wallet" | "card";
+    orderType: "Dine in" | "Take out" | "Delivery";
     tax: number;
     discount: number;
     subtotal: number;
@@ -24,6 +25,13 @@ const OrderSchema: Schema<OrderAttributes> = new Schema(
 
         order_no: {
             type: Number,
+        },
+
+        orderType: {
+            type: String,
+            enum: ["Dine in", "Take out", "Delivery"],
+            required: true,
+            default: "Dine in",
         },
 
         customer_name: {

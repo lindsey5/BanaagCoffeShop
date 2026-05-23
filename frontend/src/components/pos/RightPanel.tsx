@@ -45,6 +45,7 @@ export default function RightPanel({
     const [order, setOrder] = useState<Order | null>(null);
     const [discount, setDiscount] = useState(0);
     const [customer, setCustomer] = useState('');
+    const [orderType, setOrderType] = useState<"Dine in" | "Take out" | "Delivery">('Dine in');
 
     const { subtotal, tax, grandTotal } = useMemo(() => {
         const taxRate = 0.12;
@@ -176,6 +177,7 @@ export default function RightPanel({
         const response = await promiseToast(createOrderMutation.mutateAsync({
             order: {
                 customer_name: customer,
+                orderType,
                 change,
                 discount,
                 grandTotal,
@@ -225,7 +227,28 @@ export default function RightPanel({
 
             {/* FOOTER */}
             <WhiteCard className="space-y-4">
-
+                <div className="space-y-2">
+                    <h1 className="text-sm font-bold">
+                        Order Type
+                    </h1>
+                    <div className="flex gap-2 overflow-x-auto">
+                        {["Dine in", "Take out", "Delivery"].map(type => (
+                            <button
+                                key={type}
+                                className={cn(
+                                    "cursor-pointer text-xs bg-main/40 p-2 rounded-md min-w-20 text-white hover:bg-main transition",
+                                    orderType === type &&
+                                        "bg-accent"
+                                )}
+                                onClick={() =>
+                                    setOrderType(type as "Dine in" | "Take out" | "Delivery")
+                                }
+                            >
+                                {type}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 {/* DISCOUNTS */}
                 <div className="space-y-2">
                     <h1 className="text-sm font-bold">

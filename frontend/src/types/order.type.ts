@@ -7,6 +7,7 @@ export interface Order {
     _id: string;
     order_id: string;
     order_no: number;
+    orderType: "Dine in" | "Take out" | "Delivery";
     customer_name: string;
     payment_method: 'cash' | 'e-wallet' | 'card';
     tax: number;
@@ -44,6 +45,7 @@ export interface CreateOrderItemDTO {
 
 export interface CreateOrderDTO {
     customer_name: string;
+    orderType: "Dine in" | "Take out" | "Delivery";
     payment_method: 'cash' | 'e-wallet' | 'card';
     tax: number;
     discount: number;
