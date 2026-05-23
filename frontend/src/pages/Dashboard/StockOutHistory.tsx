@@ -67,7 +67,7 @@ export default function StockOutHistory () {
         startDate,
         endDate,
         transactionType,
-    }), [pagination, debouncedSearch, category]);
+    }), [startDate, endDate, pagination, debouncedSearch, category]);
 
     const { data, isFetching } = useGetStockOutHistory(params)
 

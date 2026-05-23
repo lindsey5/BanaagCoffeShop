@@ -16,6 +16,7 @@ import Users from "../pages/Dashboard/Users";
 import Suppliers from "../pages/Dashboard/Suppliers";
 import PurchaseOrders from "../pages/Dashboard/PurchaseOrders";
 import CreatePurchaseOrder from "../pages/Dashboard/CreatePurchaseOrder";
+import StockInHistory from "../pages/Dashboard/StockInHistory";
 
 const router = createBrowserRouter([
     {
@@ -51,6 +52,14 @@ const router = createBrowserRouter([
                         Component: () => (
                             <ProtectedRoute requiredPermissions={[PERMISSIONS.INVENTORY_READ_ALL]}>
                                 <Inventory />
+                            </ProtectedRoute>
+                        )
+                    },
+                    {
+                        path: 'stock-in',
+                        Component: () => (
+                            <ProtectedRoute requiredPermissions={[PERMISSIONS.STOCK_IN_READ_ALL]}>
+                                <StockInHistory />
                             </ProtectedRoute>
                         )
                     },

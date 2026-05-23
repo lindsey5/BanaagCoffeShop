@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import PageContainer from "../../components/ui/PageContainer";
 import type { Supplier } from "../../types/supplier.type";
 import SelectSupplier from "../../components/create-purchase-order/SelectSupplier";
@@ -56,12 +56,9 @@ export default function CreatePurchaseOrder () {
         setValue('items', watch('items').filter(item => item.inventory_item_id !== id));
     }
 
-    const grandTotal = useMemo(() => {
-        if(watch('items').length < 1) return 0;
+    const poItems = watch("items");
 
-        return watch('items').reduce((total, item) => total + item.total_cost, 0)
-
-    }, [watch('items')]);
+    const grandTotal = poItems.reduce((total, item) => total + (item.total_cost || 0), 0);
 
     const onSubmit : SubmitHandler<CreatePurchaseOrderFormData> = (data) => {
         const isConfirmed = confirm('Are you sure you want to create this purchase order?');

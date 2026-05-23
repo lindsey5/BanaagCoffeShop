@@ -15,6 +15,7 @@ import stockOutRoutes from "./routes/stockOutRoutes";
 import userRoutes from "./routes/userRoutes";
 import supplierRoutes from "./routes/supplierRoutes";
 import purchaseOrderRoutes from "./routes/purchaseOrderRoutes";
+import stockInRoutes from "./routes/stockInRoutes";
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use("/api/roles", roleRoutes);
 app.use("/api/inventory-items", inventoryItemRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/stock-ins', stockInRoutes);
 app.use('/api/stock-outs', stockOutRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/suppliers', supplierRoutes);

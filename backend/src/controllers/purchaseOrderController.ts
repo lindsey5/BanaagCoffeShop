@@ -223,7 +223,8 @@ export const updatePurchaseOrder = async (req: Request, res: Response, next: Nex
                     quantity: item.quantity,
                     unit_cost: item.unit_cost,
                     unit: item.unit,
-                    total_cost: item.total_cost
+                    total_cost: item.total_cost,
+                    supplier_id: purchaseOrder.supplier_id
                 })
             }
             purchaseOrder.dateReceived = new Date();
@@ -236,7 +237,7 @@ export const updatePurchaseOrder = async (req: Request, res: Response, next: Nex
 
         res.status(200).json({
             success: true,
-            message: `${purchaseOrder.poNumber} successfully updated to ${newStatus}`,
+            message: `${purchaseOrder.poNumber} successfully ${newStatus}`,
             purchaseOrder
         })
 

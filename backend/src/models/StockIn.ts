@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface StockInAttributes extends Document {
     stock_in_id: string;
+    supplier_id: mongoose.Types.ObjectId;
     inventory_item_id: mongoose.Types.ObjectId;
     quantity: number;
     unit_cost: number;
@@ -19,6 +20,12 @@ const StockInSchema: Schema<StockInAttributes> = new Schema(
         inventory_item_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "InventoryItem",
+            required: true,
+        },
+
+        supplier_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Supplier",
             required: true,
         },
 
