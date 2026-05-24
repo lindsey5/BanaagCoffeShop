@@ -2,6 +2,7 @@ import { useState } from "react";
 import Chart, { ChartSkeleton } from "../ui/Chart";
 import Dropdown from "../ui/Dropdown";
 import { useGetOrderMonthlySales } from "../../hooks/order/use-get-monthly-sales.hook";
+import { useGetMonthlyExpenses } from "../../hooks/stock-in/use-get-monthly-expenses.hook";
 
 export const yearOptions = Array.from({ length: 5 }, (_, i) => {
     const currentYear = new Date().getFullYear();
@@ -9,11 +10,11 @@ export const yearOptions = Array.from({ length: 5 }, (_, i) => {
     return { label: y.toString(), value: y.toString() };
 });
 
-export default function MonthlySales () {
+export default function MonthlyExpenses () {
     const currentYear = new Date().getFullYear();
     const [year, setYear] = useState<string>(currentYear.toString());
 
-    const { data, isFetching } = useGetOrderMonthlySales(Number(year));
+    const { data, isFetching } = useGetMonthlyExpenses(Number(year));
     
     if(isFetching) return <ChartSkeleton />
 
@@ -27,9 +28,9 @@ export default function MonthlySales () {
             />
             <Chart 
                 formatToPeso
-                labels={data?.monthlySales.map(sale => sale.month) || []}
-                title="Monthly Sales"
-                values={data?.monthlySales.map(sale => sale.totalSales) || []}
+                labels={data?.monthlyExpenses.map(sale => sale.month) || []}
+                title="Monthly Expenses"
+                values={data?.monthlyExpenses.map(sale => sale.totalExpenses) || []}
             />
         </div>
     )

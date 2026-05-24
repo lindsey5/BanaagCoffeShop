@@ -1,4 +1,5 @@
 import { OrderSalesThisMonth, OrderSalesThisWeek, OrderSalesThisYear, OrderSalesToday, TotalInventoryItems, TotalLowStockItems, TotalOutOfStocks, TotalUsers } from "../../components/dashboard/MetricCards";
+import MonthlyExpenses from "../../components/dashboard/MonthlyExpenses";
 import MonthlySales from "../../components/dashboard/MonthlySales";
 import TopProducts from "../../components/dashboard/TopProducts";
 import PageContainer from "../../components/ui/PageContainer";
@@ -20,6 +21,7 @@ export default function Dashboard () {
                 <MonthlySales />
                 <TopProducts />
            </div>
+           <MonthlyExpenses />
         </PageContainer>
     )
 }

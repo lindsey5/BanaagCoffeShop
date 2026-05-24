@@ -93,3 +93,76 @@ export const getStockInHistory = async (req: Request, res: Response, next: NextF
         next(err);
     }
 }
+
+export const getMonthlyExpensesByYear = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const year = Number(req.query.year) || new Date().getFullYear();
+
+        const match: any = {
+            createdAt: {
+                $gte: new Date(year, 0, 1, 0, 0, 0, 0),
+                $lte: new Date(year, 11, 31, 23, 59, 59, 999),
+            },
+        };
+
+        const result = await StockIn.aggregate([
+            { $match: match },
+
+            {
+                $group: {
+                    _id: {
+                        month: { $month: "$createdAt" },
+                    },
+
+                    totalExpenses: {
+                        $sum: "$total_cost",
+                    },
+                },
+            },
+
+            {
+                $project: {
+                    _id: 0,
+                    month: "$_id.month",
+                    totalExpenses: 1,
+                },
+            },
+
+            { $sort: { month: 1 } },
+        ]);
+
+        const monthNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ];
+
+        // Default Jan-Dec with 0
+        const monthlyExpenses = monthNames.map((name) => ({
+            month: name,
+            totalExpenses: 0,
+        }));
+
+        // Fill actual values
+        result.forEach((item) => {
+            monthlyExpenses[item.month - 1].totalExpenses =
+                item.totalExpenses;
+        });
+
+        res.status(200).json({
+            success: true,
+            monthlyExpenses
+        })
+    }catch(err){
+        next(err);
+    }
+}

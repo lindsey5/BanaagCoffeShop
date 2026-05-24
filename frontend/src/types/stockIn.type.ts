@@ -26,3 +26,9 @@ export interface GetStockInHistoryParams extends PaginationParams {
 export interface GetStockInHistoryResponse extends PaginationResponse {
     stockIns: StockIn[];
 }
+
+export interface GetMonthlyExpensesResponse {
+    success: boolean;
+    monthlyExpenses: { month: string, totalExpenses: number }[];
+    year: number;
+}
