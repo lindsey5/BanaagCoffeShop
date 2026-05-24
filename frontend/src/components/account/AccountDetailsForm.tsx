@@ -66,10 +66,18 @@ export default function AccountDetailsForm ({ setShowChangePassword, showChangeP
                 </div>
                 <div className="flex items-center gap-3">
                     {!showChangePassword && (
-                        <IconButton icon={<Lock size={20} />} onClick={() => setShowChangePassword(true)}/>
+                        <IconButton 
+                            tooltip="Change Password"
+                            icon={<Lock size={20} />} 
+                            onClick={() => setShowChangePassword(true)}
+                        />
                     )}
                     {!showEdit && (
-                        <IconButton icon={<Edit size={20}/>} onClick={() => setShowEdit(true)}/>
+                        <IconButton 
+                            tooltip="Edit Information"    
+                            icon={<Edit size={20}/>} 
+                            onClick={() => setShowEdit(true)}
+                        />
                     )}
                 </div>
             </div>
