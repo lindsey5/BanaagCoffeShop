@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserSchema, type UserFormData } from "../../schemas/userSchema";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import IconButton from "../ui/IconButton";
-import { Edit, Icon, Lock } from "lucide-react";
+import { Edit, Lock } from "lucide-react";
 import { useUpdateProfile } from "../../hooks/user/use-update-profile.hook";
 import { promiseToast } from "../../utils/sileo";
 
