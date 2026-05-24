@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Chart, { ChartSkeleton } from "../ui/Chart";
 import Dropdown from "../ui/Dropdown";
-import { useGetOrderMonthlySales } from "../../hooks/order/use-get-monthly-sales.hook";
 import { useGetMonthlyExpenses } from "../../hooks/stock-in/use-get-monthly-expenses.hook";
 
 export const yearOptions = Array.from({ length: 5 }, (_, i) => {
