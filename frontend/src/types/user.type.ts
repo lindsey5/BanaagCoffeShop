@@ -24,7 +24,7 @@ export interface CreateUserPayload {
     password: string;
 }
 
-export interface UpdateUserOwnPayload {
+export interface UpdateProfilePayload {
     firstname: string;
     lastname: string;
     email: string
@@ -36,14 +36,6 @@ export interface UpdateUserPayload {
     email: string
     role_id: string;
     password?: string;
-}
-
-export interface GetUsersCountResponse {
-    success: boolean,
-    usersCount: {
-        role_name: string;
-        total: number;
-    }[]
 }
 
 export interface GetUser {

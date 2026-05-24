@@ -3,6 +3,7 @@ import InventoryItem from "../models/InventoryItem";
 import MenuIngredient from "../models/MenuIngredient";
 import Menu from "../models/Menu";
 import { kgToGram, lToMl } from "../utils/conversion";
+import mongoose from "mongoose";
 
 export const createInventoryItem = async (req: Request, res: Response, next: NextFunction) => {
     try{
@@ -89,8 +90,6 @@ export const getInventoryItems = async (req: Request, res: Response, next: NextF
         next(err);
     }
 };
-
-import mongoose from "mongoose";
 
 export const updateInventoryItem = async (
     req: Request,

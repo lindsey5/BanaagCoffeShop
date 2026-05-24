@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { AuthRequest } from "../types/auth";
 import Role from "../models/Role";
 import User from "../models/User";
+import validator from "validator";
 import mongoose from "mongoose";
 
 export const createUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -107,14 +108,6 @@ export const updateUser = async (req: AuthRequest, res: Response, next: NextFunc
     }
 };
 
-export const changePassword = async (req: AuthRequest, res: Response, next: NextFunction) => {
-    try {
-        
-    } catch (error) {
-        next(error);
-    }
-};
-
 
 export const userGetOwn = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
@@ -185,8 +178,6 @@ export const deleteUser = async (req: AuthRequest, res: Response, next: NextFunc
                 message: "User not found."
             });
         }
-
-        const oldValues = user.toObject();
         user.status = 'deleted';
         await user.save();
 
@@ -240,3 +231,59 @@ export const getTotalUsers = async (req: Request, res: Response, next: NextFunct
         next(err);
     }
 }
+
+export const changePassword = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user._id;
+
+        let { currentPassword, newPassword, confirmPassword } = req.body;
+
+        currentPassword = validator.trim(currentPassword || "");
+        newPassword = validator.trim(newPassword || "");
+        confirmPassword = validator.trim(confirmPassword || "");
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                message: "Passwords do not match",
+            });
+        }
+
+        const user = await User.findOne({
+            _id: userId,
+            status: "active",
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        const isMatch = await user.matchPassword(currentPassword);
+
+        if (!isMatch) {
+            return res.status(403).json({
+                message: "Current password is incorrect",
+            });
+        }
+
+        const isSamePassword = await user.matchPassword(newPassword);
+
+        if (isSamePassword) {
+            return res.status(400).json({
+                message: "New password must be different from current password",
+            });
+        }
+
+        user.password = newPassword;
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "Password changed successfully",
+        });
+        
+    } catch (error) {
+        next(error);
+    }
+};

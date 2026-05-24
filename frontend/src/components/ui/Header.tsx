@@ -33,7 +33,7 @@ export default function Header() {
 
                     <button 
                         className="cursor-pointer bg-panel text-brown p-1 rounded-full w-8 h-8 flex items-center justify-center font-bold"
-                        onClick={() => navigate('/dashboard/profile')}
+                        onClick={() => navigate('/dashboard/account')}
                     >
                         {firstInitial}
                         {lastInitial}

@@ -17,6 +17,7 @@ import Suppliers from "../pages/Dashboard/Suppliers";
 import PurchaseOrders from "../pages/Dashboard/PurchaseOrders";
 import CreatePurchaseOrder from "../pages/Dashboard/CreatePurchaseOrder";
 import StockInHistory from "../pages/Dashboard/StockInHistory";
+import Account from "../pages/Dashboard/Account";
 
 const router = createBrowserRouter([
     {
@@ -151,6 +152,12 @@ const router = createBrowserRouter([
                     <ProtectedRoute requiredPermissions={[PERMISSIONS.PURCHASE_ORDER_CREATE]}>
                         <CreatePurchaseOrder />
                     </ProtectedRoute>
+                )
+            },
+            {
+                path: 'account',
+                Component: () => (
+                    <Account />
                 )
             }
         ]
