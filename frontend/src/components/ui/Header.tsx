@@ -32,7 +32,7 @@ export default function Header() {
                     <p>{formatLongDate(new Date())} | {time}</p>
 
                     <button 
-                        className="cursor-pointer bg-panel text-brown p-1 rounded-full w-8 h-8 flex items-center justify-center font-bold"
+                        className="border border-gray-400 cursor-pointer bg-panel text-brown p-1 rounded-full w-8 h-8 flex items-center justify-center font-bold"
                         onClick={() => navigate('/dashboard/account')}
                     >
                         {firstInitial}
