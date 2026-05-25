@@ -10,7 +10,6 @@ export interface StockIn {
     supplier: Supplier;
     inventoryItem: InventoryItem;
     quantity: number;
-    unit_cost: number;
     unit: "kg" | "g" | "ml" | "l" | "pcs"; 
     total_cost: number;
     createdAt: string;

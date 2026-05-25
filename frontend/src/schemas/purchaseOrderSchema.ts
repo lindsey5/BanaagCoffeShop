@@ -4,7 +4,6 @@ import * as z from "zod";
 export const purchaseOrderItemSchema = z.object({
     inventory_item_id: z.string().min(1, "Inventory item ID is required"),
     quantity: z.number("Quantity is required").min(1, "Quantity must be at least 1"),
-    unit_cost: z.number("Unit cost is required").min(1, "Unit cost cannot be negative or zero"),
     unit: z.enum(["kg", "g", "ml", "l", "pcs"], "Invalid unit"),
     total_cost: z.number().min(0, "Total cost cannot be negative")
 });

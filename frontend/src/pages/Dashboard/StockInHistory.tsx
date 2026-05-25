@@ -39,13 +39,7 @@ const columns : ColumnDef<StockIn>[]= [
         meta: { align: 'center'}
     },
     {
-        header: 'Unit Cost',
-        accessorKey: "unit_cost",
-        cell: info => formatToPeso(Number(info.getValue())),
-        meta: { align: 'center'}
-    },
-    {
-        header: 'Total Cost',
+        header: 'Item Cost',
         accessorKey: "total_cost",
         cell: info => formatToPeso(Number(info.getValue())),
         meta: { align: 'center'}

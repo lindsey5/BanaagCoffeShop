@@ -221,7 +221,6 @@ export const updatePurchaseOrder = async (req: Request, res: Response, next: Nex
                 await StockIn.create({
                     inventory_item_id: item.inventory_item_id,
                     quantity: item.quantity,
-                    unit_cost: item.unit_cost,
                     unit: item.unit,
                     total_cost: item.total_cost,
                     supplier_id: purchaseOrder.supplier_id

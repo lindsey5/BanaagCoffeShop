@@ -17,6 +17,7 @@ import { PERMISSIONS } from "../../config/permissions";
 import Button from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import PurchaseOrderModal from "../../components/purchase-order/PurchaseOrderModal";
+import { formatToPeso } from "../../utils/utils";
 
 const statusOptions = [
     { label: 'All', value: '' },
@@ -69,6 +70,11 @@ const getColumns = ({ setPurchaseOrder } : GetColumnsParams) : ColumnDef<Purchas
         header: 'Date Received',
         accessorKey: 'dateReceived',
         cell: info => info.getValue() ? formatDate(info.getValue() as string) : 'N/A',
+        meta: { align: 'center' }
+    },
+    {
+        header: "Total Cost",
+        cell: ({ row }) => formatToPeso(row.original.grandTotal),
         meta: { align: 'center' }
     },
     {

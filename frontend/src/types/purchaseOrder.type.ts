@@ -7,7 +7,6 @@ export interface PurchaseOrderItem {
     inventory_item_id: string;
     inventoryItem: InventoryItem;
     quantity: number;
-    unit_cost: number;
     unit: "kg" | "g" | "ml" | "l" | "pcs"; 
     total_cost: number;
 }
@@ -28,7 +27,6 @@ export interface PurchaseOrder {
 export interface CreatePurchaseOrderItemDTO {
     inventory_item_id: string;
     quantity: number;
-    unit_cost: number;
     unit: "kg" | "g" | "ml" | "l" | "pcs"; 
     total_cost: number;
 }

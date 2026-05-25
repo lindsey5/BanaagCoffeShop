@@ -5,7 +5,6 @@ export interface StockInAttributes extends Document {
     supplier_id: mongoose.Types.ObjectId;
     inventory_item_id: mongoose.Types.ObjectId;
     quantity: number;
-    unit_cost: number;
     unit: "kg" | "g" | "ml" | "l" | "pcs"; 
     total_cost: number;
 }
@@ -41,11 +40,6 @@ const StockInSchema: Schema<StockInAttributes> = new Schema(
             required: true,
         },
 
-        unit_cost: {
-            type: Number,
-            required: true,
-            min: [0, "Cost cannot be negative."],
-        },
         total_cost: {
             type: Number,
             required: true,

@@ -49,7 +49,6 @@ export default function PurchaseOrderModal ({ close, show, purchaseOrder } : Pur
                         <h1 className="font-semibold">{item.inventoryItem.name}</h1>
                         <div className="text-xs">
                             <p>Quantity: {item.quantity}{item.unit.toUpperCase()}</p>
-                            <p>Unit Cost: {formatToPeso(item.unit_cost)}</p>
                             <p>Cost: {formatToPeso(item.total_cost)}</p>
                         </div>
                     </div>

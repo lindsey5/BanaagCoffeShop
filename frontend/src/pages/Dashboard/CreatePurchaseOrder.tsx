@@ -34,16 +34,14 @@ export default function CreatePurchaseOrder () {
             setValue('items', watch('items').map(i => i.inventory_item_id === item._id ? ({
                 ...i, 
                 quantity: i.quantity + 1,
-                total_cost: i.unit_cost * (i.quantity + 1)
                 }) : i)
             )
         }else {
             setValue('items', [
                 ...watch('items'), {
                     inventory_item_id: item._id,
-                    unit: item.unit === 'g' ? 'kg' : item.unit === 'ml' ? 'l' : item.unit,
+                    unit: item.unit,
                     quantity: 0,
-                    unit_cost: 0,
                     total_cost: 0,
                 }
             ])
@@ -134,32 +132,20 @@ export default function CreatePurchaseOrder () {
 
                                     <div className="grid lg:grid-cols-2 gap-3">
                                         <TextField 
-                                            label="Unit Cost"
-                                            placeholder="Enter unit cost"
+                                            label="Item Cost"
+                                            placeholder="Enter item cost"
                                             type="number"
-                                            registration={register(`items.${i}.unit_cost`, {
+                                            registration={register(`items.${i}.total_cost`, {
                                                 setValueAs: v => Number(v),
-                                                onChange: (e) => {
-                                                    const unit_cost = Number(e.target.value);
-                                                    const quantity = watch(`items.${i}.quantity`) ?? 0;
-
-                                                    setValue(`items.${i}.total_cost`, unit_cost * quantity);
-                                                }
                                             })}
-                                            error={errors.items ? errors.items[i]?.unit_cost?.message : ""}
+                                            error={errors.items ? errors.items[i]?.total_cost?.message : ""}
                                         />
                                         <TextField 
                                             label="Quantity"
                                             placeholder="Enter quantity"
                                             type="number"
                                             registration={register(`items.${i}.quantity`, {
-                                            setValueAs: v => Number(v),
-                                            onChange: (e) => {
-                                                const quantity = Number(e.target.value);
-                                                const unit_cost = watch(`items.${i}.unit_cost`) ?? 0;
-
-                                                setValue(`items.${i}.total_cost`, quantity * unit_cost);
-                                            }
+                                                setValueAs: v => Number(v),
                                             })}
                                             onKeyDown={(e) => {
                                                 if ((e.key === "." || e.key === "," || e.key === "e" || e.key === "-") && item.unit === 'pcs') {
@@ -169,14 +155,9 @@ export default function CreatePurchaseOrder () {
                                             error={errors.items ? errors.items[i]?.quantity?.message : ""}
                                         />
                                     </div>
-                                    <div className="space-y-3">
-                                        <p className="text-brown text-sm">
-                                            Unit: {watch(`items.${i}.unit`).toUpperCase()}
-                                        </p>
-                                        <h2 className="font-semibold text-sm text-brown">
-                                            Cost: {formatToPeso(watch(`items.${i}.total_cost`))}
-                                        </h2>
-                                    </div>
+                                    <p className="text-brown text-sm">
+                                        Unit: {watch(`items.${i}.unit`).toUpperCase()}
+                                    </p>
                                     <div className="flex justify-end">
                                         <button
                                             type="button"

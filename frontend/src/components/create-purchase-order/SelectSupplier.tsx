@@ -39,6 +39,7 @@ export default function SelectSupplier ({ supplier, setSupplier, setItems, setVa
     const handleChangeSupplier = () => {
         setSupplier(null);
         setItems([]);
+        setValue('items', [])
     }
 
     const handleSelect = (supplier : Supplier) => {
@@ -141,7 +142,7 @@ export default function SelectSupplier ({ supplier, setSupplier, setItems, setVa
                                         Loading...
                                     </div>
                                 ) : suppliers.length ? (
-                                    suppliers.map((supplier) => (
+                                    suppliers.sort((a, b) => a.name.localeCompare(b.name)).map((supplier) => (
                                         <button
                                             key={supplier._id}
                                             type="button"
