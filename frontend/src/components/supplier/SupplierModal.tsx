@@ -68,7 +68,7 @@ export default function SupplierModal ({
             <WhiteCard>
             <form className="space-y-3 relative" onSubmit={handleSubmit(onSubmit)}>
                 <h1 className="font-bold text-xl">{supplier ? 'Update Supplier' : 'Create Supplier' }</h1>
-                <button className="absolute top-0 right-0 cursor-pointer" onClick={handleClose}>
+                <button type="button" className="absolute top-0 right-0 cursor-pointer" onClick={handleClose}>
                     <X size={20} />
                 </button>
                 <TextField 
