@@ -41,7 +41,7 @@ export default function CreatePurchaseOrder () {
             setValue('items', [
                 ...watch('items'), {
                     inventory_item_id: item._id,
-                    unit: item.unit,
+                    unit: item.unit === 'g' ? 'kg' : item.unit === 'ml' ? 'l' : 'pcs',
                     quantity: 0,
                     unit_cost: 0,
                     total_cost: 0,
@@ -171,7 +171,7 @@ export default function CreatePurchaseOrder () {
                                     </div>
                                     <div className="space-y-3">
                                         <p className="text-brown text-sm">
-                                            Unit: {item.unit.toUpperCase()}
+                                            Unit: {watch(`items.${i}.unit`).toUpperCase()}
                                         </p>
                                         <h2 className="font-semibold text-sm text-brown">
                                             Cost: {formatToPeso(watch(`items.${i}.total_cost`))}

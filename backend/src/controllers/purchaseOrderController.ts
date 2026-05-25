@@ -209,12 +209,12 @@ export const updatePurchaseOrder = async (req: Request, res: Response, next: Nex
                     inv.quantity += item.quantity;
                 }
 
-                if(inv.unit === 'kg' && item.unit === 'g'){
-                    inv.quantity += gramToKg(item.quantity);
+                if(inv.unit === 'g' && item.unit === 'kg'){
+                    inv.quantity += kgToGram(item.quantity);
                 }
 
-                if(inv.unit === 'l' && item.unit === 'ml') {
-                    inv.quantity += mlToL(item.quantity);
+                if(inv.unit === 'ml' && item.unit === 'l') {
+                    inv.quantity += lToMl(item.quantity);
                 }
 
                 inv.save({ session });
