@@ -41,7 +41,7 @@ export default function CreatePurchaseOrder () {
             setValue('items', [
                 ...watch('items'), {
                     inventory_item_id: item._id,
-                    unit: item.unit === 'g' ? 'kg' : item.unit === 'ml' ? 'l' : 'pcs',
+                    unit: item.unit === 'g' ? 'kg' : item.unit === 'ml' ? 'l' : item.unit,
                     quantity: 0,
                     unit_cost: 0,
                     total_cost: 0,
