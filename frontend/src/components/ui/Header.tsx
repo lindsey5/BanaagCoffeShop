@@ -25,7 +25,7 @@ export default function Header() {
         <header className="z-30 fixed inset-x-0 top-0">
             <Card className="flex justify-between items-center rounded-none text-white">
                 <h1 className="text-xl font-bold">
-                    Banaag POS
+                    Banaag Kapehan
                 </h1>
 
                 <div className="flex gap-3 items-center">
