@@ -75,7 +75,7 @@ export default function AccountSecurityForm ({ setShowChangePassword } : Account
                     className="bg-gray-200 rounded-md px-4 py-2 border border-gray-400 cursor-pointer"
                     onClick={handleCancel}
                 >Cancel</button>
-                <Button className="rounded-md">Save Changes</Button>
+                <Button className="rounded-md">Change Password</Button>
             </div>
         </form>
     )
