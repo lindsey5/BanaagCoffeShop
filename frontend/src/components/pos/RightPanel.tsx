@@ -58,7 +58,7 @@ export default function RightPanel({
         const discountAmount = subtotal * (discount / 100);
         const discountedSubtotal = subtotal - discountAmount;
 
-        const tax = discount === 20 ? 0 : discountedSubtotal * taxRate;
+        const tax = discountedSubtotal * taxRate;
         const grandTotal = discountedSubtotal + tax;
 
         setPayment(paymentMethod === 'cash' ? 0 : grandTotal);
