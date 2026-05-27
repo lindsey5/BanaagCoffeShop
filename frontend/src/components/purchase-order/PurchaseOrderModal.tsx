@@ -48,6 +48,7 @@ export default function PurchaseOrderModal ({ close, show, purchaseOrder } : Pur
                     <div className="space-y-2 text-sm border border-hover p-2 rounded-md">
                         <h1 className="font-semibold">{item.inventoryItem.name}</h1>
                         <div className="text-xs">
+                            <p>{formatToPeso(item.unit_cost)} per {item.base_quantity}{item.unit.toUpperCase()}</p>
                             <p>Quantity: {item.quantity}{item.unit.toUpperCase()}</p>
                             <p>Cost: {formatToPeso(item.total_cost)}</p>
                         </div>

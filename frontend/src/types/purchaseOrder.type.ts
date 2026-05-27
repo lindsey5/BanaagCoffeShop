@@ -6,30 +6,53 @@ import type { ApiResponse } from "./types";
 export interface PurchaseOrderItem {
     inventory_item_id: string;
     inventoryItem: InventoryItem;
+
     quantity: number;
-    unit: "kg" | "g" | "ml" | "l" | "pcs"; 
+    unit: "kg" | "g" | "ml" | "l" | "pcs";
+
+    // Example:
+    // base_quantity = 100
+    // base_unit = "ml"
+    // unit_cost = 20
+    // Means: ₱20 per 100ml
+    unit_cost: number;
+    base_quantity: number;
+
     total_cost: number;
 }
 
 export interface PurchaseOrder {
     _id: string;
     poNumber: string;
+
     supplier_id: string;
     supplier: Supplier;
+
     items: PurchaseOrderItem[];
+
     status: "pending" | "received" | "cancelled";
+
     grandTotal: number;
+
     notes?: string;
+
     dateReceived: string;
     createdAt: string;
 }
 
 export interface CreatePurchaseOrderItemDTO {
     inventory_item_id: string;
+
     quantity: number;
-    unit: "kg" | "g" | "ml" | "l" | "pcs"; 
+    unit: "kg" | "g" | "ml" | "l" | "pcs";
+
+    // pricing definition (₱20 per 100ml, etc.)
+    unit_cost: number;
+    base_quantity: number;
+
     total_cost: number;
 }
+
 
 export interface CreatePurchaseOrderDTO {
     supplier_id: string;

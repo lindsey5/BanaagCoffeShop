@@ -24,7 +24,7 @@ interface RightPanelProps {
 const discounts = [
     { label: "None", percentage: 0 },
     { label: "Seasonal (10%)", percentage: 10 },
-    { label: "PWD (20%)", percentage: 20 }
+    { label: "PWD / Senior (20%)", percentage: 20 }
 ];
 
 const paymentMethods = [
@@ -58,7 +58,7 @@ export default function RightPanel({
         const discountAmount = subtotal * (discount / 100);
         const discountedSubtotal = subtotal - discountAmount;
 
-        const tax = discountedSubtotal * taxRate;
+        const tax = discount === 20 ? 0 : discountedSubtotal * taxRate;
         const grandTotal = discountedSubtotal + tax;
 
         setPayment(paymentMethod === 'cash' ? 0 : grandTotal);
